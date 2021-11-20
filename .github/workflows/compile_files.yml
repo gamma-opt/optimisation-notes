@@ -17,7 +17,6 @@ jobs:
       - name: Upload pdfs  
         uses: actions/upload-artifact@v2
         with:
-          # name: build
-          path: |
-            optimisation-notes.pdf
+          name: build
+          path: /optimisation-notes.pdf
        
