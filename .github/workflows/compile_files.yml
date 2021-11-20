@@ -21,7 +21,7 @@ jobs:
           git config --global user.email "fabricio.oliveira@aalto.fi"
           
           # add file and push
-          git add optimisation-notes/optimisation-notes.pdf
+          git add optimisation-notes.pdf
           git commit -m "[github actions] update optimisation-notes"
           git push
         env:
