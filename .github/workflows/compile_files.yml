@@ -19,18 +19,11 @@ jobs:
           # configure git
           git config --global user.name "FabsOliveira"
           git config --global user.email "fabricio.oliveira@aalto.fi"
-          # setup ssh
-          mkdir ~/.ssh
-          chmod 700 ~/.ssh
-          echo "$DEPLOY_KEY" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          git config --global core.sshCommand "ssh -i ~/.ssh/id_ed25519 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
-          git clone --depth=1 git@github.com:gamma-opt/optimisation-notes.git "$GITHUB_WORKSPACE/optimisation-notes"
-          cp -f optimisation-notes.pdf "$GITHUB_WORKSPACE/optimisation/notes/optimisation-notes.pdf"
+          
+          # add file and push
           git add optimisation-notes/optimisation-notes.pdf
           git commit -m "[github actions] update optimisation-notes"
           git push
         env:
           DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
        
