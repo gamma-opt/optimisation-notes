@@ -28,8 +28,8 @@ jobs:
           git config --global user.email "fabricio.oliveira@aalto.fi"
           
           # add file and push
-          git add -f optimisation-notes.pdf
-          git commit -m "[github actions] update optimisation-notes.pdf"
+          git add -f src/optimisation-notes.pdf
+          git commit -m "[GA] update optimisation-notes.pdf"
           git push
         env:
           DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
