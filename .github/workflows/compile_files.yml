@@ -24,14 +24,14 @@ jobs:
       - name: Upload optimisation-notes.pdf
         run: |
           # Move file to root folder
-          mv src/optimisation_notes.pdf .
+          mv $GITHUB_WORKSPACE/src/optimisation_notes.pdf .
           
           # configure git
           git config --global user.name "FabsOliveira"
           git config --global user.email "fabricio.oliveira@aalto.fi"
           
           # add file and push
-          git add -f src/optimisation-notes.pdf
+          git add -f optimisation-notes.pdf
           git commit -m "[GA] update optimisation-notes.pdf"
           git push
           
