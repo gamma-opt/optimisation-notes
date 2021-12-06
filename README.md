@@ -1,3 +1,6 @@
+[![Build LaTeX document](https://github.com/gamma-opt/optimisation-notes/actions/workflows/compile_files.yml/badge.svg?branch=main)](https://github.com/gamma-opt/optimisation-notes/actions/workflows/compile_files.yml)
+
+
 # optimisation-notes
 
 ## Introduction
