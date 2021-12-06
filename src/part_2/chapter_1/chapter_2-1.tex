@@ -94,11 +94,11 @@ Notice that, as posed, the resource allocation problem is linear. This is perhap
 One classic variant of resource allocation that include nonlinear terms is the \emph{portfolio optimisation problem}. In this, we assume that a collection of assets $j \in J = \braces{1,\dots, N}$ are available for investment. In this case, capital is the single (actual) resource to be considered. Each asset has random return $R_j$, with an expected value $\mathbb{E}[R_j] = \mu_j$. Also, the covariance between two assets $i,j \in J$ is given by $\sigma_{ij} = \mathbb{E}[(R_i - \mu_i)(R_j - \mu_j)]$, which can be denoted as the covariance matrix 
 %
 \begin{align*}
-\Sigma = \begin{bmatrix}
- \sigma_{11} & \dots & \sigma_{1N} \\ 
- \vdots      & \ddots & \vdots \\
- \sigma_{N1}  & \dots & \sigma_{NN}
-\end{bmatrix}
+	\Sigma = \begin{bmatrix}
+		\sigma_{11} & \dots & \sigma_{1N} \\ 
+		\vdots      & \ddots & \vdots \\
+		\sigma_{N1}  & \dots & \sigma_{NN}
+	\end{bmatrix}
 \end{align*}
 %
 Markowitz (1952) proposed using $x^\top\Sigma x$ as a risk measure that captures the variability in the return of the assets. Given the above, the optimisation model that provides the investment portfolio with the least risk, given a minimum requirement $\epsilon$ in terms of expected returns is given by
@@ -140,11 +140,11 @@ Consider the resource allocation problem from Section \ref{sec:resource_allocati
 	& x_j \geq 0, \ \forall j \in J. 
 \end{align*} 
 %
-Let us assume that the only information available are observations $\hat{a}_i$, from which we can estimate a nominal value $\overline{a}_i$. This is illustrated in Figure \ref{fig:random_obsservations}, in which 100 random observations are generated for $\tilde{a_i} = [\tilde{a}_{i1}, \tilde{a}_{i2}]$ with $\tilde{a}_{i1} \sim \text{Normal}(10,2)$ and $\tilde{a}_{i2} \sim \text{Normal}(5,3)$ for a single constraint $i \in I$. The nominal values are assumed to have coordinates given by the average values used in the Normal distributions. 
+Let us assume that the only information available are observations $\hat{a}_i$, from which we can estimate a nominal value $\overline{a}_i$. This is illustrated in Figure \ref{fig:random_observations}, in which 100 random observations are generated for $\tilde{a_i} = [\tilde{a}_{i1}, \tilde{a}_{i2}]$ with $\tilde{a}_{i1} \sim \text{Normal}(10,2)$ and $\tilde{a}_{i2} \sim \text{Normal}(5,3)$ for a single constraint $i \in I$. The nominal values are assumed to have coordinates given by the average values used in the Normal distributions. 
 %
 \begin{figure}[h]
-	\includegraphics[width=0.8\textwidth]{figures/part_2_chapter_1/data_no_ellipsoid.pdf}
-	\caption{One hundred random realisations for $\tilde{a}_i$.} \label{fig:random_obsservations}
+	\includegraphics[width=0.8\textwidth]{part_2/chapter_1/figures/data_no_ellipsoid.pdf}
+	\caption{One hundred random realisations for $\tilde{a}_i$.} \label{fig:random_observations}
 \end{figure}
 %
 Our objective is to develop a model that incorporates a given level of protection in terms of feasibility guarantees. That is, we would like to develop a model that provides solutions that are guaranteed to remain feasible if the realisation of $\tilde{a}_i$ falls within an \emph{uncertainty set} $\epsilon_i$ of size controlled by the parameter $\Gamma_i$. The idea is that the bigger the uncertainty set $\epsilon_i$, the more robust is the solution, which typically comes at the expense of accepting solutions with expected worse performance.
@@ -197,7 +197,7 @@ In Figure \ref{fig:ellipsoids}, we show the ellipsoidal sets for two levels of $
 using the average and standard deviation of the original distributions that generated the observations. We plot the ellipsoids for $\Gamma_1 = 1$ and $\Gamma_2 = 1.5$, illustrating how the protection level increases as $\Gamma$ increases. This can be inferred since the uncertainty set covers more of the observations and the formulation is such that feasibility is guaranteed for any observation within the uncertainty set. 
 %
 \begin{figure}
-	\includegraphics[width=0.8\textwidth]{figures/part_2_chapter_1/data_with_ellipsoid.pdf}
+	\includegraphics[width=0.8\textwidth]{part_2/chapter_1/figures/data_with_ellipsoid.pdf}
 	\caption{One hundred random realisations for $\tilde{a}_i$.} \label{fig:ellipsoids}
 \end{figure}
 %
@@ -212,7 +212,7 @@ Each element in $D$ is an observation of a given set of $n$ features with values
 Figure \ref{fig:classified_observations} illustrates this situation for $n = 2$, in which the orange dots represent points classified as belonging to $I^-$ (negative observations) and the blue dots represent points classified as belonging to $I^+$ (positive observations).
 
 \begin{figure}
-    \includegraphics[width=0.8\textwidth]{figures/part_2_chapter_1/classes_no_classifier.pdf}
+    \includegraphics[width=0.8\textwidth]{part_2/chapter_1/figures/classes_no_classifier.pdf}
     \caption{Two hundred observations for $x_i$ classified to belong to $I^-$ (orange) or $I^+$ (blue).}        
     \label{fig:classified_observations}
 \end{figure}
@@ -258,7 +258,7 @@ To avoid trivial solutions in which $(a,b) = (0, 0)$, the normalisation constrai
 Solving the model \eqref{ex4:obj}--\eqref{ex4:end} provides optimal $(a,b)$ which translates into the classifier represented as the green line in Figure \ref{fig:observations_with_classifier}.
 
 \begin{figure}[h]
-    \includegraphics[width=0.8\textwidth]{figures/part_2_chapter_1/classes_with_classifier.pdf}
+    \includegraphics[width=0.8\textwidth]{part_2/chapter_1/figures/classes_with_classifier.pdf}
     \caption{Two hundred observations for $x_i$ classified to belong to $I^-$ (orange) or $I^+$ (blue) with a classifier (green).}        
     \label{fig:observations_with_classifier}
 \end{figure}
@@ -292,7 +292,7 @@ By doing so, a penalty is applied not only to those points that were misclassifi
 In objective function \eqref{ex5:obj}, the errors accumulated in variables $u_i$, $i=1,\dots,N$ and $v_i$, $i = 1,\dots,M$ and the squared norm $||a||_2^2$ are considered simultaneously. The term $\gamma$ is a scalar used to impose an emphasis on minimising the norm $||a||_2$ and incentivising a larger slab $S$ (recall that the slab is large for smaller $||a||_2$). The squared norm  $||a||_2^2$ is considered instead as a means to recover differentiability, as the norm  $||a||_2$ is not differentiable. Later on, we will see how beneficial it is for optimisation methods to be able to assume differentiability. Moreover, note how in constraints \eqref{ex5:const1} and \eqref{ex5:const2} $u$ and $v$ also accumulate penalties for correctly classified $x_i$ that happen to be between the slab $S$, that is, that have term $a^\top x - b$ larger/ smaller than -1/ +1. Figure \ref{fig:observations_with_rob_classifier} shows a robust classifier an arbitrary value of $\gamma$.
 
 \begin{figure}[H]
-    \includegraphics[width=0.8\textwidth]{figures/part_2_chapter_1/classes_with_robust_classifier.pdf}
+    \includegraphics[width=0.8\textwidth]{part_2/chapter_1/figures/classes_with_robust_classifier.pdf}
     \caption{Two hundred observations for $x_i$ classified to belong to $I^-$ (orange) or $I^+$ (blue).}        
     \label{fig:observations_with_rob_classifier}
 \end{figure}
