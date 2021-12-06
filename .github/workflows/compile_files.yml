@@ -24,7 +24,7 @@ jobs:
       - name: Upload optimisation-notes.pdf
         run: |
           # Move file to root folder
-          mv $GITHUB_WORKSPACE/src/optimisation_notes.pdf .
+          mv $GITHUB_WORKSPACE/src/optimisation-notes.pdf .
           
           # configure git
           git config --global user.name "FabsOliveira"
