@@ -18,7 +18,7 @@ jobs:
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@v2
         with:
-          root_file: src/optimisation-notes.tex
+          root_file: optimisation-notes.tex
           
       - name: Upload optimisation-notes.pdf
         run: |
