@@ -18,7 +18,8 @@ jobs:
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@v2
         with:
-          root_file: src/optimisation-notes.tex
+          working_directory: src
+          root_file: optimisation-notes.tex
           
       - name: Upload optimisation-notes.pdf
         run: |
@@ -28,7 +29,7 @@ jobs:
           
           # add file and push
           git add -f optimisation-notes.pdf
-          git commit -m "[github actions] update optimisation-notes"
+          git commit -m "[github actions] update optimisation-notes.pdf"
           git push
         env:
           DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
