@@ -1,9 +1,12 @@
 [![Build LaTeX document](https://github.com/gamma-opt/optimisation-notes/actions/workflows/compile_files.yml/badge.svg?branch=main)](https://github.com/gamma-opt/optimisation-notes/actions/workflows/compile_files.yml)
 
 
-# optimisation-notes
+# Optimisation notes
 
-## Introduction
+Download the notes here: [download](https://gamma-opt.github.io/optimisation-notes/pdfs/optimisation-notes.pdf)
+
+
+## About
 
 This repository contains the lecture notes that have been prepared for graduate level courses at Aalto University. 
 - MS-E2121 - Linear Optimisation
