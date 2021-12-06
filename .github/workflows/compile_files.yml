@@ -1,6 +1,12 @@
 name: Build LaTeX document
 
-on: [push]
+on: 
+  push:
+    branches: 
+      - main
+  pull_request:
+    branches:
+      - main    
 
 jobs:
   build_latex:
@@ -12,7 +18,7 @@ jobs:
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@v2
         with:
-          root_file: optimisation-notes.tex
+          root_file: src/optimisation-notes.tex
           
       - name: Upload optimisation-notes.pdf
         run: |
