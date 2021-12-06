@@ -5,4 +5,5 @@
 *.gz
 *.toc
 *.fdb_latexmk
-*.pdf
+*ipynb_checkpoints
+optimisation_notes.pdf
