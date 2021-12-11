@@ -1,4 +1,5 @@
 [![Build LaTeX document](https://github.com/gamma-opt/optimisation-notes/actions/workflows/compile_files.yml/badge.svg?branch=main)](https://github.com/gamma-opt/optimisation-notes/actions/workflows/compile_files.yml)
+[![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
 
 
 # Optimisation notes
@@ -42,3 +43,15 @@ The material is in constant developments and therefore, subject to error and typ
 Associated with the material, we have a forum about the content of the notes in the [Discussion](https://github.com/gamma-opt/optimisation-notes/discussions) section. If you have any questions about the material, a good starting point is to search the forum. We also curate it with questions students ask, so you might find your answer there. Otherwise, feel free to post questions related to the material.
 
 Notice that questions related to any of the assessments of the courses should be ask in the appropriate channels. The questions in the forum are exclusively for **the lecture's content**.
+
+## License
+
+This work is licensed under a
+[Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License][cc-by-nc-sa].
+
+[![CC BY-NC-SA 4.0][cc-by-nc-sa-image]][cc-by-nc-sa]
+
+[cc-by-nc-sa]: http://creativecommons.org/licenses/by-nc-sa/4.0/
+[cc-by-nc-sa-image]: https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png
+[cc-by-nc-sa-shield]: https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg
+
