@@ -1,0 +1,197 @@
+\section{Basics of linear problems}
+
+As we have seen in the previous chapter, the feasible region of a linear programming problem can be represented as
+%
+\begin{equation} \label{p1c2:eq:feasible_region_inequality}
+	Ax \leq b	
+\end{equation}
+%
+where $A$ is a $m \times n$ matrix, $x$ is a $n$-dimensional column vector (or more compactly, $x \in \reals^n$), and $b$ is an $m$- dimensional column vector ($b \in \reals^m$). Notice that $\leq$ is considered component-wise.
+
+Before introducing the simplex method, let us first revisit a few key elements and operations that we will use in the process. The first of them is presented in Definition \ref{p1c2:def:matrix_inversion}.
+%
+\begin{definition}[Matrix inversion] \label{p1c2:def:matrix_inversion}
+	Let $A$ be a square $n \times n$ matrix. $A^{-1}$ is the \emph{inverse matrix} of $A$ if it exists and $AA^{-1} = I$, where $I$ is the identity matrix.
+\end{definition}
+%
+Matrix inversion is the ``kingpin'' of linear optimisation (and nonlinear) optimisation. As we will see later on, being able to perform efficient matrix inversion operations (in reality, operations that are equivalent to matrix inversion but that can exploit the matrix structure to be made faster) is of utmost importance for developing a linear optimisation solver. 
+
+Another importance concept is the notion of \emph{linear independence}. We formally state when a collection of vectors are said to be linearly independent (or otherwise dependent) in Definition \ref{p1c2:def:linear_independence}. 
+
+%
+\begin{definition}[Linearly Independent vectors] \label{p1c2:def:linear_independence}
+	The vectors $\braces{x_i}_{i=1}^k \in \reals^n$  are \emph{linearly dependent} if there exists real numbers $\braces{a_i}_{i=1}^k$ with $a_i \neq 0$ for at least one $i \in \braces{1,\dots, k}$ such that
+	$$
+		\sum_{i=1}^k a_i x_i= 0;
+	$$
+	otherwise, $\braces{x_i}_{i=1}^k$ are \emph{linearly independent}.
+\end{definition}
+
+In essence, for a collection of vectors to be linearly independent it must be so that neither of the vectors in the collection can be expressed as a combination (that is multiplying the vectors by nonzero scalars and adding them) of the others. This is simpler to see in $\reals^2$. Two vectors are linearly independent if one cannot obtain one by multiplying the other by a constant, which, effectively, means that they are not parallel. If the two vectors are not parallel, then one of them must have a component in a direction that the cannot achieve. The same holds for any $n$-dimensional space. Also, that is why one can only have up to $n$ independent vectors in $\reals^n$. Figure X illustrates this effect. 
+
+\begin{figure}[h]
+	\centering
+    \begin{tikzpicture}
+%	        		\draw[help lines] (-2,-2) grid (2,3);
+		\node (pic) at (0,0) {\includegraphics{part_1/chapter_2/figures/Figure1}};
+		\node (x1) at (-1.7, 2.1) {$x_1$};
+		\node (x2) at (1.2, 2.2) {$x_2$};
+		\node (x11) at (-1.9, -0.2) {$x_1$};
+		\node (x12) at (1, 0) {$x_2$};
+		\node (x3) at (2.1, -0.8) {$x_3$};
+    \end{tikzpicture}
+	\caption{Linearly independent (top) and dependent (bottom) vectors in $\reals^2$}
+\end{figure}
+
+Theorem \ref{p1c2:thm:fundamental_linear_algebra} summarises results that we will utilise in the upcoming developments. These are classical results from linear algebra and are thus provided without a proof.
+%
+\begin{theorem}[Inverses, linear independence, and solving $Ax = b$] \label{p1c2:thm:fundamental_linear_algebra}
+	Let $A$ be a $m \times m$ matrix. Then, the following statements are equivalent:
+	\begin{enumerate}
+		\item $A$ is invertible
+		\item $A^\top$ is invertible
+		\item The determinant of $A$ is nonzero
+		\item The rows of $A$ are linearly independent
+		\item The columns of $A$ are linearly independent
+		\item For every $b \in \reals^m$, the linear system $Ax = b$ has a unique solution
+		\item There exists some $b \in \reals^m$ such that $Ax = b$ has a unique solution.	
+	\end{enumerate}	
+\end{theorem}
+%
+Notice that Theorem \ref{p1c2:thm:fundamental_linear_algebra} establishes important relationships between the geometry of the matrix $A$ (its rows and columns) and consequences it has to our ability to calculate its inverse $A^{-1}$ and, consequently, solve the system $Ax = b$, to which the solution is obtained as $x = A^{-1}b$. This will turn to be most important operation in the simplex method.
+
+
+\subsection{Subspaces and bases}
+
+Let us define some objects to which we will refer often. The first of them is the notion of a \emph{subspace}. A subspace of $\reals^n$ is a set comprising all linear combinations of its own elements. Specifically, if $S$ is a subspace, then
+%
+\begin{equation*}
+	S = \braces{ax + by : x,y \in S; a,b \in \reals}.
+\end{equation*}
+%
+A related concept is the notion of a \emph{span}. A span of a collection of vectors $\braces{x_i}_{i=1}^k \in \reals^n$ is the subspace of $\reals^n$ formed by all linear combinations of such vectors, i.e., 
+%
+\begin{equation*}
+	\spans(x_1,\dots, x_k) = \braces{y = \sum_{i=1}^k a_ix_i : a_i \in \reals, i \in \braces{1,\dots, k}}. 
+\end{equation*}
+%
+Notice how the two concepts are related: subspaces can be characterised by a collection of vectors to which the span gives the said subspace. In other words, the span of a set of vectors is the subspace formed by all points we can represent by some linear combination of these vectors. 
+
+The missing part in this is the notion of a \emph{basis}. A \emph{basis} of the subspace $S \subseteq \reals^n$ is a collection of vectors $\braces{x_i}_{i=1}^k \in \reals^n$ that are LI such that $\spans(x_1,\dots, x_k) = S$. 
+
+Notice that a basis a "minimal"set of vectors that form a subspace. You can think of it in light of the definition of linearly independent vectors; if a vector is linearly dependent to the others, it is not needed for characterising the subspace the vectors span, since it ca be represented by a linear combination of the other vectors (and thus is in the subspace formed by the span of the other vectors).
+
+The above leads us to some important realisations:
+
+\begin{enumerate}
+	\item All the bases of a given subspace $S$ have the same dimension. Any extra vector would be linearly dependent to those vector that (the span) forms $S$. In that case, we say that the subspace has size (or dimension) $k$, the number of LI vectors forming the basis of the subspace.
+	\item If the subspace $S \subset \reals^n$ is formed by a basis of size $m < n$, we say that $S$ is a proper subspace, because it is not the whole $\reals^n$ itself, but a space contained within $\reals^n$. For example, two LI vectors form (i.e., span) a hyperplane in $\reals^3$; this hyperplane is a proper subspace since $m=2 <3=n$.
+	\item If a proper subspace has dimension $m < n$, then it means that there are $n-m$ directions in $\reals^n$ that are perpendicular to the subspace. That is, there are nonzero vectors $a_i$ that are orthogonal to $S$, that is $a_i^\top x = 0$ for $i = n-m + 1, ..., n$. Referring to the $\reals^3$, if $S \subseteq \reals^2$, then there is a third direction that is perpendicular to (or not in) $S$. Figure \ref{p1c2:fig:proper_subpaces} illustrate this.
+\end{enumerate}
+
+\begin{figure}
+	\centering
+	\begin{tikzpicture}
+%			\draw[help lines] (-4,-2) grid (4,2);
+		\node (pic) at (0,0) {\includegraphics{part_1/chapter_2/figures/Figure2}};
+		\node (x1l) at (-1.6, 0.6) {$x_1$};
+		\node (Sl) at (-1.1, 0.9) {$S$};	
+		\node (x1r) at (2.8, 0.8) {$x_1$};
+		\node (x2r) at (2.6, -0.9) {$x_2$};
+		\node (Sr) at (3.7, -0.3) {$S$};
+	\end{tikzpicture}
+	\vspace{-12pt}
+	\caption{one- (left) and two-dimensional subspaces (right) in $\reals^3$} \label{p1c2:fig:proper_subpaces}
+\end{figure}
+
+Theorem \ref{thm:LI_and_bases} builds upon the previous points to guarantee the existence of bases and propose a procedure to form them.
+
+\begin{theorem}[Forming bases from LI vectors]\label{thm:LI_and_bases}
+	Suppose that $S = \spans(x_1,\dots, x_k)$ has dimension $m \leq k$. Then
+	\begin{enumerate}
+		\item There exists a basis of $S$ consisting of $m$ of the vectors $x_1,\dots, x_k$.
+		\item If $k' \leq m$ and $x_1,\dots, x_{k'} \in S$ are linearly independent, we can form a basis for $S$ by starting with $x_1,\dots, x_{k'}$ and choosing $m-{k'}$ additional vectors from $x_1,\dots, x_k$.
+	\end{enumerate}	
+\end{theorem}
+
+%TODO: Include proof.
+
+Our interest in subspaces and basis span from their usefulness in explaining how the simplex method works under a purely algebraic (as opposed to geometric) perspective. For now, we can use the opportunity to define some ``famous'' subspaces which will often appear our derivations. 
+
+Let $A$ be a $m \times n$ matrix as before. The \emph{column space} of $A$ consist of the subspace spanned by the $n$ columns of $A$ and has dimension $m$ (recall that each column has as many components as he number of rows and is thus a $m$-dimensional vector). Likewise, the \emph{row space} of $A$ is the subspace in $\reals^n$ spanned by the rows of $A$. Finally, the \emph{null space} of $A$, often denoted as $\nulls(A) = \braces{x \in \reals^n : Ax = 0}$, consist of the vectors that are perpendicular to the row space of $A$. 
+
+One important notion related to those subspaces is that of their size. Both the row and the column space have the same size, and that size is the \emph{rank} of $A$. If $A$ is full rank, than it means that 
+%
+\begin{equation*}
+	\rank(A) = \min \braces{m,n}. 		
+\end{equation*}
+%
+Finally, the size of the null space of $A$ is given $n - \rank(A)$, which is in line with Theorem \ref{thm:LI_and_bases}.
+
+A related concept is that of an \emph{affine subspace}. Differently from linear subspaces (to which we have been referring to simply as subspaces), affine subspaces encode some form of translation, such s  
+%
+\begin{equation*}
+	S = S_0 + x_0 = \braces{x + x_0 : x \in S_0}.
+\end{equation*}
+%
+
+\subsection{Affine subspaces}
+
+Affine subspaces are not subspaces, because they do not contain the origin (recall that the definition of subspaces allow for $a$ and $b$ to be zero). Nevertheless, $S$ has the \emph{same dimension} as $S_0$.
+
+Affine subspaces give a framework for representing linear programming problems algebraically.  Specifically, let $A$ be a $m \times n$ matrix with $m < n$ (which will always be the case in linear programming models in this form as we will see) and $b$ a $m$-dimensional vector. Then, let 
+%
+\begin{equation} \label{p1c2:eq:equality_constraint_feasible_set}
+	S = \braces{x \in \reals^n : Ax = b}		
+\end{equation}
+%
+As we will see, the feasible set of any linear programming problem can be represented as an equality-constrained equivalent of the form of \eqref{p1c2:eq:equality_constraint_feasible_set} by means of the addition of slack variables to the inequality constraints. Now, assume that $x_0 \in \reals^n$ is such that $Ax_0 = b$.  Then, we have that 
+%
+\begin{equation*}
+	Ax = Ax_0 = b =\Rightarrow A(x - x_0) = 0.	
+\end{equation*}
+%
+Thus, $x \in S$ if and only if the vector $(x - x_0)$ belongs to $\nulls(A)$, the nullspace of $A$. Notice that the feasible region $S$ can be also defined as 
+%
+\begin{equation*}
+	S = \braces{x + x_0 : x \in \nulls(A)},	
+\end{equation*}
+%
+being thus an affine subspace with dimension $n-m$, if $A$ has $m$ linearly independent rows (i.e., $\rank(A)=m$). This will have important implications in the way we can define multiple basis from the $n$ vectors in the column space by choosing $m$ to be removed and form a basis to $\nulls(A)$, and what this process means geometrically.
+
+Figure \ref{p1c2:fig:nill_space_a} illustrates this concept for a single-row matrix $a$. For multiple rows, one would see $S$ as being represented by the intersection of multiple hyperplanes.
+
+\begin{figure}
+	\begin{tikzpicture}
+	    \node (pic) at (0,0) {\includegraphics{part_1/chapter_2/figures/Figure3}};
+	    \node (x0) at (0,-0.4) {$x_0$};
+	    \node (x1) at (1.4,0.4) {$x_1$};
+	    \node (x2) at (-1,-0.9) {$x_2$};
+	    \node (a) at (-0.5,1.4) {$a$};
+	    \node (S) at (-1.7,0.2) {$S$}; 
+	\end{tikzpicture}
+	\caption{The affine subspace $S$ generated by $x_0$ and $\nulls(a)$} \label{p1c2:fig:nill_space_a}		
+\end{figure}
+
+
+\section{Convex polyhedral set}
+
+The feasible region of any linear programming problem is a convex polyhedral set, which we will simply refer to as polyhedral set. That is because we are interested in polyhedral sets that are formed by an intersection of a finite number of half-spaces, and can only be convex (as we will see in a minute), thus creating redundancy in our context, but maybe some confusion overall. 
+
+\subsection{Hyperplanes, half-spaces and polyhedral sets}
+
+Definition \ref{p1c2:def:polyhedral_sets} formally state what is the structure we refer to as polyhedral sets.
+
+\begin{definition}[Polyhedral set] \label{p1c2:def:polyhedral_sets}
+	A polyhedral set is a set that can be described as
+	$$
+	\braces{x \in \reals^n : Ax \geq b},	
+	$$
+	where $A$ is an $m \times n$ matrix and $b$ is a $m$-vector.
+\end{definition}
+
+
+
+ 
+
+
