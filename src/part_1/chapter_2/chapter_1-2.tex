@@ -180,18 +180,167 @@ The feasible region of any linear programming problem is a convex polyhedral set
 
 \subsection{Hyperplanes, half-spaces and polyhedral sets}
 
-Definition \ref{p1c2:def:polyhedral_sets} formally state what is the structure we refer to as polyhedral sets.
-
+Definition \ref{p1c2:def:polyhedral_sets} formally state the structure we refer to as polyhedral sets.
+%
 \begin{definition}[Polyhedral set] \label{p1c2:def:polyhedral_sets}
 	A polyhedral set is a set that can be described as
 	$$
-	\braces{x \in \reals^n : Ax \geq b},	
+	S = \braces{x \in \reals^n : Ax \geq b},	
 	$$
 	where $A$ is an $m \times n$ matrix and $b$ is a $m$-vector.
 \end{definition}
+%
+One important thing to notice is that polyhedral sets, as defined in Definition \ref{p1c2:def:polyhedral_sets}, as formed by the intersection multiple hyperplanes. Specifically, let $\braces{a_i}_{i=1}^m$ be the rows of $A$. Then, the set $S$ can be described as $S = \braces{x \in \reals^n : a_i^\top x \geq b_i, i = 1,\dots, m}$, which represents exactly the intersection of the half-spaces $a_i^\top x \geq b_i$. Furthermore, notice that the hyperplanes $a_i^\top x = b_i$, $\forall i \in \braces{1,\dots, m}$ are the boundaries of each hyperplane, and thus describe one of the faces of the polyhedral set, which is generally given by $\braces{x \in S : a_i^\top x \geq b_i}$ for a given face $i \in \braces{1,\dots, m}$. Figure \ref{p1c2:fig:hyperplanes_and_polyhedral_set} illustrates a hyperplane forming two half spaces and how the intersection of five half-spaces form a polyhedral set.
+
+\begin{figure}
+			\begin{tikzpicture}
+		    \node (pic) at (0,0) {\includegraphics{part_1/chapter_2/figures/Figure4}};
+		    \node (a) at (-4.5,0.2) {$a$};
+			\node (ax=b) at (-3.6,-1.3) {$a^\top x =b$};
+			\node (ax<b) at (-2.5, 0.8) {$a^\top x > b$};
+			\node (ax>b) at (-2.3,-0.7) {$a^\top x < b$};
+			\node (a1) at (1.5, -0.2) {$a_1$};
+			\node (a2) at (2.8, 0.2) {$a_2$};
+			\node (a3) at (1.8, 0.7) {$a_3$};
+			\node (a4) at (2.9, -0.3) {$a_4$};
+			\node (a5) at (2.2, -0.8) {$a_5$};
+			\node[rotate = 90] (a1x=b1) at (0.1,0.2) {$a_1^\top x =b_1$};
+			\node (a3x=b3) at (1.5,2.2) {$a_3^\top x =b_3$};
+			\node (a2x=b2) at (4.5, 1) {$a_2^\top x =b_2$};
+			\node (a4x=b4) at (4.4,-1.2) {$a_4^\top x =b_4$};
+			\node (a5x=b5) at (1.3,-2) {$a_5^\top x =b_5$};
+			\end{tikzpicture}
+			\vspace{1pt}
+		\caption{A hyperplane and its respective halfspaces (left) and the polyhedral set $\braces{x\in \reals^{2} : a_i^x \leq b_i, i =1,\dots, 5}$ (right).} \label{p1c2:fig:hyperplanes_and_polyhedral_set}		
+	\end{figure}
+
+You might see in some references authors referring to bounded polyhedral sets as polytopes, though this is not used consistently across references, sometimes with switched meanings (for example, using polytope to refer to a set defined as in Definition \ref{p1c2:def:polyhedral_sets} and using polyhedron to refer to a bounded version of $S$). In this text, we will only use the term polyhedral set to refer to sets defined as in Definition \ref{p1c2:def:polyhedral_sets} and use the term bounded whenever applicable.
+
+% TODO: include a more rigorous presentation of face and facets. 
 
 
+\subsection{Convexity of polyhedral sets}
 
+As will see in more details in Part 2 of this text, convexity plays a crucial role in optimisation, being the ``watershed'' between easy and hard optimisation problems. One of the main reasons why we can solve challenging linear programming problems is due to the inherent convexity of polyhedral sets.
+
+Let us first define the notion of convexity for sets, which is stated in Definition X
+
+\begin{definition}[Convex set]\label{p1c2:def:convex_set} 
+	A set $S \subseteq \reals^n$ is convex if, for any $x_1,x_2 \in S$ and any $\lambda \in [0,1]$, we have that $\overline{x} = \lambda x_1 + (1-\lambda) x_2 \in S$.
+\end{definition}
+
+Definition \ref{p1c2:def:convex_set} leads to a simple geometrical intuition: for a set to be convex, the line segment connecting any two points within the set must lie within the set. This is illustrated in Figure \ref{p1c2:fig:convex_sets}.
+
+\begin{figure}
+	\begin{tikzpicture}
+		\node (pic) at (0,0) {\includegraphics{part_1/chapter_2/figures/Figure5}};
+		% Left pic line
+		\node[circle, fill, minimum size=3pt, inner sep = 0pt] (x1) at (-4,-0.5) {};
+		\node[above left] at (-4,-0.5) {$x_1$};
+		\node[circle, fill, minimum size=3pt, inner sep = 0pt] (x2) at (-2.8,0.5) {};
+		\node[above left] at (-2.8,0.5) {$x_2$};
+		\draw[thick] (x1) -- (x2);
+		% Center pic line
+		\node[circle, fill, minimum size=3pt, inner sep = 0pt] (x1) at (-0.5,-0.5) {};
+		\node[above left] at (-0.5,-0.5) {$x_1$};
+		\node[circle, fill, minimum size=3pt, inner sep = 0pt] (x2) at (0.5,0.5) {};
+		\node[above left] at (0.5,0.5) {$x_2$};
+		\draw[thick] (x1) -- (x2);
+		\node[circle, fill, minimum size=3pt, inner sep = 0pt] (x1) at (2.3, -0.3) {};
+		\node[above] at (2.3, -0.3) {$x_1$};
+		\node[circle, fill, minimum size=3pt, inner sep = 0pt] (x2) at (4,-0.3) {};
+		\node[above left] at (4,-0.3) {$x_2$};
+		\draw[thick] (x1) -- (x2);
+	\end{tikzpicture}
+	\caption{Two convex sets (left and middle) and one nonconvex set (right)} \label{p1c2:fig:convex_sets}
+\end{figure}
+
+Associated with the notion of convex sets are two important elements we will refer to later, when we discuss linear problems that embed \emph{integrality requirements}. The first is the notion of a convex combination, which is already contained in Definition \ref{p1c2:def:convex_set}, but can be generalised for an arbitrary number of points. The second consists of \emph{convex hulls}, which are sets formed by combining the convex combinations of all elements within a given set. As one might suspect, convex hulls are always convex sets, regardless whether the original set from which the points are drawn from is convex or not. These are formalised in Definition \ref{p1c2:def:convex_combination_hull} and illustrated in Figure \ref{p1c2:fig:convex_hulls}.
+
+\begin{definition}[Convex combinations and convex hulls] \label{p1c2:def:convex_combination_hull}
+	Let $x_1, \dots, x_k \in \reals^n$ and $\lambda_1,\dots, \lambda_k \in \reals$ such that $\lambda_i \geq 0$ for $i = 1, \dots, k$ and $\sum_{i=1}^k \lambda_i = 1$. Then
+	\begin{enumerate}
+		\item $x = \sum_{i=1}^k \lambda_i x_i$ is a \emph{convex combination} of $\braces{x_i}_{i=1}^k \in \reals^n$.
+		\item The \emph{convex hull} of $\braces{x_i}_{i=1}^k \in \reals^n$, denoted $\conv(x_1, \dots, x_k)$, is the set of all convex combinations of $\braces{x_i}_{i=1}^k \in \reals^n$.
+	\end{enumerate}		
+\end{definition}
+
+\begin{figure}
+	\begin{tikzpicture}
+		\node (pic) at (0,0) {\includegraphics{part_1/chapter_2/figures/Figure6}};
+		\node (x1l) at (-4.5,-0.7) {$x_1$};
+		\node (x2l) at (-2.3, 0.7) {$x_2$};
+		\node (x1c) at (-0.5, 1.1) {$x_1$};
+		\node (x2c) at (0.8, -1) {$x_2$};
+		\node (x3c) at (-1.5, -0.9) {$x_3$};
+		\node (x1r) at (2.1, 1) {$x_1$};
+		\node (x2r) at (4.4, 0.6) {$x_2$};
+		\node (x3r) at (4.5, -0.9) {$x_3$};
+		\node (x4r) at (1.9, -0.9) {$x_4$};
+		\node (x5r) at (2.7, 0.4) {$x_5$};
+		\node (x6r) at (3.8, -0.15) {$x_6$};
+	\end{tikzpicture}
+	\vspace{-6pt}
+	\caption{The convex hull of two points is the line segment connecting them (left); The convex hull of three (centre) and six (right) points in $\reals^2$} \label{p1c2:fig:convex_hulls}
+\end{figure}	
+
+We are now ready to state the result that guarantees that polyhedral sets of the form
+$$
+	S = \braces{x \in \reals^n : Ax \le b}
+$$
+are convex. 
+
+\begin{theorem}[Convexity of polyhedral sets] \label{p1c2:thm:convexity}
+	The following statements are true:
+	\begin{enumerate}
+		\item The intersection of convex sets is convex
+		\item Every polyhedral set is a convex set
+		\item A convex combination of a finite number of elements of a convex set also belongs to that set
+		\item The convex hull of a finite number of elements is a convex set.			
+	\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+	We provide proofs to each of the statements individually. 
+	\begin{enumerate}
+	 \item Let 	$S_i$, for $i \in I$, be convex sets and suppose that $x, y \in \bigcap_{i \in I} S_i$. Let $\lambda \in [0,1]$. Since $S_i$ are convex and $x,y \in S_i$ for all $i \in I$, $\lambda x + (1-\lambda) y \in S_i$ for all $i \in I$ and thus $\lambda x + (1-\lambda) y \in \bigcap_{i \in I} S_i$.
+	
+	\item Let $a \in \reals^n$ and $b \in \reals$. Let $x,y \in \reals^n$, such that $a^\top x \geq b$ and $a^\top y \geq b$. Let $\lambda \in [0,1]$. Then $a^\top (\lambda x + (1-\lambda)y) \geq \lambda b + (1-\lambda)b = b$, showing that half-spaces are convex. The result follows from combining this with (1).    
+	
+	\item By induction. Let $S$ be a convex set and assume that the convex combination of $x_1, \dots, x_k \in S$ also belongs to $S$. Consider $k+1$ elements $x_1, \dots, x_{k+1} \in S$ and $\lambda_1, \dots, \lambda_{k+1}$ with $\lambda_i \in [0,1]$ for $i = 1,\dots, k+1$ and $\sum_{i=1}^{k+1}\lambda_i = 1$ and $\lambda_{k+1} \neq 1$ (w.l.g.). Then
+
+	\begin{equation}
+		\sum_{i=1}^{k+1}\lambda_i x_i = \lambda_{k+1}x_{k+1} + (1 - \lambda_{k+1}) \sum_{i=1}^k \frac{\lambda_i}{1 - \lambda_{k+1}}x_i. \label{p1c2:eq:induction}
+	\end{equation}								
+
+		Notice that $\sum_{i=1}^{k}\frac{\lambda_i}{1 - \lambda_{k+1}} = 1$. Thus, using the induction hypothesis, $\sum_{i=1}^{k}\frac{\lambda_i}{1 - \lambda_{k+1}}x_i \in S$. Considering that $S$ is convex and using \eqref{p1c2:eq:induction}, we conclude that $\sum_{i=1}^{k+1}\lambda_{k+1}x_{k+1} \in S$, completing the induction.
+		
+	\item Let $S = \conv(x_1, \dots, x_k)$. Let $y = \sum_{i=1}^k \alpha_i x_i$ and $z = \sum_{i=1}^k \beta_ix_i$ be such that $y,z \in S$, $\alpha_i,\beta_i \geq 0$, and $\sum_{i=1}^k \alpha_i = \sum_{i=1}^k \beta_i = 1$. Let $\lambda \in [0,1]$. Then
+		%
+		\begin{equation}
+			\lambda y + (1- \lambda)z = \lambda\sum_{i=1}^k \alpha_i + (1-\lambda)\sum_{i=1}^k \beta_i = \sum_{i=1}^k (\lambda \alpha_i + (1-\lambda) \beta_i)x_i. 	
+		\end{equation}
+		%
+		Since, $\sum_{i=1}^k \lambda \alpha_i + (1-\lambda) \beta_i = 1$ and $\lambda \alpha_i + (1-\lambda) \beta_i \geq 0$ for $i=1,\dots,k$, $\lambda y + (1- \lambda)z$ is a convex combination of $x_1, \dots, x_k$ and, thus, $\lambda y + (1- \lambda)z \in S$, showing the convexity of $S$. \qedhere	
+	\end{enumerate}	
+\end{proof}
+
+Figure \ref{p1c2:fig:convexity_theorem_examples} illustrate some of the statements represented in the proof. For example, the intersection of the convex sets is always a convex set. One should notice however that the same does not apply to the union of convex sets. Notice that statement 2 proves that polyhedral sets as defined according to Definition \ref{p1c2:def:polyhedral_sets} are convex. Finally the third figure on the right illustrate the convex hull of four points as a convex polyhedral set containing the lines connecting any two points within the set. 
  
+\begin{figure}
+	\begin{tikzpicture}
+%			\draw[help lines] (-5,-1) grid (5,1);
+		\node (pic) at (0,0) {\includegraphics{part_1/chapter_2/figures/Figure7}};
+	\end{tikzpicture}
+    \vspace{-6pt}
+	\caption{Illustration of statement 1 (left), 2 (centre), and 3 and 4 (right)} \label{p1c2:fig:convexity_theorem_examples}
+\end{figure}	
+
+We will halt our discussion about convexity for now and return to it in deeper details in Part 2. As it will become clearer then, convexity (which is a given in the context of linear programming, as we just seen) the presence of convexity is what allows us to conclude that the solutions returned by our optimisation algorithms are indeed optimal for the problem at hand. 
+
+
+\section{Extreme points, vertices, and basic feasible solutions}
+
+
 
 
