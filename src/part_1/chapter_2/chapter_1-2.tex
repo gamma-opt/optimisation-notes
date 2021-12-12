@@ -106,7 +106,7 @@ The above leads us to some important realisations:
 
 Theorem \ref{thm:LI_and_bases} builds upon the previous points to guarantee the existence of bases and propose a procedure to form them.
 
-\begin{theorem}[Forming bases from LI vectors]\label{thm:LI_and_bases}
+\begin{theorem}[Forming bases from LI vectors]\label{p1c2:thm:LI_and_bases}
 	Suppose that $S = \spans(x_1,\dots, x_k)$ has dimension $m \leq k$. Then
 	\begin{enumerate}
 		\item There exists a basis of $S$ consisting of $m$ of the vectors $x_1,\dots, x_k$.
@@ -341,6 +341,153 @@ We will halt our discussion about convexity for now and return to it in deeper d
 
 \section{Extreme points, vertices, and basic feasible solutions}
 
+Now we focus on the algebraic representation of the most relevant geometric elements in the optimisation of linear programming problems. As we seen in the graphical example in the previous chapter, the optimal of linear programming problems is generally located at the vertices of the feasible set. Furthermore, such vertices are formed by the intersection of $n$ constraints (in $n$-dimensional space, which comprises constraints that are active (or satisfied at the boundary of the half-space of said constraints).
+
+First, let us formally define the notions of vertex and extreme point. Though in general these can refer to different objects, we will see that in the case of linear programming problems, if a point is a vertex, then it is an extreme point as well, being the converse also true.
+
+\begin{definition}[Vertex] \label{p1c2:def:vertex}
+	Let $P$ be a convex polyhedral set. The vector $x \in P$ is a vertex of $P$ if there exists some $c$ such that $c^\top x < c^\top y$ for all $y \in P$ with $y \neq x$.
+\end{definition}
+
+\begin{definition}[Extreme points]\label{p1c2:def:extreme_point}
+	Let $P$ be a convex polyhedral set. The vector $x \in P$ is an extreme point of $P$ if there are no two vectors $y,z \in P$ (different than $x$) such that $x = \lambda y + (1 - \lambda)z$, for any $\lambda \in [0,1]$.
+\end{definition}
+
+Figure \ref{p1c2:fig:vertex_and_extreme_point} provides an illustration of the Definitions \ref{p1c2:def:vertex} and \ref{p1c2:def:extreme_point}. Notice that, while the definition of a vertex involve an additional hyperplane that, once placed on a vertex point, strictly contains the whole polyhedral set in one of the half-spaces it defines, which exception of the vertex itself. On the other hand, the definition of an extreme point only rely on convex combinations of the set itself. 
+
+\begin{figure}
+	\begin{tikzpicture}
+		\node (pic) at (0,0) {\includegraphics{part_1/chapter_2/figures/Figure8}};
+		\node (Pl) at (-2.5, 0) {$P$};
+		\node (Pr) at (3, 0) {$P$};
+		\node (wl) at (-3, 0.9) {$w$};
+		\node (xl) at (-2.3, -1.5) {$x$};
+		\node (c1) at (-4, -1) {$c$};
+		\node (c2) at (-0.9, -0.5) {$c$};
+		\node[left] (cw) at (-2.3, 1.5) {$\braces{y : c^\top y = c^\top w}$};
+		\node[right] (cx) at (-1.7, -1.4) {$\braces{y : c^\top y = c^\top x}$};
+		\node (wr) at (2.1, 0.7) {$w$};
+		\node (vr) at (2.4, 0.9) {$v$};
+		\node (ur) at (1.8, 0.4) {$u$};
+		\node (xr) at (3.1, -1.5) {$x$};
+		\node (yr) at (3.4, -1.2) {$y$};
+		\node (zr) at (2.8, -1.8) {$z$};
+	\end{tikzpicture}
+	\caption{Representation of a vertex (left) and a extreme point (right)} \label{p1c2:fig:vertex_and_extreme_point}
+\end{figure}	
+
+Now we focus on the description of active constraints under an algebraic standpoint. For that, let us first generalise our setting by considering all possible types of linear constraints. That is, let us consider the convex polyhedral set $P \subset \reals^n$, formed by the set of inequalities and equalities:
+%
+\begin{align*}
+	& a_i^\top x \geq b, i \in M_1, \\ 
+	& a_i^\top x \leq b, i \in M_2, \\
+	& a_i^\top x = b, i \in M_3.
+\end{align*}
+
+Definition \ref{p1c2:fig:active_constraint} formalises the notion of active constraints. This is illustrated in Figure \ref{p1c2:fig:active_constraints}, where the polyhedral set $P = \braces{x \in \reals^3 : x_1 + x_2 + x_3 = 1, x_i \geq 0, i =1,2,3}$ is represented. Notice that, while points $A$, $B$, $C$ and $D$ have 3 active constraints, $E$ only has 2 active constraints ($x_2 = 0$ and $x_1 + x_2 + x_3 = 1$).
+
+\begin{definition}[Active (or binding) constraints] \label{p1c2:fig:active_constraint}
+	If a vector $\overline{x}$ satisfies $a_i^\top \overline{x} = b_i$ for some $i \in M_1, M_2$, or $M_3$, we say that the corresponding constraints are active (or binding).
+\end{definition}
+
+\begin{figure}[h]
+	\begin{tikzpicture}
+		\node (pic) at (0,0) {\includegraphics{part_1/chapter_2/figures/Figure9}};
+		\node (x1) at (1.5, -2) {$x_1$};
+		\node (x2) at (1.7, 0.4) {$x_2$};
+		\node (x3) at (-2.1, 2) {$x_3$};
+		\node (P) at (0, -0.5) {$P$};
+		\node[left] (A) at (-1.1, 1.3) {$A$};
+		\node[left] (B) at (-1.8, -1) {$B$};
+		\node[right] (C) at (-0.5, -1.9) {$C$};
+		\node[above] (D) at (0.9, -0.1) {$D$};
+		\node[right] (E) at (-1.6, -0.2) {$E$};
+	\end{tikzpicture}
+	\caption{Representation of $P$ in $\reals^3$.} \label{p1c2:fig:active_constraints}
+\end{figure}	
 
 
+Theorem \ref{p1c2:thm:active_const} sows a thread between having a collection of active constraints forming a vertex and being able to describe it as a basis of a subspace that is formed by the vectors $a_i$ that form these constraints. This link is what will allow us to characterise vertices by their forming active constraints.
+
+\begin{theorem}[Properties of active constraints]\label{p1c2:thm:active_const}
+	Let $\overline{x} \in \reals^n$ and $I = \braces{ i \in M_1 \cup M_2 \cup M_3 \mid a_i^\top \overline{x} = b_i}$. Then, the following are equivalent:
+	\begin{enumerate}
+		\item There exists $n$ vectors in $\braces{a_i}_{i \in I}$ that are linearly independent.  
+		\item The $\spans(\braces{a_i}_{i \in I})$ spans $\reals^n$. That is, every $x \in \reals^n$ can be expressed as a linear combination of $\braces{a_i}_{i \in I}$.
+		\item The system of equations $\braces{a_i ^\top x = b_i}_{i \in I}$ has a unique solution.
+	\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+	Suppose that $\braces{a_i}_{i \in I}$ spans $\reals^n$, implying that the $\spans(\braces{a_i}_{i \in I})$ has dimension $n$. By Theorem \ref{p1c2:thm:LI_and_bases} (1), $n$ of these vector form a basis for $\reals^n$ and are, thus, linearly independent. Moreover, they must span $\reals^n$ and thus every $x \in \reals^n$ can be expressed as a combination of $\braces{a_i}_{i \in I}$. This connects (1) and (2).
+	
+	Assume that the system of equations $\braces{a_i ^\top x = b_i}_{i \in I}$ has multiple solutions, say $x_1$ and $x_2$. Then, the nonzero vector $d = x_1 - x_2$ satisfies $a_i^\top d = 0$ for all $i \in I$. As $d$ is orthogonal to every $a_i$, $i \in I$, $d$ cannot be expressed as a combination of $\braces{a_i}_{i \in I}$ and, thus, $\braces{a_i}_{i \in I}$ do not span $\reals^n$.
+	
+	Conversely, if $\braces{a_i}_{i \in I}$ do not span $\reals^n$, choose $d \in \reals^n$ that is orthogonal to $\spans(\braces{a_i}_{i \in I})$. If $x$ satisfies $\braces{a_i ^\top x = b_i}_{i \in I}$, so does $\braces{a_i ^\top (x + d) = b_i}_{i \in I}$, thus yielding multiple solutions. This connects (2) and (3). \qedhere
+\end{proof}
+
+Notice that Theorem \ref{p1c2:thm:active_const} implies that there are (at least) \emph{$n$ active constraints ($a_i$)} that are \emph{linearly independent} at $\overline{x}$. This is the reason why we will refer to $\overline{x}$ and any vertex forming solution a \emph{basic solution}, of which we will be interested on those that are feasible, i.e., that satisfy all constraints $i \in M_1 \cup M_2 \cup M_3$. Definition \ref{p1c2:def:basic_feasible_solution} provides a formal definition of these concepts.
+
+\begin{definition}[Basic feasible solution (BFS)] \label{p1c2:def:basic_feasible_solution}
+	Consider a convex polyhedral set $P \subset \reals^n$ defined by linear equality and inequality constraints, and let $\overline{x} \in \reals^n$.
+	\begin{enumerate}
+		\item $\overline{x}$ is a \emph{basic solution} if 
+		\begin{enumerate}
+			\item All equality constraints are active and,
+			\item Out of the constraints active at $\overline{x}$, $n$ of them are linearly independent.
+		\end{enumerate}
+		\item if $\overline{x}$  is a basic solution satisfying all constraints, we say $\overline{x}$ is a \emph{basic feasible solution}. 
+	\end{enumerate}
+\end{definition}
+
+Figure \ref{p1c2:fig:BFS} provides an illustration of the notion of basic solutions, and show how only a subset of the basic solutions are feasible. As one might infer, these will be the points of interest in out future developments, as these are the candidates for optimal solution.
+
+\begin{figure}[h]
+	\begin{tikzpicture}
+		\node (pic) at (0,0) {\includegraphics{part_1/chapter_2/figures/Figure10}};
+		\node[above] (A) at (-0.7, 1) {$A$};
+		\node[left] (B) at (-0.9, 0.2) {$B$};
+		\node[right] (C) at (-0.4, 0.7) {$C$};
+		\node[below] (D) at (1.6, -1.2) {$D$};
+		\node[below] (E) at (-0.5, -1) {$E$};
+		\node[above] (F) at (-1.8, -0.8) {$F$};
+		\node (P) at (-0.3, -0.3) {$P$};
+	\end{tikzpicture}
+	\caption{Points $A$ to $F$ are basic solutions; $B$,$C$,$D$, and $E$ are BFS.} \label{p1c2:fig:BFS}
+\end{figure}		
+
+We finalise stating the main result of this chapter, which formally confirms the intuition we developed so far. That is, for convex polyhedral sets, the notion of vertices and extreme points coincide and these points can be represented as basic feasible solutions. This is precisely the link that allows to treat the feasible region of linear programming problems under a purely algebraic characterisation of the candidates for optimal solutions, those described uniquely by a subset of constraints of the problem.
+
+\begin{theorem}[BFS, extreme points and vertices]\label{p1c2:thm:BFS_vertex_extreme_point}
+	Let $P \subset \reals^n$ be a convex polyhedral set and let $\overline{x} \in P$. Then, the following are equivalent
+	$$	\overline{x} \text{ is a vertex} \iff \overline{x} \text{ is an extreme point} \iff \overline{x} \text{ is a BFS}.	
+	$$
+\end{theorem}
+
+
+\begin{proof}
+	Let $P =\{ x \in \reals^n \mid a_i^\top x \geq b_i, i \in M_1, a_i^\top x = b_i, i \in M_2\}$, and $I = \braces{i \in M_1 \cup M_2 \mid a_i^\top x = b_i}$.
+	
+	\begin{enumerate}
+		\item (Vertex $\Rightarrow$ Extreme point) Suppose $\overline{x}$ is a vertex. Then, there exists some $c \in \reals^n$ such that $c^\top\overline{x} < c^\top x$, for every $x \in P$ with $x \neq \overline{x}$ (cf. Definition \ref{p1c2:def:vertex}). Take $y,z \in P$ with $y,z \neq \overline{x}$. Thus $c^\top\overline{x} < c^\top y$ and $c^\top\overline{x} < c^\top z$. For $\lambda \in [0,1]$, $c^\top \overline{x} < c^\top(\lambda y + (1-\lambda)z)$ implying that $\overline{x} \neq \lambda y + (1-\lambda)z$, and is thus an extreme point (cf. Definition \ref{p1c2:def:extreme_point}).
+		
+		\item (Extreme point $\Rightarrow$ BFS) suppose $\overline{x} \in P$ is not a BFS. Then, there are no $n$ linearly independent vectors within $\braces{a_i}_{i \in I}$. Thus $\braces{a_i}_{i \in I}$ lie in a proper subspace of $\reals^n$. Let the nonzero vector $d \in \reals^n$ be such that $a_i^\top d = 0$, for all $i \in I$.
+			
+			Let $\epsilon > 0$, $y = \overline{x} + \epsilon d$, and $z = \overline{x} - \epsilon d$. Notice that $a_i^\top y = a_i^\top z = b_i$, for all $i \in I$. Moreover, for $i \neq I$, $a_i^\top x > b$ and, provided that $\epsilon$ is sufficiently small (such that $\epsilon|a_i^\top d| < a_i ^\top \overline{x} - b_i $), we have that $a_i ^\top x \geq b_i$. Thus $y \in P$, and by a similar argument, $z \in P$. Now, by noticing that $\overline{x} = \frac{1}{2}y + \frac{1}{2}z$, we see that $\overline{x}$ is not an extreme point. 			 
+		\item (BFS $\Rightarrow$ Vertex) Let $\overline{x}$ be a BFS. Define $c = \sum_{i \in I} a_i$. Then
+			\begin{equation*}
+				c^\top \overline{x} = \linebreak \sum_{i \in I} a_i^\top \overline{x} = \sum_{i \in I} b_i.	 			 	
+	 		\end{equation*}
+			Also, for any $x \in P$, we have that 
+			\begin{equation*}
+				c^\top x = k \sum_{i \in I} a_i^\top x \geq \sum_{i \in I} b_i, 	 	
+	 		\end{equation*}
+	 		since $a_i^\top x \geq b_i$ for $i \in M_1 \cup M_2$. Thus, for any $x \in P$, $c^\top \overline{x} \leq c^\top x$, making $\overline{x}$ a vertex (cf. Definition \ref{p1c2:def:vertex}). \qedhere
+	\end{enumerate} 	
+\end{proof}
+
+Some interesting insights emerge from the proof of Theorem \ref{p1c2:thm:BFS_vertex_extreme_point}, upon which we will build our next developments. First, notice how the definition of vertex encode a concept of optimality, since it implies that $\overline{x}$ is a unique minimiser (i.e., all other feasible points $y$ are such that $c^\top\overline{x} < c^\top y$). Also, once the relationship between being a vertex/ extreme point and a BFS is made, it means that $\overline{x}$ ca be recovered as the unique solution of a system of linear equations, these equations being the active constraints at that vertex. This means that the list of all candidate points for optimal solution can be obtained by simply looking at all possible combinations of $n$ active constraint, discarding those that are infeasible. This means that the number of candidate for optimal solution is \emph{finite} and can be bounded by $\binom{m}{n}$, where $| M_1 \cup M_2 |$. 
+
+
+ 
 
