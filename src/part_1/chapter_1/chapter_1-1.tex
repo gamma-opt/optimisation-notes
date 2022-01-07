@@ -1,17 +1,17 @@
 \section{What is optimisation?}
 
-An optimisation is one of these words that has many meanings, depending on the context you take as a reference. In the context of this course, optimisation refers to \emph{mathematical optimisation}, which is a discipline of applied mathematics.
+An optimisation is one of these words that has many meanings, depending on the context you take as a reference. In the context of this book, optimisation refers to \emph{mathematical optimisation}, which is a discipline of applied mathematics.
 
 In mathematical optimisation, we build upon concepts and techniques from calculus, analysis, linear algebra, and other domains of mathematics to develop methods that allow us finding values for variables within a given domain that maximise (or minimise) the value of a function. In specific, we are trying to solve the following general problem:
 %
 \begin{align}
-    \mini & f(x) \label{eq:opt_prob} \\
-    \text{s.t.}   &x \in X. \nonumber
+    \mini & f(x) \label{p1c1:eq:opt_prob} \\
+    \st   & x \in X. \nonumber
 \end{align}
 %
 %where $x \in \reals^n$ is a vector of $n$ \emph{variables}, $f:\mathbb{R}^n \mapsto \reals$ is a \emph{function} to be optimised (minimised) and $X \subseteq \reals^n$ is a \emph{domain} containing acceptable values for $x$.
 
-In a general sense, these problems can be solved by employing the following strategy:
+That is, we would like to find the solution $x$ that \emph{minimises} the value of the \emph{objective function} $f$, such that (s.t.) $x$ belongs to the \emph{feasibility set} $X$. In a general sense, problems like this can be solved by employing the following strategy:
 %
 \begin{enumerate}
     \item Analysing properties of functions under specific domains and deriving the conditions that must be satisfied such that a point $x$ is a candidate optimal point.
@@ -32,9 +32,10 @@ I like to separate \emph{mathematical programming} from (mathematical) \emph{opt
     \item function is an \emph{objective function} that provides a measure of solution quality.  
 \end{itemize}
 %    
-With these in mind, we can represent the decision problem as a \emph{mathematical programming model} of the form of \eqref{eq:opt_prob} that can be solved using \emph{optimisation} methods. From now on, we will refer to this specific class of models as mathematical optimisation models, or optimisation models for short. We will also use the term to \emph{solve the problem} to refer to the task of finding optimal solutions to optimisation models.
+With these in mind, we can represent the decision problem as a \emph{mathematical programming model} of the form of \eqref{p1c1:eq:opt_prob} that can be solved using \emph{optimisation} methods. From now on, we will refer to this specific class of models as mathematical optimisation models, or optimisation models for short. We will also use the term to \emph{solve the problem} to refer to the task of finding optimal solutions to optimisation models.
 
-This course is mostly focused on the optimisation techniques employed to find optimal solutions for these models. As we will see, depending on the nature of the functions $f$ and $g$ that are used to formulate the model, some methods might be more or less appropriate. Further complicating the issue, for models of a given nature, there might be alternative algorithms that can be employed and with no generalised consense whether one method is generally better performing than another.
+This book is mostly focused on the optimisation techniques employed to find optimal solutions for these models. As we will see, depending on the nature of the functions $f$ and $g$ that are used to formulate the model, some methods might be more or less appropriate. Further complicating the issue, for models of a given nature, there might be alternative algorithms that can be employed and with no generalised consense whether one method is generally better performing than another, which is one of the aspects that make optimisation so exciting and multifaceted when it comes to alternative approaches. I hope that this makes more sense as we progress through the chapters. 
+
 
 \subsection{Types of mathematical optimisation models}
 
@@ -57,9 +58,9 @@ The most general types of models are the following. We also use this as an oppor
 %
 \begin{enumerate}
     \item \emph{Unconstrained models:} in these, the set $X = \reals^n$ and $m=l=0$. These are prominent in, e.g., machine learning and statistics applications, where $f$ represents a measure of model fitness or prediction error.  
-    \item \emph{Linear programming (LP):} presumes linear objective function. $f(x) = c^\top x$ and constraints $g$ and $h$ affine, i.e., of the form $a_i^\top x - b_i$, with $a_i \in \reals^n$ and $b \in \reals$. Normally, $X = \braces{x \in \reals^n \mid x_j \geq 0, j = 1,\dots, n}$ enforce that decision variables are constrained to be the nonnegative orthant.
+    \item \emph{Linear programming (LP):} presumes linear objective function $f(x) = c^\top x$ and affine constraints $g$ and $h$, i.e., of the form $a_i^\top x - b_i$, with $a_i \in \reals^n$ and $b \in \reals$. Normally, $X = \braces{x \in \reals^n \mid x_j \geq 0, j = 1,\dots, n}$ enforce that decision variables are constrained to be the nonnegative orthant.
     \item \emph{Nonlinear programming (NLP):} some or all of the functions $f$, $g$, and $h$ are nonlinear.
-    \item \emph{Mixed-integer (linear) programming (MIP):} consists of an LP in which some (or all) of the variables are constrained to be integers. In other words, $X \subseteq \reals^k \times \integers^{n-k}$. Very frequently, the integer variables are binary terms, i.e., $x_i \in \braces {0,1}$, for $i = 1,\dots, n-k$ and are meant to represent true-or-false or yes-or-no conditions.
+    \item \emph{Mixed-integer (linear) programming (MIP):} consists of an LP in which some (or all, being then simply integer programming) of the variables are constrained to be integers. In other words, $X \subseteq \reals^k \times \integers^{n-k}$. Very frequently, the integer variables are constrained to be binary terms, i.e., $x_i \in \braces {0,1}$, for $i = 1,\dots, n-k$ and are meant to represent true-or-false or yes-or-no conditions.
     \item \emph{Mixed-integer nonlinear programming (MINLP):} are the intersection of MIPs and NLPs.  
 \end{enumerate}
 
@@ -73,9 +74,9 @@ We will consider now a few examples of liner programming models with somewhat ge
 
 \subsection{Resource allocation}
 
-Most linear programming (LP) problems, can be interpreted as a \emph{resource allocation} problem. In that, we are interested in defining an optimal allocation of resources (i.e., a plan) that maximises return or minimise costs and satisfy allocation rules. 
+Most linear programming (LP) problems can be interpreted as a \emph{resource allocation} problem. In that, we are interested in defining an optimal allocation of resources (i.e., a plan) that maximises return or minimise costs and satisfy allocation rules. 
 
-Specifically, let $I = \braces{1, \dots, i, \dots, M}$ by a set of resources that can be combined to produce products in the set $J = \braces{1, \dots, j, \dots, N}$. Assume that we are given a return per unit of product $c_j$, $\forall j\in J$ and a list of $a_{ij}$, $\forall i \in I, \forall j \in J$ describing which and how much of the resources $i \in I$ are required for making product $j \in J$. Assume that the availability of resource $b_i$, $\forall i\in I$, is known. 
+Specifically, let $I = \braces{1, \dots, i, \dots, M}$ by a set of resources that can be combined to produce products in the set $J = \braces{1, \dots, j, \dots, N}$. Assume that we are given a return per unit of product $c_j$, $\forall j\in J$, and a list of $a_{ij}$, $\forall i \in I, \forall j \in J$, describing which and how much of the resources $i \in I$ are required for making product $j \in J$. Assume that the availability of resource $b_i$, $\forall i\in I$, is known. 
 
 Our objective is to define the amounts $x_j$ representing the production of $j \in J$. We would like to define those in a way that we optimise the resource allocation plan quality (in our case, maximise return from the production quantities $x_j$) while making sure the amount produced do not exceed the availability of resources. For that, we need to define: 
 
@@ -85,10 +86,9 @@ The \emph{objective function}, which measures the \emph{quality} of a production
 	\maxi \sum_{j \in J}c_jx_j \Rightarrow c^\top x,
 \end{equation*}
 %
-where $c = [c_1, \dots, c_{N}]^\top$ and $x = [x_1, \dots, x_{N}]^\top$ are $n$-sized vectors.
+where $c = [c_1, \dots, c_{N}]^\top$ and $x = [x_1, \dots, x_{N}]^\top$ are $n$-sized vectors. The transpose sign $^\top$ is meant to reinforce that we see our vectors as column vectors, unless otherwise stated.
 
-
-Next, we need to define \emph{constraints} that state the conditions for a plan to be \emph{valid}. In this context, a valid plan is a plan that does not utilise more than the amount of resources $b_i$, $\forall i \in I$ available. This can be expressed as the collection (one for each $i \in I$) of linear inequalities
+Next, we need to define \emph{constraints} that state the conditions for a plan to be \emph{valid}. In this context, a valid plan is a plan that does not utilise more than the amount of resources $b_i$, $\forall i \in I$, available. This can be expressed as the collection (one for each $i \in I$) of linear inequalities
 %
 \begin{equation*}
 	\st \sum_{j \in J} a_{ij}x_j \leq b_i, \forall i \in I	\Rightarrow	Ax \leq b,
@@ -105,13 +105,14 @@ Combining the above, we obtain the generic formulation that will be used through
 \end{align}
 %
 
+
 \subsubsection{Illustrative example: the paint factory problem}
  
-Let us work on a more specific example, that will be useful for illustrating some important concepts related to the geometry of linear programming problems.
+Let us work on a more specific example that will be useful for illustrating some important concepts related to the geometry of linear programming problems.
 
 A paint factory produces \emph{exterior} and \emph{interior paint} from raw materials \emph{M1} and \emph{M2}. The \emph{maximum demand} for interior paint is 2 tons/day. Moreover, the amount of interior paint produced \emph{cannot exceed} that of exterior paint by more than 1 ton/day. 
 
-Our goal is to determine optimal paint production plan. Table \ref{p1c1:tab:paint_factory_problem_data} summarises the data to be considered. Notice the constraint that must be imposed to represent the daily availability of paint.
+Our goal is to determine optimal paint production plan. Table \ref{p1c1:tab:paint_factory_problem_data} summarises the data to be considered. Notice the constraints that must be imposed to represent the daily availability of paint.
 
 \begin{table}[h]
 	\begin{tabular}{rccc} \hline
@@ -147,7 +148,7 @@ Notice that paint factory model can also be \emph{compactly represented} as in \
 
 \subsection{Transportation problem}
 
-Another important class of linear programming problems are those known as transportation problems. These problems are often model using the abstraction of graphs, since they consider a network of nodes and arcs through which some flow must be optimised. Transportation problems have several important characteristics that can be exploit to design specialised algorithms, the so-called \emph{transportation simplex} method. Although we will not discuss these methods in this text, the simplex method (and its variant dual simplex) will be in the centre of our developments later on. Also, modern solvers have more and more relegate transport simplex methods in their development, as dual simplex has consistently shown to perform similarly in the context of transportation problems, despite being a far more general method. 
+Another important class of linear programming problems are those known as transportation problems. These problems are often modelled using the abstraction of graphs, since they consider a network of nodes and arcs through which some flow must be optimised. Transportation problems have several important characteristics that can be exploit to design specialised algorithms, the so-called \emph{transportation simplex} method. Although we will not discuss these methods in this text, the simplex method (and its variant dual simplex) will be in the centre of our developments later on. Also, modern solvers have more and more relegated transport simplex methods in their development, as dual simplex has consistently shown to perform similarly in the context of transportation problems, despite being a far more general method. 
 
 The problem can be summarised as follows. We would like to plan production and distribution of a certain product, taking into account that the transportation cost is known (e.g., proportional to distance travelled), the factories (or source nodes) have a capacity limit and the clients (or demand nodes) have known demands. Figure \ref{p1c1:fig1:transport_network} illustrate a small network with two factories, located in San Diego and Seattle, and three demand points, located in New York, Chicago, and Miami. Table \ref{p1c1:tab:transport_problem_data} presents the data related to the problem. 
 %
@@ -173,7 +174,7 @@ The problem can be summarised as follows. We would like to plan production and d
 	\caption{Schematic illustration of a network with two source nodes and three demand nodes} \label{p1c1:fig1:transport_network}    
 \end{figure}
 %
-\begin{table}
+\begin{table}[h]
 	\begin{tabular}{r|ccc|c}
     	& & {\it Clients} &\\\hline
     	{\it Factory} & NY & Chicago & Miami & Capacity \\\hline
@@ -184,7 +185,7 @@ The problem can be summarised as follows. We would like to plan production and d
 	\caption{Problem data: unit transportation costs, demands and capacities} \label{p1c1:tab:transport_problem_data}
 \end{table}
 
-To formulate a linear programming model representing the transportation problem, let $i \in I = \{\text{Seattle}, \text{San Diego}\}$ be the index set representing factories. Similarly, let $j \in J = \{\text{New York}, \text{Chicago}, \text{Miami}\}$.
+To formulate a linear programming model representing the transportation problem, let $i \in I = \{\text{Seattle}, \text{San Diego}\}$ be the index set representing factories. Similarly, let $j \in J = \{\text{New York}, \lb \text{Chicago}, \text{Miami}\}$.
 
 The decisions in this case are represented by $x_{ij}$ be the amount produced in factory $i$ and sent to client $j$. Such a distribution plan can then be assessed by its total transportation cost, which is given by
 %
@@ -239,19 +240,19 @@ Or, more compactly, in the so called \emph{algebraic (or symbolic) form}
 	&x_{ij} \geq 0, \forall i \in I, \forall j \in J.
 \end{align*}
 %
-One interesting aspect to notice regarding algebraic forms is that they allow to represent the main structure of the model while being independent of the instance being considered. For example, regardless of whether the instance would have 5 or 50 nodes, the algebraic formulation is the same, allowing for detaching the problem instance (in our case the 5 node network) from the model itself. Moreover, most computational tools for mathematical programming modelling (hereinafter referred to simply as modelling - like JuMP) requires the user to define the optimisation model using this algebraic representation.
+One interesting aspect to notice regarding algebraic forms is that they allow to represent the main structure of the model while being independent of the instance being considered. For example, regardless of whether the instance would have 5 or 50 nodes, the algebraic formulation is the same, allowing for detaching the problem instance (in our case the 5 node network) from the model itself. Moreover, most computational tools for mathematical programming modelling (hereinafter referred to simply as modelling - like JuMP) empowers the user to define the optimisation model using this algebraic representation.
 
-Algebraic forms are the main form in which we will specify optimisation models. This abstraction is a peculiar aspect of mathematical programming, and is perhaps one the main features the fact that one must \emph{formulate} models for each specific setting, which can be done in multiple ways and might have consequences for how well computationally an algorithm performs. Further in this text we will discuss this point in more detail.  
+Algebraic forms are the main form in which we will specify optimisation models. This abstraction is a peculiar aspect of mathematical programming, and is perhaps one of its main features the fact that one must \emph{formulate} models for each specific setting, which can be done in multiple ways and might have consequences for how well computationally an algorithm performs. Further in this text we will discuss this point in more detail.  
 
 
 \subsection{Production planning (lot-sizing)}
 
 
-Production planning problems, commonly referred to as lot-sizing problems in contexts related to industrial engineering, consider problems where a planning horizon is taken into consideration. Differently from the previous examples, lot-sizing problems allow for the consideration of a time flow aspect, in which production that is made in the past can be ``shifted'' to a future point in time by means of inventories (i.e., stocks). Inventories are important because they allow for taking advantage of different prices at different time periods, considering production capacity limitations, or to prepare against uncertainties in the future (e.g., uncertain demands).
+Production planning problems, commonly referred to as lot-sizing problems in contexts related to industrial engineering, consider problems where a planning horizon is taken into consideration. Differently from the previous examples, lot-sizing problems allow for the consideration of a time flow aspect, in which production that is made in the past can be ``shifted'' to a future point in time by means of inventories (i.e., stocks). Inventories are important because they allow for taking advantage of different prices at different time periods, circumventing production capacity limitations, or preparing against uncertainties in the future (e.g., uncertain demands).
 
-The planning horizon is represented buy a collection of chronologically ordered elements $t \in \braces{1,\dots, T}$ representing a set of uniformly-sized time periods (e.g., months or days). Then let us define the decision variables $p_t$ as the amount produced in period $t$ and $s_t$ the amount stored in period $t$, which is available for use in periods $t' > t$. These decisions are governed by two costs: $P_t$, $\forall t \in T$ representing the production cost in each time period $t$ and the unit holding cost $H$, that is, how much it costs to hold one unit of product for one time period. 
+The planning horizon is represented by a collection of chronologically ordered elements $t \in \braces{1,\dots, T}$ representing a set of uniformly-sized time periods (e.g., months or days). Then, let us define the decision variables $p_t$ as the amount produced in period $t$ and $k_t$ the amount stored in period $t$, which is available for use in periods $t' > t$. These decisions are governed by two costs: $P_t$, $\forall t \in T$, representing the production cost in each time period $t$ and the unit holding cost $H$, that is, how much it costs to hold one unit of product for one time period. 
 
-Our objective is to satisfy the demands $D_t$, $\forall t \in T$ at the minimum possible cost. Figure \ref{p1c1:fig:lot-sizing_diagram}	provides a schematic representation of the process to be modelled. Notice that each node represents a material balance to be considered, that is, that at any period $t$, the total produced plus the amount held in inventory from the previous period ($t-1$) must  be the same as the amount used to satisfy the demand plus the amount held in inventory for the next period ($t+1$). 	
+Our objective is to satisfy the demands $D_t$, $\forall t \in T$, at the minimum possible cost. Figure \ref{p1c1:fig:lot-sizing_diagram}	provides a schematic representation of the process to be modelled. Notice that each node represents a material balance to be considered, that is, that at any period $t$, the total produced plus the amount held in inventory from the previous period ($t-1$) must be the same as the amount used to satisfy the demand plus the amount held in inventory for the next period ($t+1$). 	
    
 \begin{figure}[h]
 	\begin{tikzpicture}[scale=1,
@@ -272,9 +273,9 @@ Our objective is to satisfy the demands $D_t$, $\forall t \in T$ at the minimum 
 		\node[node] (2) at (2, 1) {$t=2$};
 		\node[node] (3) at (4, 1) {$\dots$};
 		\node[node] (4) at (6, 1) {$t=T$};
-		\draw[->, thick] (1) -- node[above] {$s_1$} (2);
-		\draw[->, thick] (2) -- node[above] {$s_2$} (3) ;
-		\draw[->, thick] (3) -- node[above] {$s_{T-1}$}(4);
+		\draw[->, thick] (1) -- node[above] {$k_1$} (2);
+		\draw[->, thick] (2) -- node[above] {$k_2$} (3) ;
+		\draw[->, thick] (3) -- node[above] {$k_{T-1}$}(4);
 		\draw[->, thick] (11) -- (1);
 		\draw[->, thick] (21) -- (2);
 		\draw[->, thick] (31) -- (3);
@@ -291,36 +292,36 @@ The production planning problem can be formulated as
 %
 \begin{flalign*}
 	\mini & \sum_{t \in T} \left[C_t p_t + H s_t\right] \\
-	\st 	  & p_t + s_{t-1} = D_t + s_t, \ \forall t \in T \\
+	\st 	  & p_t + s_{t-1} = D_t + k_t, \ \forall t \in T \\
 	      & p_t, h_t \geq 0, \ \forall t \in T .	
 \end{flalign*}
 %
 
-A few points must be considered carefully when dealing with lot-sizing problems. First, one must carefully consider boundary condition, that is what the model is deciding in time periods $t = T$ and what is the initial initial inventory (carried from $t=0$). While the former will be seen by the model as the ``end of the world'' and thus will realise that optimal inventory levels must be zero, the latter might considerable influence how much production is needed during the planning horizon $T$. These must be observed and handled accordingly. 
+A few points must be considered carefully when dealing with lot-sizing problems. First, one must carefully consider boundary condition, that is what the model is deciding in time periods $t = T$ and what is the initial initial inventory (carried from $t=0$). While the former will be seen by the model as the ``end of the world'' and thus will realise that optimal inventory levels at period $|T|$ must be zero, the latter might considerable influence how much production is needed during the planning horizon $T$. These must be observed and handled accordingly. 
  
 
 
 \section{The geometry of LPs - graphical method} 
 
-Let us now focus our attention to the geometry of linear programming (LP) models. As it will become evident later one, LP models have a very peculiar geometry that is exploited by one of the most widespread methods to solve them. 
+Let us now focus our attention to the geometry of linear programming (LP) models. As it will become evident later on, LP models have a very peculiar geometry that is exploited by one of the most widespread methods to solve them, the \emph{simplex method}. 
 
 \subsection{The graphical method}
 
-In order to create a geometric intuition, we will utilise a graphical representation of the resource allocation example (the paint factory problem). But first, recall the general LP formulation \eqref{p1c1:eq:LP_objective}--\eqref{p1c1:eq:LP_domain}, where $A$ is an $m \times n$ matrix, and $b$, $c$, and $x$ have suitable dimensions. Let $a_i$ be one of the $m$ rows of $A$. Notice each constraint $a_i^\top x \leq b_i$ defines a closed half-space, with boundary defined by a hyperplane $a_i^\top x= b_i$, $\forall i \in I = \braces{1,\dots,m} \equiv [m]$. By plotting all of these closed half-spaces we can see that their intersection will form the \emph{feasible region} of the problem, that is, the (polyhedral) set of point that satisfy all constraints $Ax \le b$. 
+In order to create a geometric intuition, we will utilise a graphical representation of the resource allocation example (the paint factory problem). But first, recall the general LP formulation \eqref{p1c1:eq:LP_objective}--\eqref{p1c1:eq:LP_domain}, where $A$ is an $m \times n$ matrix, and $b$, $c$, and $x$ have suitable dimensions. Let $a_i$ be one of the $m$ rows of $A$. Notice each constraint $a_i^\top x \leq b_i$ defines a closed half-space, with boundary defined by a hyperplane $a_i^\top x= b_i$, $\forall i \in I = \braces{1,\dots,m} \equiv [m]$ (we will return to these definitions in chapter 2; for now, just bear with e if these terms do not make sense to you). By plotting all of these closed half-spaces, we can see that their intersection will form the \emph{feasible region} of the problem, that is, the (polyhedral) set of points that satisfy all constraints $Ax \le b$. 
 
 
 Figure \ref{p1c1:fig:feasible_region_plot} provides a graphical representation of the feasible region of the paint factory problem. 
 %
 \begin{figure}[h]
 	\begin{subfigure}{0.45\textwidth}
-		\includegraphics[scale=0.99]{part_1/chapter_1/figures/ex2_c4.pdf}	
-		\caption{}
+		\includegraphics[scale=0.99]{part_1/chapter_1/figures/figure3_c4.pdf}	
+		\caption{} \label{p1c1:fig:fig3a}
 	\end{subfigure}
 	\begin{subfigure}{0.45\textwidth}
-		\includegraphics[scale=0.99]{part_1/chapter_1/figures/ex2_c4.pdf}
-		\caption{}		
+		\includegraphics[scale=0.99]{part_1/chapter_1/figures/figure3_c5.pdf}
+		\caption{} \label{p1c1:fig:fig3b}		
 	\end{subfigure}
-	\caption{The feasible region of the paint factory problem, represented as the intersection of the four closed-half spaces formed by each of the constraints. Notice how the feasible region is a polyhedral set in $\reals^2$, as there are two decision variables ($x_1$ and $x_2$).} \label{p1c1:fig:feasible_region_plot}	
+	\caption{The feasible region of the paint factory problem (in Figure \ref{p1c1:fig:fig3b}), represented as the intersection of the four closed-half spaces formed by each of the constraints (as shown in Figure \ref{p1c1:fig:fig3a}). Notice how the feasible region is a polyhedral set in $\reals^2$, as there are two decision variables ($x_1$ and $x_2$).} \label{p1c1:fig:feasible_region_plot}	
 \end{figure}
 %
 
@@ -328,28 +329,28 @@ We can use this visual representation to find the optimal solution for the probl
 %
 \begin{figure}
 	\begin{subfigure}{0.45\textwidth}
-		\includegraphics[scale=0.99]{part_1/chapter_1/figures/ex2_c5.pdf}  
+		\includegraphics[scale=0.99]{part_1/chapter_1/figures/figure3_c6.pdf}  
 		\caption{} \label{p1c1:fig:level_curves_a}	
 	\end{subfigure}
 	\begin{subfigure}{0.45\textwidth}
-		\includegraphics[scale=0.99]{part_1/chapter_1/figures/ex2_complete.pdf}
+		\includegraphics[scale=0.99]{part_1/chapter_1/figures/figure3_complete.pdf}
 		\caption{} \label{p1c1:fig:level_curves_b}	 
 	\end{subfigure}
 	\caption{Graphical representation of some of the level curves of the objective function $z = 5x_1 + 4x_2$. Notice that the constant gradient vector $\nabla z = (5,4)^\top$ points to the direction in which the level curves increase in value. The optimal point is represented by $x^*=(3, 1.5)^\top$ with the furthermost level curve being that associated with the value $z^* = 21$}	
 \end{figure}
 %
-This observation provides us with a simple graphical method to find the optimal solution of linear problems. One must simply sweep the feasible region in the direction of the gradient $\nabla z=[\frac{\partial z}{\partial x_1},\frac{\partial z}{\partial x_2}]^\top=[5,4]^\top$ (or opposite to it, if minimising) until one last point (or edge) or contact remains, meaning that the whole of the feasible region is behind that furthermost level curve. Figure \ref{p1c1:fig:level_curves_b} illustrates the processing of finding the optimal solution for the paint factory problem.
+This observation provides us with a simple graphical method to find the optimal solution of linear problems. One must simply sweep the feasible region in the direction of the gradient $\nabla z=[\frac{\partial z}{\partial x_1},\frac{\partial z}{\partial x_2}]^\top=[5,4]^\top$ (or opposite to it, if minimising) until one last point (or edge) or contact remains, meaning that the whole of the feasible region is behind that furthermost level curve. Figure \ref{p1c1:fig:level_curves_b} illustrates the process of finding the optimal solution for the paint factory problem.
 
-The graphical method is important because it allows to observe several key features that are going to be used later on when we define a method that can search for optimal solutions for LP problems. The first is related to the notion of active or inactive constraints. We say that a constraint is \emph{active} if, at the optimum, the constraint is satisfied as an equality. For example, the constraints $6x_1 + 4x_2 \leq 24$ and $x_1 + 2x_2 \leq 6$ are active at the optimum $x^* = (3, 1.5)$, since $6(3) + 4(1.5) = 24$ and $3 + 2(1.5) = 6$. An active constraint indicates that the resource (or requirement) represented by that constraint is being fully depleted (or minimally satisfied). 
+The graphical method is important because it allows to notice several key features that are going to be used later on when we analyse a method that can search for optimal solutions for LP problems. The first is related to the notion of active or inactive constraints. We say that a constraint is \emph{active} if, at the optimum, the constraint is satisfied as an equality. For example, the constraints $6x_1 + 4x_2 \leq 24$ and $x_1 + 2x_2 \leq 6$ are active at the optimum $x^* = (3, 1.5)$, since $6(3) + 4(1.5) = 24$ and $3 + 2(1.5) = 6$. An active constraint indicates that the resource (or requirement) represented by that constraint is being fully depleted (or minimally satisfied). 
 
 Analogously, \emph{inactive constraint} are constraints that are satisfied as strict inequalities at the optimum. For example, the constraint $-x_1 + x_2 \leq 1$ is inactive at the optimum, as $-(3) + 1.5 < 1$. In this case, an inactive constraint represents a resource (or requirement) that is not fully depleted (or is over satisfied).
 
 
 \subsection{Geometrical properties of LPs}
 
-One striking feature concerning the geometry of LPs that becomes evident when we analyse the graphical method is that the number of candidate solutions is not infinite, but yet, only \emph{a finite set} of points are potential candidates for optimal solution. This is because the process of sweeping in the direction of the gradient will, in general, lead to a unique solution that must lie on a vertex of the polyhedral feasible set. The only exceptions are either when the gradient $\nabla z$ happens to be perpendicular to a facet of the polyhedral set (and in the direction of the sweeping) or in case the sweeping direction is not bounded by some of the facets of the polyhedral set. These exceptional cases will be discussed in more detail later on, but the observation still holds.
+One striking feature concerning the geometry of LPs that becomes evident when we analyse the graphical method is that the number of candidate solutions is not infinite, but yet, only \emph{a finite set} of points are potential candidates for optimal solution. This is because the process of sweeping in the direction of the gradient of the (linear) objective function will, in general, lead to a unique solution that must lie on a vertex of the polyhedral feasible set. The only exceptions are either when the gradient $\nabla z$ happens to be perpendicular to a facet of the polyhedral set (and in the direction of the sweeping) or in case the sweeping direction is not bounded by some of the facets of the polyhedral set. These exceptional cases will be discussed in more detail later on, but the observation still holds.
 
-In the graphical example (i.e., in $\reals^2$), notice how making $n = 2$ constraints active out of $m = 4$ constraints \emph{forms a vertex}. However, not all vertices are feasible. This allows us to devise a mechanism to describe vertices (by activating $n$ of the $m$ constraints) which we could exhaustively test and select the best. The issue however, is that the number of candidates increases \emph{exponentially} with the number of constraints and variables	 of the problem, which would quickly become computationally infeasible. As we will see, it turns out that this search idea can be made considerably efficient and the underlying framework of the \emph{simplex method}, however there are worst-case settings where the method does need to consider every single vertex.
+In the graphical example (i.e., in $\reals^2$), notice how making $n = 2$ constraints active out of $m = 4$ constraints \emph{forms a vertex}. However, not all vertices are feasible. This allows us to devise a mechanism to describe vertices by activating $n$ of the $m$ constraints at a time, which we could exhaustively test and select the best. The issue however, is that the number of candidates increases \emph{exponentially} with the number of constraints and variables of the problem, which indicates this would quickly become computationally infeasible. As we will see, it turns out that this search idea can be made considerably efficient and the underlying framework of the \emph{simplex method}, however there are artificially engineered worst-case settings where the method does need to consider every single vertex.
 
 The simplex method exploits the above idea to \emph{heuristically} search for solutions by selecting $n$ constraints to be active from the $m$ constraints available. Starting from an initial selection of constraints to be active, it selects one inactive constraint to activate and one to deactivate in a way that improvement in the objective function can observed while feasibility is maintained. This process repeats until no improvement can be observed. When such is the case, the \emph{geometry} of the problem guarantees \emph{(global) optimality}. In the following chapters we will concentrate on defining algebraic objects that we will use to develop the simplex method.
 
