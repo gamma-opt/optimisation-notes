@@ -63,7 +63,7 @@ Notice that Theorem \ref{p1c2:thm:fundamental_linear_algebra} establishes import
 
 \subsection{Subspaces and bases}
 
-Let us define some objects to which we will refer often. The first of them is the notion of a \emph{subspace}. A subspace of $\reals^n$ is a set comprising all linear combinations of its own elements. Specifically, if $S$ is a subspace, then
+Let us define some objects that we will frequently refer to. The first of them is the notion of a \emph{subspace}. A subspace of $\reals^n$ is a set comprising all linear combinations of its own elements. Specifically, if $S$ is a subspace, then
 %
 \begin{equation*}
 	S = \braces{ax + by : x,y \in S; a,b \in \reals}.
@@ -79,14 +79,14 @@ Notice how the two concepts are related: subspaces can be characterised by a col
 
 The missing part in this is the notion of a \emph{basis}. A \emph{basis} of the subspace $S \subseteq \reals^n$ is a collection of vectors $\braces{x_i}_{i=1}^k \in \reals^n$ that are LI such that $\spans(x_1,\dots, x_k) = S$. 
 
-Notice that a basis a "minimal"set of vectors that form a subspace. You can think of it in light of the definition of linearly independent vectors; if a vector is linearly dependent to the others, it is not needed for characterising the subspace the vectors span, since it ca be represented by a linear combination of the other vectors (and thus is in the subspace formed by the span of the other vectors).
+Notice that a basis is a ``minimal'' set of vectors that form a subspace. You can think of it in light of the definition of linearly independent vectors; if a vector is linearly dependent to the others, it is not needed for characterising the subspace the vectors span, since it can be represented by a linear combination of the other vectors (and thus is in the subspace formed by the span of the other vectors).
 
 The above leads us to some important realisations:
 
 \begin{enumerate}
-	\item All the bases of a given subspace $S$ have the same dimension. Any extra vector would be linearly dependent to those vector that (the span) forms $S$. In that case, we say that the subspace has size (or dimension) $k$, the number of LI vectors forming the basis of the subspace.
+	\item All the bases of a given subspace $S$ have the same dimension. Any extra vector would be linearly dependent to those vectors that span $S$. In that case, we say that the subspace has size (or dimension) $k$, the number of LI vectors forming the basis of the subspace.
 	\item If the subspace $S \subset \reals^n$ is formed by a basis of size $m < n$, we say that $S$ is a proper subspace, because it is not the whole $\reals^n$ itself, but a space contained within $\reals^n$. For example, two LI vectors form (i.e., span) a hyperplane in $\reals^3$; this hyperplane is a proper subspace since $m=2 <3=n$.
-	\item If a proper subspace has dimension $m < n$, then it means that there are $n-m$ directions in $\reals^n$ that are perpendicular to the subspace. That is, there are nonzero vectors $a_i$ that are orthogonal to $S$, that is $a_i^\top x = 0$ for $i = n-m + 1, ..., n$. Referring to the $\reals^3$, if $S \subseteq \reals^2$, then there is a third direction that is perpendicular to (or not in) $S$. Figure \ref{p1c2:fig:proper_subpaces} illustrate this.
+	\item If a proper subspace has dimension $m < n$, then it means that there are $n-m$ directions in $\reals^n$ that are perpendicular to the subspace. That is, there are nonzero vectors $a_i$ that are orthogonal to $S$, that is $a_i^\top x = 0$ for $i = n-m + 1, ..., n$. Referring to the $\reals^3$, if $m=2$, then there is a third direction that is perpendicular to (or not in) $S$. Figure \ref{p1c2:fig:proper_subpaces} illustrates this.
 \end{enumerate}
 
 \begin{figure}
@@ -101,7 +101,7 @@ The above leads us to some important realisations:
 		\node (Sr) at (3.7, -0.3) {$S$};
 	\end{tikzpicture}
 	\vspace{-12pt}
-	\caption{one- (left) and two-dimensional subspaces (right) in $\reals^3$} \label{p1c2:fig:proper_subpaces}
+	\caption{One- (left) and two-dimensional subspaces (right) in $\reals^3$} \label{p1c2:fig:proper_subpaces}
 \end{figure}
 
 Theorem \ref{p1c2:thm:LI_and_bases} builds upon the previous points to guarantee the existence of bases and propose a procedure to form them.
@@ -116,9 +116,9 @@ Theorem \ref{p1c2:thm:LI_and_bases} builds upon the previous points to guarantee
 
 %TODO: Include proof.
 
-Our interest in subspaces and basis span from their usefulness in explaining how the simplex method works under a purely algebraic (as opposed to geometric) perspective. For now, we can use the opportunity to define some ``famous'' subspaces which will often appear our derivations. 
+Our interest in subspaces and bases span from their usefulness in explaining how the simplex method works under a purely algebraic (as opposed to geometric) perspective. For now, we can use the opportunity to define some ``famous'' subspaces which will often appear our derivations. 
 
-Let $A$ be a $m \times n$ matrix as before. The \emph{column space} of $A$ consist of the subspace spanned by the $n$ columns of $A$ and has dimension $m$ (recall that each column has as many components as he number of rows and is thus a $m$-dimensional vector). Likewise, the \emph{row space} of $A$ is the subspace in $\reals^n$ spanned by the rows of $A$. Finally, the \emph{null space} of $A$, often denoted as $\nulls(A) = \braces{x \in \reals^n : Ax = 0}$, consist of the vectors that are perpendicular to the row space of $A$. 
+Let $A$ be a $m \times n$ matrix as before. The \emph{column space} of $A$ consists of the subspace spanned by the $n$ columns of $A$ and has dimension $m$ (recall that each column has as many components as the number of rows and is thus a $m$-dimensional vector). Likewise, the \emph{row space} of $A$ is the subspace in $\reals^n$ spanned by the rows of $A$. Finally, the \emph{null space} of $A$, often denoted as $\nulls(A) = \braces{x \in \reals^n : Ax = 0}$, consist of the vectors that are perpendicular to the row space of $A$. 
 
 One important notion related to those subspaces is that of their size. Both the row and the column space have the same size, and that size is the \emph{rank} of $A$. If $A$ is full rank, than it means that 
 %
@@ -126,9 +126,9 @@ One important notion related to those subspaces is that of their size. Both the 
 	\rank(A) = \min \braces{m,n}. 		
 \end{equation*}
 %
-Finally, the size of the null space of $A$ is given $n - \rank(A)$, which is in line with Theorem \ref{thm:LI_and_bases}.
+Finally, the size of the null space of $A$ is given $n - \rank(A)$, which is in line with Theorem \ref{p1c2:thm:LI_and_bases}.
 
-A related concept is that of an \emph{affine subspace}. Differently from linear subspaces (to which we have been referring to simply as subspaces), affine subspaces encode some form of translation, such s  
+A related concept is that of an \emph{affine subspace}. Differently from linear subspaces (to which we have been referring to simply as subspaces), affine subspaces encode some form of translation, such as  
 %
 \begin{equation*}
 	S = S_0 + x_0 = \braces{x + x_0 : x \in S_0}.
