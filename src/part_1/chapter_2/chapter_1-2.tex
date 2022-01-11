@@ -176,11 +176,11 @@ Figure \ref{p1c2:fig:nill_space_a} illustrates this concept for a single-row mat
 
 \section{Convex polyhedral set}
 
-The feasible region of any linear programming problem is a convex polyhedral set, which we will simply refer to as polyhedral set. That is because we are interested in polyhedral sets that are formed by an intersection of a finite number of half-spaces, and can only be convex (as we will see in a minute), thus creating redundancy in our context, but maybe some confusion overall. 
+The feasible region of any linear programming problem is a convex polyhedral set, which we will simply refer to as a polyhedral set. That is because we are interested in polyhedral sets that are formed by an intersection of a finite number of half-spaces, and can thus only be convex (as we will see in a minute), creating redundancy in our context, but maybe some confusion overall. 
 
 \subsection{Hyperplanes, half-spaces and polyhedral sets}
 
-Definition \ref{p1c2:def:polyhedral_sets} formally state the structure we refer to as polyhedral sets.
+Definition \ref{p1c2:def:polyhedral_sets} formally states the structure we refer to as polyhedral sets.
 %
 \begin{definition}[Polyhedral set] \label{p1c2:def:polyhedral_sets}
 	A polyhedral set is a set that can be described as
@@ -190,7 +190,7 @@ Definition \ref{p1c2:def:polyhedral_sets} formally state the structure we refer 
 	where $A$ is an $m \times n$ matrix and $b$ is a $m$-vector.
 \end{definition}
 %
-One important thing to notice is that polyhedral sets, as defined in Definition \ref{p1c2:def:polyhedral_sets}, as formed by the intersection multiple hyperplanes. Specifically, let $\braces{a_i}_{i=1}^m$ be the rows of $A$. Then, the set $S$ can be described as $S = \braces{x \in \reals^n : a_i^\top x \geq b_i, i = 1,\dots, m}$, which represents exactly the intersection of the half-spaces $a_i^\top x \geq b_i$. Furthermore, notice that the hyperplanes $a_i^\top x = b_i$, $\forall i \in \braces{1,\dots, m}$ are the boundaries of each hyperplane, and thus describe one of the faces of the polyhedral set, which is generally given by $\braces{x \in S : a_i^\top x \geq b_i}$ for a given face $i \in \braces{1,\dots, m}$. Figure \ref{p1c2:fig:hyperplanes_and_polyhedral_set} illustrates a hyperplane forming two half spaces and how the intersection of five half-spaces form a polyhedral set.
+One important thing to notice is that polyhedral sets, as defined in Definition \ref{p1c2:def:polyhedral_sets}, as formed by the intersection multiple hyperplanes. Specifically, let $\braces{a_i}_{i=1}^m$ be the rows of $A$. Then, the set $S$ can be described as $S = \braces{x \in \reals^n : a_i^\top x \geq b_i, i = 1,\dots, m}$, which represents exactly the intersection of the half-spaces $a_i^\top x \geq b_i$. Furthermore, notice that the hyperplanes $a_i^\top x = b_i$, $\forall i \in \braces{1,\dots, m}$ are the boundaries of each hyperplane, and thus describe one of the faces of the polyhedral set, which is generally given by $\braces{x \in S : a_i^\top x \geq b_i}$ for a given face $i \in \braces{1,\dots, m}$. Figure \ref{p1c2:fig:hyperplanes_and_polyhedral_set} illustrates a hyperplane forming two half-spaces (also polyhedral sets) and how the intersection of five half-spaces form a (bounded) polyhedral set.
 
 \begin{figure}
 			\begin{tikzpicture}
@@ -223,7 +223,7 @@ You might see in some references authors referring to bounded polyhedral sets as
 
 As will see in more details in Part 2 of this text, convexity plays a crucial role in optimisation, being the ``watershed'' between easy and hard optimisation problems. One of the main reasons why we can solve challenging linear programming problems is due to the inherent convexity of polyhedral sets.
 
-Let us first define the notion of convexity for sets, which is stated in Definition X
+Let us first define the notion of convexity for sets, which is stated in Definition \ref{p1c2:def:convex_set} 
 
 \begin{definition}[Convex set]\label{p1c2:def:convex_set} 
 	A set $S \subseteq \reals^n$ is convex if, for any $x_1,x_2 \in S$ and any $\lambda \in [0,1]$, we have that $\overline{x} = \lambda x_1 + (1-\lambda) x_2 \in S$.
@@ -321,11 +321,11 @@ are convex.
 			\lambda y + (1- \lambda)z = \lambda\sum_{i=1}^k \alpha_i + (1-\lambda)\sum_{i=1}^k \beta_i = \sum_{i=1}^k (\lambda \alpha_i + (1-\lambda) \beta_i)x_i. 	
 		\end{equation}
 		%
-		Since, $\sum_{i=1}^k \lambda \alpha_i + (1-\lambda) \beta_i = 1$ and $\lambda \alpha_i + (1-\lambda) \beta_i \geq 0$ for $i=1,\dots,k$, $\lambda y + (1- \lambda)z$ is a convex combination of $x_1, \dots, x_k$ and, thus, $\lambda y + (1- \lambda)z \in S$, showing the convexity of $S$. \qedhere	
+		Since $\sum_{i=1}^k \lambda \alpha_i + (1-\lambda) \beta_i = 1$ and $\lambda \alpha_i + (1-\lambda) \beta_i \geq 0$ for $i=1,\dots,k$, $\lambda y + (1- \lambda)z$ is a convex combination of $x_1, \dots, x_k$ and, thus, $\lambda y + (1- \lambda)z \in S$, showing the convexity of $S$. \qedhere	
 	\end{enumerate}	
 \end{proof}
 
-Figure \ref{p1c2:fig:convexity_theorem_examples} illustrate some of the statements represented in the proof. For example, the intersection of the convex sets is always a convex set. One should notice however that the same does not apply to the union of convex sets. Notice that statement 2 proves that polyhedral sets as defined according to Definition \ref{p1c2:def:polyhedral_sets} are convex. Finally the third figure on the right illustrate the convex hull of four points as a convex polyhedral set containing the lines connecting any two points within the set. 
+Figure \ref{p1c2:fig:convexity_theorem_examples} illustrates some of the statements represented in the proof. For example, the intersection of the convex sets is always a convex set. One should notice however that the same does not apply to the union of convex sets. Notice that statement 2 proves that polyhedral sets as defined according to Definition \ref{p1c2:def:polyhedral_sets} are convex. Finally the third figure on the right illustrates the convex hull of four points as a convex polyhedral set containing the lines connecting any two points within the set. 
  
 \begin{figure}
 	\begin{tikzpicture}
@@ -336,7 +336,7 @@ Figure \ref{p1c2:fig:convexity_theorem_examples} illustrate some of the statemen
 	\caption{Illustration of statement 1 (left), 2 (centre), and 3 and 4 (right)} \label{p1c2:fig:convexity_theorem_examples}
 \end{figure}	
 
-We will halt our discussion about convexity for now and return to it in deeper details in Part 2. As it will become clearer then, convexity (which is a given in the context of linear programming, as we just seen) the presence of convexity is what allows us to conclude that the solutions returned by our optimisation algorithms are indeed optimal for the problem at hand. 
+We will halt our discussion about convexity for now and return to it in deeper details in Part 2. As it will become clearer then, convexity (which is a given in the context of linear programming, as we've just seen) the presence of convexity is what allows us to conclude that the solutions returned by our optimisation algorithms are indeed optimal for the problem at hand. 
 
 
 \section{Extreme points, vertices, and basic feasible solutions}
