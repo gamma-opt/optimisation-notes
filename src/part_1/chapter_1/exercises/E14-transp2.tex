@@ -1,0 +1,38 @@
+The Finnish company Next is involved with a logistics problem in which used oils serve as raw material to form a class of renewable diesel. The supply chain team need to organise, to a minimal cost, the acquisition of two types of used oils (o1 and o2) from three suppliers (s1, s2, and s3) to feed the line of three of their used oils processing factories (f1, f2, and f3). As the used oils are the byproduct of the suppliers core activities, the only requirement is that Next need to fetch the amount of oil and pay the transportation costs alone.
+
+The used oils have specific conditioning and handling requirements so transportation costs varies between o1 and o2. Additionally, not all the routes (arcs) between suppliers and factories are available as some distances are not economically feasible. Table \ref{table:supdem} bring the volume requirement of the two types of oil from each supply and demand node, table \ref{table:arcs} show the transportation costs for each oil type per L and the arc's capacity, arcs with ``-'' for costs are not available as transportation routes.
+
+\begin{table}[h!]
+	\begin{subtable}[h]{0.4\textwidth}
+		\begin{center}
+		\begin{tabular}{c|cc}
+			\textbf{node} & \textbf{o1} & \textbf{o2} \\
+			\hline
+			\textbf{s1 / f1} & 80 / 60 & 400 / 300 \\
+			\textbf{s2 / f2} & 200 / 100 & 1500 / 1000 \\
+			\textbf{s3 / f3} & 200 / 200 & 300 / 500 \\
+		\end{tabular}
+		\end{center}
+		\caption{Supplies availability and demand per oil type [in L]}
+		\label{table:supdem}
+	\end{subtable}
+	\hfill
+	\begin{subtable}[h]{0.55\textwidth}
+		\begin{center}
+			\begin{tabular}{c|ccc}
+				 & \textbf{f1} & \textbf{f2} & \textbf{f3}\\
+				 & \textbf{o1/o2 (cap)} & \textbf{o1/o2 (cap)} & \textbf{o1/o2 (cap)}\\
+				\hline
+				\textbf{s1} & 5/- ($\infty$) & 5/18 (300) & -/- (0)\\
+				\textbf{s2} & 8/15 (300) & 9/12 (700) & 7/14 (600)\\
+				\textbf{s3} & -/- (0) & 10/20 ($\infty$) & 8/- ($\infty$)\\
+			\end{tabular}
+		\end{center}
+		\caption{Arcs costs per oil type [in \euro \ per L] and arcs` capacities [in L]}
+		\label{table:arcs}
+	\end{subtable}
+	\caption{Supply chain data}
+	\label{table:sc}
+\end{table}
+
+Solve the transportation problem to the minimum cost.

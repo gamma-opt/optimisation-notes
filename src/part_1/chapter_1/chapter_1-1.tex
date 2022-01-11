@@ -154,8 +154,8 @@ The problem can be summarised as follows. We would like to plan production and d
 %
 \begin{figure}[h]
 	\begin{tikzpicture}[scale=1,
-		node/.style={circle, fill=blue!40, draw, minimum size=2em, inner sep=1pt},
-		node2/.style={circle, fill=orange, draw, minimum size=2em, inner sep=1pt}] 
+		node/.style={circle, fill=blue!40, draw, minimum size=3em, inner sep=1pt},
+		node2/.style={circle, fill=orange, draw, minimum size=3em, inner sep=1pt}] 
     	\node[above] at (0, 3.5) {Plants};                                                                                  
     	\node[above] at (2, 3.5) {Clients};
 	    \node[node] (1) at (0, 1.5) {SE};
@@ -353,5 +353,28 @@ One striking feature concerning the geometry of LPs that becomes evident when we
 In the graphical example (i.e., in $\reals^2$), notice how making $n = 2$ constraints active out of $m = 4$ constraints \emph{forms a vertex}. However, not all vertices are feasible. This allows us to devise a mechanism to describe vertices by activating $n$ of the $m$ constraints at a time, which we could exhaustively test and select the best. The issue however, is that the number of candidates increases \emph{exponentially} with the number of constraints and variables of the problem, which indicates this would quickly become computationally infeasible. As we will see, it turns out that this search idea can be made considerably efficient and the underlying framework of the \emph{simplex method}, however there are artificially engineered worst-case settings where the method does need to consider every single vertex.
 
 The simplex method exploits the above idea to \emph{heuristically} search for solutions by selecting $n$ constraints to be active from the $m$ constraints available. Starting from an initial selection of constraints to be active, it selects one inactive constraint to activate and one to deactivate in a way that improvement in the objective function can observed while feasibility is maintained. This process repeats until no improvement can be observed. When such is the case, the \emph{geometry} of the problem guarantees \emph{(global) optimality}. In the following chapters we will concentrate on defining algebraic objects that we will use to develop the simplex method.
+
+
+\section{Exercises}
+
+\subsection*{Exercise 1.1: Introduction to JuMP - part I}
+\input{part_1/chapter_1/exercises/E11-jump1}
+
+\subsection*{Exercise 1.2: Introduction to JuMP - part II}
+\input{part_1/chapter_1/exercises/E12-jump2}
+
+\subsection*{Exercise 1.3: Transportation problem}
+\input{part_1/chapter_1/exercises/E13-transp1}
+
+\subsection*{Exercise 1.4: Capacitated transportation}
+\input{part_1/chapter_1/exercises/E14-transp2}
+
+\subsection*{Exercise 1.5: The farmer's problem}
+\input{part_1/chapter_1/exercises/E15-farmer}
+
+\subsection*{Exercise 1.6: Factory planning}
+\input{part_1/chapter_1/exercises/E16-factoryplanning}
+
+
 
 
