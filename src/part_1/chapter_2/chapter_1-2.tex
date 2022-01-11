@@ -16,18 +16,18 @@ Before introducing the simplex method, let us first revisit a few key elements a
 %
 Matrix inversion is the ``kingpin'' of linear optimisation (and nonlinear) optimisation. As we will see later on, being able to perform efficient matrix inversion operations (in reality, operations that are equivalent to matrix inversion but that can exploit the matrix structure to be made faster) is of utmost importance for developing a linear optimisation solver. 
 
-Another importance concept is the notion of \emph{linear independence}. We formally state when a collection of vectors are said to be linearly independent (or otherwise dependent) in Definition \ref{p1c2:def:linear_independence}. 
+Another important concept is the notion of \emph{linear independence}. We formally state when a collection of vectors is said to be linearly independent (or dependent) in Definition \ref{p1c2:def:linear_independence}. 
 
 %
 \begin{definition}[Linearly Independent vectors] \label{p1c2:def:linear_independence}
-	The vectors $\braces{x_i}_{i=1}^k \in \reals^n$  are \emph{linearly dependent} if there exists real numbers $\braces{a_i}_{i=1}^k$ with $a_i \neq 0$ for at least one $i \in \braces{1,\dots, k}$ such that
+	The vectors $\braces{x_i}_{i=1}^k \in \reals^n$  are \emph{linearly dependent} if there exist real numbers $\braces{a_i}_{i=1}^k$ with $a_i \neq 0$ for at least one $i \in \braces{1,\dots, k}$ such that
 	$$
 		\sum_{i=1}^k a_i x_i= 0;
 	$$
 	otherwise, $\braces{x_i}_{i=1}^k$ are \emph{linearly independent}.
 \end{definition}
 
-In essence, for a collection of vectors to be linearly independent it must be so that neither of the vectors in the collection can be expressed as a combination (that is multiplying the vectors by nonzero scalars and adding them) of the others. This is simpler to see in $\reals^2$. Two vectors are linearly independent if one cannot obtain one by multiplying the other by a constant, which, effectively, means that they are not parallel. If the two vectors are not parallel, then one of them must have a component in a direction that the cannot achieve. The same holds for any $n$-dimensional space. Also, that is why one can only have up to $n$ independent vectors in $\reals^n$. Figure X illustrates this effect. 
+In essence, for a collection of vectors to be linearly independent it must be so that none of the vectors in the collection can be expressed as a combination (that is multiplying the vectors by nonzero scalars and adding them) of the others. This is simpler to see in $\reals^2$. Two vectors are linearly independent if one cannot obtain one by multiplying the other by a constant, which, effectively, means that they are not parallel. If the two vectors are not parallel, then one of them must have a component in a direction that the other cannot achieve. The same holds for any $n$-dimensional space. Also, that is why one can only have up to $n$ independent vectors in $\reals^n$. Figure X illustrates this effect. 
 
 \begin{figure}[h]
 	\centering
@@ -58,7 +58,7 @@ Theorem \ref{p1c2:thm:fundamental_linear_algebra} summarises results that we wil
 	\end{enumerate}	
 \end{theorem}
 %
-Notice that Theorem \ref{p1c2:thm:fundamental_linear_algebra} establishes important relationships between the geometry of the matrix $A$ (its rows and columns) and consequences it has to our ability to calculate its inverse $A^{-1}$ and, consequently, solve the system $Ax = b$, to which the solution is obtained as $x = A^{-1}b$. This will turn to be most important operation in the simplex method.
+Notice that Theorem \ref{p1c2:thm:fundamental_linear_algebra} establishes important relationships between the geometry of the matrix $A$ (its rows and columns) and consequences it has to our ability to calculate its inverse $A^{-1}$ and, consequently, solve the system $Ax = b$, to which the solution is obtained as $x = A^{-1}b$. This will turn out to be most important operation in the simplex method.
 
 
 \subsection{Subspaces and bases}
