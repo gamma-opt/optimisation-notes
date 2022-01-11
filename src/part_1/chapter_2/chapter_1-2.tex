@@ -137,7 +137,7 @@ A related concept is that of an \emph{affine subspace}. Differently from linear 
 
 \subsection{Affine subspaces}
 
-Affine subspaces are not subspaces, because they do not contain the origin (recall that the definition of subspaces allow for $a$ and $b$ to be zero). Nevertheless, $S$ has the \emph{same dimension} as $S_0$.
+Affine subspaces are not subspaces, because they do not contain the origin (recall that the definition of subspaces allows for $a$ and $b$ to be zero). Nevertheless, $S$ has the \emph{same dimension} as $S_0$.
 
 Affine subspaces give a framework for representing linear programming problems algebraically.  Specifically, let $A$ be a $m \times n$ matrix with $m < n$ (which will always be the case in linear programming models in this form as we will see) and $b$ a $m$-dimensional vector. Then, let 
 %
@@ -148,7 +148,7 @@ Affine subspaces give a framework for representing linear programming problems a
 As we will see, the feasible set of any linear programming problem can be represented as an equality-constrained equivalent of the form of \eqref{p1c2:eq:equality_constraint_feasible_set} by means of the addition of slack variables to the inequality constraints. Now, assume that $x_0 \in \reals^n$ is such that $Ax_0 = b$.  Then, we have that 
 %
 \begin{equation*}
-	Ax = Ax_0 = b =\Rightarrow A(x - x_0) = 0.	
+	Ax = Ax_0 = b \Rightarrow A(x - x_0) = 0.	
 \end{equation*}
 %
 Thus, $x \in S$ if and only if the vector $(x - x_0)$ belongs to $\nulls(A)$, the nullspace of $A$. Notice that the feasible region $S$ can be also defined as 
