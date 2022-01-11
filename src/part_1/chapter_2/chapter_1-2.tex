@@ -341,7 +341,7 @@ We will halt our discussion about convexity for now and return to it in deeper d
 
 \section{Extreme points, vertices, and basic feasible solutions}
 
-Now we focus on the algebraic representation of the most relevant geometric elements in the optimisation of linear programming problems. As we seen in the graphical example in the previous chapter, the optimal of linear programming problems is generally located at the vertices of the feasible set. Furthermore, such vertices are formed by the intersection of $n$ constraints (in $n$-dimensional space, which comprises constraints that are active (or satisfied at the boundary of the half-space of said constraints).
+Now we focus on the algebraic representation of the most relevant geometric elements in the optimisation of linear programming problems. As we've seen in the graphical example in the previous chapter, the optimum of linear programming problems is generally located at the vertices of the feasible set. Furthermore, such vertices are formed by the intersection of $n$ constraints (in $n$-dimensional space, which comprises constraints that are active (or satisfied at the boundary of the half-space of said constraints).
 
 First, let us formally define the notions of vertex and extreme point. Though in general these can refer to different objects, we will see that in the case of linear programming problems, if a point is a vertex, then it is an extreme point as well, being the converse also true.
 
@@ -353,7 +353,7 @@ First, let us formally define the notions of vertex and extreme point. Though in
 	Let $P$ be a convex polyhedral set. The vector $x \in P$ is an extreme point of $P$ if there are no two vectors $y,z \in P$ (different than $x$) such that $x = \lambda y + (1 - \lambda)z$, for any $\lambda \in [0,1]$.
 \end{definition}
 
-Figure \ref{p1c2:fig:vertex_and_extreme_point} provides an illustration of the Definitions \ref{p1c2:def:vertex} and \ref{p1c2:def:extreme_point}. Notice that, while the definition of a vertex involve an additional hyperplane that, once placed on a vertex point, strictly contains the whole polyhedral set in one of the half-spaces it defines, which exception of the vertex itself. On the other hand, the definition of an extreme point only rely on convex combinations of the set itself. 
+Figure \ref{p1c2:fig:vertex_and_extreme_point} provides an illustration of the Definitions \ref{p1c2:def:vertex} and \ref{p1c2:def:extreme_point}. Notice that, while the definition of a vertex involves an additional hyperplane that, once placed on a vertex point, strictly contains the whole polyhedral set in one of the half-spaces it defines, with the exception of the vertex itself. On the other hand, the definition of an extreme point only relies on convex combinations of the set itself. 
 
 \begin{figure}
 	\begin{tikzpicture}
@@ -419,14 +419,14 @@ Theorem \ref{p1c2:thm:active_const} sows a thread between having a collection of
 \end{theorem}
 
 \begin{proof}
-	Suppose that $\braces{a_i}_{i \in I}$ spans $\reals^n$, implying that the $\spans(\braces{a_i}_{i \in I})$ has dimension $n$. By Theorem \ref{p1c2:thm:LI_and_bases} (1), $n$ of these vector form a basis for $\reals^n$ and are, thus, linearly independent. Moreover, they must span $\reals^n$ and thus every $x \in \reals^n$ can be expressed as a combination of $\braces{a_i}_{i \in I}$. This connects (1) and (2).
+	Suppose that $\braces{a_i}_{i \in I}$ spans $\reals^n$, implying that the $\spans(\braces{a_i}_{i \in I})$ has dimension $n$. By Theorem \ref{p1c2:thm:LI_and_bases} (1), $n$ of these vectors form a basis for $\reals^n$ and are, thus, linearly independent. Moreover, they must span $\reals^n$ and thus every $x \in \reals^n$ can be expressed as a combination of $\braces{a_i}_{i \in I}$. This connects (1) and (2).
 	
 	Assume that the system of equations $\braces{a_i ^\top x = b_i}_{i \in I}$ has multiple solutions, say $x_1$ and $x_2$. Then, the nonzero vector $d = x_1 - x_2$ satisfies $a_i^\top d = 0$ for all $i \in I$. As $d$ is orthogonal to every $a_i$, $i \in I$, $d$ cannot be expressed as a combination of $\braces{a_i}_{i \in I}$ and, thus, $\braces{a_i}_{i \in I}$ do not span $\reals^n$.
 	
 	Conversely, if $\braces{a_i}_{i \in I}$ do not span $\reals^n$, choose $d \in \reals^n$ that is orthogonal to $\spans(\braces{a_i}_{i \in I})$. If $x$ satisfies $\braces{a_i ^\top x = b_i}_{i \in I}$, so does $\braces{a_i ^\top (x + d) = b_i}_{i \in I}$, thus yielding multiple solutions. This connects (2) and (3). \qedhere
 \end{proof}
 
-Notice that Theorem \ref{p1c2:thm:active_const} implies that there are (at least) \emph{$n$ active constraints ($a_i$)} that are \emph{linearly independent} at $\overline{x}$. This is the reason why we will refer to $\overline{x}$ and any vertex forming solution a \emph{basic solution}, of which we will be interested on those that are feasible, i.e., that satisfy all constraints $i \in M_1 \cup M_2 \cup M_3$. Definition \ref{p1c2:def:basic_feasible_solution} provides a formal definition of these concepts.
+Notice that Theorem \ref{p1c2:thm:active_const} implies that there are (at least) \emph{$n$ active constraints ($a_i$)} that are \emph{linearly independent} at $\overline{x}$. This is the reason why we will refer to $\overline{x}$ and any vertex forming solution a \emph{basic solution}, of which we will be interested in those that are feasible, i.e., that satisfy all constraints $i \in M_1 \cup M_2 \cup M_3$. Definition \ref{p1c2:def:basic_feasible_solution} provides a formal definition of these concepts.
 
 \begin{definition}[Basic feasible solution (BFS)] \label{p1c2:def:basic_feasible_solution}
 	Consider a convex polyhedral set $P \subset \reals^n$ defined by linear equality and inequality constraints, and let $\overline{x} \in \reals^n$.
@@ -486,7 +486,7 @@ We finalise stating the main result of this chapter, which formally confirms the
 	\end{enumerate} 	
 \end{proof}
 
-Some interesting insights emerge from the proof of Theorem \ref{p1c2:thm:BFS_vertex_extreme_point}, upon which we will build our next developments. First, notice how the definition of vertex encode a concept of optimality, since it implies that $\overline{x}$ is a unique minimiser (i.e., all other feasible points $y$ are such that $c^\top\overline{x} < c^\top y$). Also, once the relationship between being a vertex/ extreme point and a BFS is made, it means that $\overline{x}$ ca be recovered as the unique solution of a system of linear equations, these equations being the active constraints at that vertex. This means that the list of all candidate points for optimal solution can be obtained by simply looking at all possible combinations of $n$ active constraint, discarding those that are infeasible. This means that the number of candidate for optimal solution is \emph{finite} and can be bounded by $\binom{m}{n}$, where $| M_1 \cup M_2 |$. 
+Some interesting insights emerge from the proof of Theorem \ref{p1c2:thm:BFS_vertex_extreme_point}, upon which we will build our next developments. First, notice how the definition of vertex encodes a concept of optimality, since it implies that $\overline{x}$ is a unique minimiser (i.e., all other feasible points $y$ are such that $c^\top\overline{x} < c^\top y$). Also, once the relationship between being a vertex/ extreme point and a BFS is made, it means that $\overline{x}$ can be recovered as the unique solution of a system of linear equations, these equations being the active constraints at that vertex. This means that the list of all candidate points for optimal solution can be obtained by simply looking at all possible combinations of $n$ active constraints, discarding those that are infeasible. This means that the number of candidates for optimal solution is \emph{finite} and can be bounded by $\binom{m}{n}$, where $m=| M_1 \cup M_2 |$. 
 
 
  
