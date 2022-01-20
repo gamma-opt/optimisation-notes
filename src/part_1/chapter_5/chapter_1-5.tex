@@ -1,0 +1,195 @@
+\section{Formulating duals}
+
+In this chapter, we will discuss the notion of duality, under the context of linear programming problem. Duality can be understood as a property that makes available a collection of tools and features that can be exploited to both further understand characteristics of the optimal solution and to devise decomposition methods (that is, methods that break problems into smaller parts and then recombine their solutions into a solution of the original problem)  for solving large-scale linear programming problems.
+
+
+\subsection{Motivation}
+
+Let us define the notation we will be using throughout the next chapters. Let $c \in \reals^n$, $b \in \reals^m$, $A \in \reals^{m \times n}$, and $P$ be the standard form LP
+%
+\begin{align*}
+	(P) : \mini \ & c^\top x \\
+	\st 	  & Ax = b \\
+		  & x \geq 0,   
+\end{align*}
+%
+which we will refer to as the \emph{primal} problem.  In mathematical programming, we say that a constraint has been \emph{relaxed} if it has been removed from the set of constraints. With that in mind, let us consider a \emph{relaxed} version of $P$, where $Ax = b$ is replaced with a \emph{violation penalty} term $p^\top (b - Ax)$. This lead to the following problem:
+%
+\begin{equation*}
+	g(p) = \mini_{x \geq 0} \braces{c^\top x + p^\top (b - Ax)},
+\end{equation*}
+%
+which has the benefit of not having equality constraints explicitly represented, but only implicit by means of a penalty element that can be used to penalise infeasibility of the constraints. Recalling that our main objective is to solve $P$, we are interested in the prices $p \in \reals^m$ that make $P$ and $g(p)$ equivalent.
+
+Let $\overline{x}$ be the optimal solution to $P$. Notice that, for any $p$, we have
+%
+\begin{equation*}
+	g(p) = \mini_{x \geq 0} \braces{c^\top x + p^\top (b - Ax)} \leq c^\top \overline{x} +  p^\top (b - A\overline{x}) = c^\top \overline{x},   
+\end{equation*}
+%
+i.e., $g(p)$ is a \emph{lower bound} on the optimal value $c^\top \overline{x}$. The lefthand-side inequality holds because, although $\overline{x}$ is optimal for $P$, it might not be optimal for $g(p)$ for an arbitrary vector $p$. The second inequality is a consequence of the feasibility of $\overline{x}$ in $P$, implying that $A\overline{x} = b$.
+
+We can use an optimisation approach to try to find an optimal lower bound, i.e., the tightest possible lower bound for $P$. this can be achieved by solving the \emph{dual problem} $D$ formulated as 
+%
+\begin{equation*}
+	(D) : \maxi_p g(p).
+\end{equation*}
+%
+Notice that $D$ is an unconstrained problem, to which a solution proves the \emph{tightest} lower bound on $P$ (say, at $\overline{p}$). Also, notice how the function $g(p) : \reals^m \mapsto \reals$ has embedded on its evaluation the solution of a linear optimisation problem with $x \in \reals^n$ as decision variables for a fixed $p$, which is the argument given to the function $g$. This is a new concept at this point that often is a source of confusion. 
+
+We will proceed in this chapter developing the analytical framework that will allows to pose the key result in duality theory, which is that stating that 
+%
+\begin{equation*}
+	g(\overline{p}) = c^\top \overline{x}.	
+\end{equation*}
+%
+That is, we will next develop the results that equivalence between primal and dual representations. This will be useful for interpreting properties associated with the optimal primal solution $\overline{x}$ from the associated optimal prices $\overline{p}$. Furthermore, we will see in later chapters that linear programming duality can be used as a framework for replacing constraints with equivalent representations, which is a useful procedure in many settings, including for developing alternative solution strategies also based in linear programming. Hopefully this will become clearer in the next few chapters.
+
+
+\subsection{General form of duals}
+
+Now, let us focus on developing a formulation for dual problems that is based on linear programming as well. Using the definition of $D$, we notice that
+%
+\begin{align*}
+	g(p) = \ & \mini_{x \geq 0}  \braces{c^\top x + p^\top (b - Ax)}	\\
+	= \ & p^\top b + \mini_{x \geq 0}  \braces{c^\top x - p^\top Ax}    \\
+    = \ & p^\top b + \mini_{x \geq 0}  \braces{(c^\top - p^\top A)x}.  
+\end{align*} 
+%
+As $x \ge 0$, the rightmost problem can only be bounded if $(c^\top - p^\top A) \ge 0$. This gives us a linear constraint that can be used to enforce the existence of a solution for $\mini_{x \geq 0}  \braces{(c^\top - p^\top A)x}$. With that in mind, we can equivalently reformulate $D$ as
+%
+\begin{align*}
+	(D) : \maxi \ & p^\top b \\
+	\st 	  & p^\top A \leq c^\top.
+\end{align*}	
+%
+Notice that $D$ is a linear programming problem with $m$ variables (one per constraint of the primal problem $P$) and $n$ constraints (one per variable of $P$). As you might suspect, if you were to repeat the analysis, looking at $D$ as the ``primal'', you end with a dual that is exactly $P$. For this to become more apparent, let us fist define more generally the rules that dictate what kind of duals are obtained for different types of primal problems in terms of its original variables and constraints. 
+
+
+In the more general case, let $P$ be defined as
+%
+\begin{align*}
+	(P) : \mini \ & c^\top x \\
+	\st 	  & Ax \geq b.  
+\end{align*}
+%
+Notice that the problem $P$ can be equivalently reformulated as
+%
+\begin{align*}
+	(P) : \mini \ & c^\top x \\
+	\st & Ax - s = b \\
+	& s \geq 0.
+\end{align*}
+%
+Let us focus on the constraints in the reformulated version of $P$, which can be written as
+%
+\begin{equation*}
+	[A \mid -I] \begin{bmatrix} x \\ s \end{bmatrix} = b. 
+\end{equation*}
+%
+We will apply the same procedure as before, being our constraint matrix $[A \mid -I]$ in place of $A$ and $[x \mid s]^\top$ our vector of variables, in place of $x$. Using the same arguments as before, we now require $c^\top - p^\top A = 0$ so $g(p)$ is finite. Notice that this is a slight deviation from before, but is this case we have that $x \in \reals^n$, so $c^\top - p^\top A = 0$ is the only condition that allow the inner problem in $g(p)$ to have a finite solution. Then, we obtain the following dual linear programming formulation
+%
+\begin{align*}
+	&p^\top [A \mid -I] \leq [c^\top \mid 0^\top]  \\
+	&c^\top - p^\top A = 0 
+\end{align*}
+%
+or simply
+%
+\begin{align*}
+	(D) : \maxi \ & p^\top b  \hspace{1.5cm}\\ 
+	\st & p^\top A = c^\top \\
+	& p \geq 0.
+\end{align*}
+
+Notice how the change in the type of constraints in the primal problem $P$ lead to additional nonnegative constraints in the dual variables $p$. Similarly, the absence of explicit nonnegativity constraints in the primal variables $x$ lead to equality constraints in the dual problem $D$, as opposed to inequalities. 
+
+Table \ref{p1c5:tab:primal-dual_conversion} provides a summary which allows one to identify the resulting formulation of the dual problem based on the primal formulation, in particular regarding its type (minimisation or maximisation), constraint types and variable domains.
+
+\begin{table}[h]
+	\begin{tabular}{|c|c|} \hline
+		{\bf Primal (dual)} & {\bf Dual (primal)} \\ \hline
+		 minimise & maximise \\
+		Independent terms  & Obj. function coef.  \\
+		Obj. function coef.  & Independent terms  \\
+		$i$-th row of constraint coef. & $i$-th column of constraint coef. \\
+		$i$-th column of constraint coef. & $i$-th row of constraint coef. \\ \hline
+		{\bf Constraints} & {\bf Variables} \\ \hline
+		$\geq$ & $\geq 0$ \\
+		$\leq$ & $\leq 0$ \\
+		$=$ & $\in \reals$ \\ \hline
+		{\bf Variables} & {\bf Constraints} \\ \hline
+		$\geq 0$ & $\leq$ \\
+		$\leq 0$ & $\geq$ \\
+		$\in \reals$ & $=$ \\ \hline
+	\end{tabular}
+	\caption{Primal-dual conversion table} \label{p1c5:tab:primal-dual_conversion}
+\end{table}
+
+For converting a minimisation primal problem into a (maximisation) dual, one must read the table from left to right. That is, the independent terms ($b$) become the objective function coefficients, greater or equal constraints become nonnegative variables, and so forth. However, if the primal problem is a maximisation problem, then the table must be read from right to left. For example, in this case, less-or-equal-then constraints would be come nonnegative variables instead, and so forth. It takes a little practice to familiarise yourself with this table, but it turns to be a really useful resource to obtain dual formulations from primal problems.
+
+One remark to be made at this point is that, as is hopefully clearer now, the conversion of primal problems into duals is symmetric, meaning that reapplying the rules in Table \ref{p1c5:tab:primal-dual_conversion} would take you from the obtained dual back to the original primal. This is a property of linear programming problems and is called \emph{self dual}. Another remark is that equivalent reformulations made in the primal lead to equivalent duals. Specifically, transformations that replace variables $x \in \reals$ with $x^+ - x^-$, with $x^+, x^- \geq 0$, introduce of nonnegative slack variables, or remove redundant constraints lead to equivalent duals. 
+
+For example, recall that the dual formulation for the primal problem 
+%
+\begin{align*}
+	(P) : \mini \ & c^\top x \\
+	\st &Ax \geq b \\
+	&x \in \reals^n
+\end{align*}
+%
+is given by
+%
+\begin{align*}
+	(D) : \maxi \ & p^\top b \\
+	\st &p \geq 0 \\
+	&p^\top A = c^\top. 
+\end{align*}
+%
+Now suppose we equivalently reformulate the primal problem to become
+\begin{align*}
+	(P') : \mini \ & c^\top x + 0^\top s \\
+	\st &A x - s = b \\
+	&x \in \reals^n, s \geq 0.
+\end{align*}
+%
+Then, using Table \ref{p1c5:tab:primal-dual_conversion}, we would obtain the following dual formulation, which is equivalent to $D$
+\begin{align*}
+	(D') : \maxi \ & p^\top b \\
+	\st &p \in \reals^m \\
+	&p^\top A = c^\top \\
+	-&p \leq 0.
+\end{align*}
+%
+Analogously, suppose we were to equivalently reformulate $P$ as 
+%
+\begin{align*}
+	(P'') : \mini \ & c^\top x^+ - c^\top x^- \\
+	\st &Ax^+ - Ax^- \geq b \\
+	&x^+ \geq 0, x^- \geq 0.
+\end{align*}
+%
+Then, the dual formulation for $P''$ would be 
+%
+\begin{align*}
+	(D'') : \maxi \ & p^\top b \\
+	\st &p \geq 0 \\
+	&p^\top A \leq c \\
+	-&p^\top A \leq -c^\top,
+\end{align*}
+%
+which is also equivalent to $D$.
+
+
+
+    
+
+\section{Duality theory}
+
+\subsection{Weak duality}
+
+\subsection{Strong duality}
+
+\section{Geometric interpretation of duality}
+
+\section{Practical uses of duality}
