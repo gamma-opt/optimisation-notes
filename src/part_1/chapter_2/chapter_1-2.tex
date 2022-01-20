@@ -324,7 +324,7 @@ $$
 	\item Let $S = \conv(x_1, \dots, x_k)$. Let $y = \sum_{i=1}^k \alpha_i x_i$ and $z = \sum_{i=1}^k \beta_ix_i$ be such that $y,z \in S$, $\alpha_i,\beta_i \geq 0$, and $\sum_{i=1}^k \alpha_i = \sum_{i=1}^k \beta_i = 1$. Let $\lambda \in [0,1]$. Then
 		%
 		\begin{equation}
-			\lambda y + (1- \lambda)z = \lambda\sum_{i=1}^k \alpha_i + (1-\lambda)\sum_{i=1}^k \beta_i = \sum_{i=1}^k (\lambda \alpha_i + (1-\lambda) \beta_i)x_i. 	
+			\lambda y + (1- \lambda)z = \lambda\sum_{i=1}^k \alpha_i x_i + (1-\lambda)\sum_{i=1}^k \beta_i x_i = \sum_{i=1}^k (\lambda \alpha_i + (1-\lambda) \beta_i)x_i. 	
 		\end{equation}
 		%
 		Since $\sum_{i=1}^k \lambda \alpha_i + (1-\lambda) \beta_i = 1$ and $\lambda \alpha_i + (1-\lambda) \beta_i \geq 0$ for $i=1,\dots,k$, $\lambda y + (1- \lambda)z$ is a convex combination of $x_1, \dots, x_k$ and, thus, $\lambda y + (1- \lambda)z \in S$, showing the convexity of $S$. \qedhere	
