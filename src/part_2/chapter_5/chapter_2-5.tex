@@ -342,7 +342,7 @@ The \emph{cordinate descent method} relies on a simple yet powerful idea. By foc
 Algorithm \ref{Alg5} summarises the general structure of the coordinate descent method. Notice that the for-loop starting in Line \ref{alg5:line3} uses the cyclic variant of the coordinate descent method. 
 
 %% Juho: Nicer caption + spacing
-\begin{algorithm}[H]
+\begin{algorithm}[h]
 \caption{Coordinate descent method (cyclic)} \label{Alg5}
 \begin{algorithmic}[1] %line numbering frequency. 
 \State {\bf initialise.} tolerance $\epsilon > 0,$ initial point $x^0,$ iteration count $k = 0$ 
@@ -361,7 +361,7 @@ Algorithm \ref{Alg5} summarises the general structure of the coordinate descent 
 Figure \ref{fig:coordinate_descent} shows the progress of the algorithm when applied to solve 
 $$f(x)=e^{(-(x_1-3)/2)} + e^{((4x_2 + x_1)/10)} + e^{((-4x_2 + x_1)/10)}$$ using the golden section method as line search. 
 
-\begin{figure}[H]
+\begin{figure}[h]
 \includegraphics[width=0.8\textwidth]{part_2/chapter_5/figures/coordinate_decent_exact.pdf}	
 \caption{Coordinate descent method applied to $f$. Convergence is observed in 4 steps for a tolerance $\epsilon = 10^{-5}$} \label{fig:coordinate_descent}
 \end{figure}
