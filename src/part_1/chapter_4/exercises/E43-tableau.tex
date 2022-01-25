@@ -1,0 +1,23 @@
+\renewcommand{\arraystretch}{1.1}
+\setlength{\tabcolsep}{8pt}
+Consider a linear programming problem in standard form, described in terms of the following tableau:
+\[
+\begin{tabular}{c|c|ccccccc}
+  &   & $x_1$ & $x_2$ & $x_3$ & $x_4$ & $x_5$ & $x_6$ & $x_7$\\
+\hline
+  & $0$  & $0$ & $0$ & $0$ & $\delta$ & 3 & $\gamma$ & $\xi$ \\
+\hline
+$x_2=$   & $\beta$ & 0 & 1 & 0 & $\alpha$ & 1 & 0      &  3 \\
+$x_3=$   & 2       & 0 & 0 & 1 & -2\,\,       & 2 & $\eta$ & -1\,\, \\
+$x_1=$   & 3       & 1 & 0 & 0 &  0       &-1\,\, & 2      &  1
+  \end{tabular}
+\]
+The entries $\alpha$, $\beta$, $\gamma$, $\delta$, $\eta$ and $\xi$ in the tableau are unknown parameters. Furthermore, let $\mathbf{B}$ be the basis matrix corresponding to having $x_2$, $x_3$, and $x_1$ (in that order) be the basic variables. For each one of the following statements, find the ranges of values of the various parameters that will make the statement to be true.
+\begin{itemize}
+\item[(a)] Phase II of the Simplex method can be applied using this as an initial tableau.
+%\item[(b)] The first row in the present tableau (below the row with the reduced costs) indicates that the problem is infeasible.
+\item[(b)] The corresponding basic solution is feasible, but we do not have an optimal basis.
+\item[(c)] The corresponding basic solution is feasible and the first Simplex iteration indicates that the optimal cost is $-\infty$.
+\item[(d)] The corresponding basic solution is feasible, $x_6$ is candidate for entering the basis, and when $x_6$ is the entering variable, $x_3$ leaves the basis.  
+\item[(e)] The corresponding basic solution is feasible, $x_7$ is candidate for entering the basis, but if it does, the objective value remains unchanged.
+\end{itemize}
