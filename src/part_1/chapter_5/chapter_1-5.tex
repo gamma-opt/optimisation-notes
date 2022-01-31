@@ -1,11 +1,11 @@
 \section{Formulating duals}
 
-In this chapter, we will discuss the notion of duality, under the context of linear programming problem. Duality can be understood as a property that makes available a collection of tools and features that can be exploited to both further understand characteristics of the optimal solution and to devise decomposition methods (that is, methods that break problems into smaller parts and then recombine their solutions into a solution of the original problem)  for solving large-scale linear programming problems.
+In this chapter, we will discuss the notion of duality, under the context of linear programming problem. Duality can be understood as a property that makes available a collection of tools and features that can be exploited to both further understand characteristics of the optimal solution and to devise specialised methods for solving large-scale linear programming problems.
 
 
 \subsection{Motivation}
 
-Let us define the notation we will be using throughout the next chapters. Let $c \in \reals^n$, $b \in \reals^m$, $A \in \reals^{m \times n}$, and $P$ be the standard form LP
+Let us define the notation we will be using throughout the next chapters. As before, let $c \in \reals^n$, $b \in \reals^m$, $A \in \reals^{m \times n}$, and $P$ be the standard form linear programming problem
 %
 \begin{align*}
 	(P) : \mini \ & c^\top x \\
@@ -19,31 +19,31 @@ which we will refer to as the \emph{primal} problem.  In mathematical programmin
 	g(p) = \mini_{x \geq 0} \braces{c^\top x + p^\top (b - Ax)},
 \end{equation*}
 %
-which has the benefit of not having equality constraints explicitly represented, but only implicit by means of a penalty element that can be used to penalise infeasibility of the constraints. Recalling that our main objective is to solve $P$, we are interested in the prices $p \in \reals^m$ that make $P$ and $g(p)$ equivalent.
+which has the benefit of not having equality constraints explicitly represented, but only implicit by means of a penalty element that can be used to penalise infeasibility of the constraints in the attempt to steer the solution of this relaxed problems towards the solution to $P$. Recalling that our main objective is to solve $P$, we are interested in the values (or prices, as they are often called) for $p \in \reals^m$ that make $P$ and $g(p)$ equivalent.
 
-Let $\overline{x}$ be the optimal solution to $P$. Notice that, for any $p$, we have
+Let $\overline{x}$ be the optimal solution to $P$. Notice that, for any $p \in \reals^m$, we have that
 %
 \begin{equation*}
 	g(p) = \mini_{x \geq 0} \braces{c^\top x + p^\top (b - Ax)} \leq c^\top \overline{x} +  p^\top (b - A\overline{x}) = c^\top \overline{x},   
 \end{equation*}
 %
-i.e., $g(p)$ is a \emph{lower bound} on the optimal value $c^\top \overline{x}$. The lefthand-side inequality holds because, although $\overline{x}$ is optimal for $P$, it might not be optimal for $g(p)$ for an arbitrary vector $p$. The second inequality is a consequence of the feasibility of $\overline{x}$ in $P$, implying that $A\overline{x} = b$.
+i.e., $g(p)$ is a \emph{lower bound} on the optimal value $c^\top \overline{x}$. The lefthand-side inequality holds because, although $\overline{x}$ is optimal for $P$, it might not be optimal for $g(p)$ for an arbitrary vector $p$. The second inequality is a consequence of $\overline{x} \in P$, i.e., the feasibility of $\overline{x}$ implies that $A\overline{x} = b$.
 
-We can use an optimisation approach to try to find an optimal lower bound, i.e., the tightest possible lower bound for $P$. this can be achieved by solving the \emph{dual problem} $D$ formulated as 
+We can use an optimisation-based approach to try to find an optimal lower bound, i.e., the tightest possible lower bound for $P$. this can be achieved by solving the \emph{dual problem} $D$ formulated as 
 %
 \begin{equation*}
 	(D) : \maxi_p g(p).
 \end{equation*}
 %
-Notice that $D$ is an unconstrained problem, to which a solution proves the \emph{tightest} lower bound on $P$ (say, at $\overline{p}$). Also, notice how the function $g(p) : \reals^m \mapsto \reals$ has embedded on its evaluation the solution of a linear optimisation problem with $x \in \reals^n$ as decision variables for a fixed $p$, which is the argument given to the function $g$. This is a new concept at this point that often is a source of confusion. 
+Notice that $D$ is an unconstrained problem, to which a solution proves the \emph{tightest} lower bound on $P$ (say, at $\overline{p}$). Also, notice how the function $g(p) : \reals^m \mapsto \reals$ has embedded on its evaluation the solution of a linear programming problem with $x \in \reals^n$ as decision variables for a fixed $p$, which is the argument given to the function $g$. This is a new concept at this point that often is a source of confusion. 
 
-We will proceed in this chapter developing the analytical framework that will allows to pose the key result in duality theory, which is that stating that 
+We will proceed in this chapter developing the analytical framework that allows use to pose the key result in duality theory, which is that stating that 
 %
 \begin{equation*}
 	g(\overline{p}) = c^\top \overline{x}.	
 \end{equation*}
 %
-That is, we will next develop the results that equivalence between primal and dual representations. This will be useful for interpreting properties associated with the optimal primal solution $\overline{x}$ from the associated optimal prices $\overline{p}$. Furthermore, we will see in later chapters that linear programming duality can be used as a framework for replacing constraints with equivalent representations, which is a useful procedure in many settings, including for developing alternative solution strategies also based in linear programming. Hopefully this will become clearer in the next few chapters.
+That is, we will next develop the results that guarantee the equivalence between primal and dual representations. This will be useful for interpreting properties associated with the optimal primal solution $\overline{x}$ from the associated optimal prices $\overline{p}$. Furthermore, we will see in later chapters that linear programming duality can be used as a framework for replacing constraints with equivalent representations, which is a useful procedure in many settings, including for developing alternative solution strategies also based in linear programming. 
 
 
 \subsection{General form of duals}
@@ -56,15 +56,20 @@ Now, let us focus on developing a formulation for dual problems that is based on
     = \ & p^\top b + \mini_{x \geq 0}  \braces{(c^\top - p^\top A)x}.  
 \end{align*} 
 %
-As $x \ge 0$, the rightmost problem can only be bounded if $(c^\top - p^\top A) \ge 0$. This gives us a linear constraint that can be used to enforce the existence of a solution for $\mini_{x \geq 0}  \braces{(c^\top - p^\top A)x}$. With that in mind, we can equivalently reformulate $D$ as
+As $x \ge 0$, the rightmost problem can only be bounded if $(c^\top - p^\top A) \ge 0$. This gives us a linear constraint that can be used to enforce the existence of a solution for 
+%
+\begin{equation*}
+	\mini_{x \geq 0}  \braces{(c^\top - p^\top A)x}.
+\end{equation*}
+%
+With that in mind, we can equivalently reformulate $D$ as
 %
 \begin{align*}
 	(D) : \maxi \ & p^\top b \\
 	\st 	  & p^\top A \leq c^\top.
 \end{align*}	
 %
-Notice that $D$ is a linear programming problem with $m$ variables (one per constraint of the primal problem $P$) and $n$ constraints (one per variable of $P$). As you might suspect, if you were to repeat the analysis, looking at $D$ as the ``primal'', you end with a dual that is exactly $P$. For this to become more apparent, let us fist define more generally the rules that dictate what kind of duals are obtained for different types of primal problems in terms of its original variables and constraints. 
-
+Notice that $D$ is a linear programming problem with $m$ variables (one per constraint of the primal problem $P$) and $n$ constraints (one per variable of $P$). As you might suspect, if you were to repeat the analysis, looking at $D$ as the ``primal'', you would end with a dual that is exactly $P$. For this to become more apparent, let us fist define more generally the rules that dictate what kind of dual formulations are obtained for different types of primal problems in terms of its original variables and constraints. 
 
 In the more general case, let $P$ be defined as
 %
@@ -87,11 +92,11 @@ Let us focus on the constraints in the reformulated version of $P$, which can be
 	[A \mid -I] \begin{bmatrix} x \\ s \end{bmatrix} = b. 
 \end{equation*}
 %
-We will apply the same procedure as before, being our constraint matrix $[A \mid -I]$ in place of $A$ and $[x \mid s]^\top$ our vector of variables, in place of $x$. Using the same arguments as before, we now require $c^\top - p^\top A = 0$ so $g(p)$ is finite. Notice that this is a slight deviation from before, but is this case we have that $x \in \reals^n$, so $c^\top - p^\top A = 0$ is the only condition that allow the inner problem in $g(p)$ to have a finite solution. Then, we obtain the following dual linear programming formulation
+We will apply the same procedure as before, being our constraint matrix $[A \mid -I]$ in place of $A$ and $[x \mid s]^\top$ our vector of variables, in place of $x$. Using analogous arguments, we now require $c^\top - p^\top A = 0$ so $g(p)$ is finite. Notice that this is a slight deviation from before, but is this case we have that $x \in \reals^n$, so $c^\top - p^\top A = 0$ is the only condition that allow the inner problem in $g(p)$ to have a finite solution. Then, we obtain the following dual linear programming formulation
 %
 \begin{align*}
 	&p^\top [A \mid -I] \leq [c^\top \mid 0^\top]  \\
-	&c^\top - p^\top A = 0 
+	&c^\top - p^\top A = 0, 
 \end{align*}
 %
 or simply
@@ -126,9 +131,9 @@ Table \ref{p1c5:tab:primal-dual_conversion} provides a summary which allows one 
 	\caption{Primal-dual conversion table} \label{p1c5:tab:primal-dual_conversion}
 \end{table}
 
-For converting a minimisation primal problem into a (maximisation) dual, one must read the table from left to right. That is, the independent terms ($b$) become the objective function coefficients, greater or equal constraints become nonnegative variables, and so forth. However, if the primal problem is a maximisation problem, then the table must be read from right to left. For example, in this case, less-or-equal-then constraints would be come nonnegative variables instead, and so forth. It takes a little practice to familiarise yourself with this table, but it turns to be a really useful resource to obtain dual formulations from primal problems.
+For converting a minimisation primal problem into a (maximisation) dual, one must read the table from left to right. That is, the independent terms ($b$) become the objective function coefficients, greater or equal constraints become nonnegative variables, and so forth. However, if the primal problem is a maximisation problem, then the table must be read from right to left. For example, in this case, less-or-equal-than constraints would be come nonnegative variables instead, and so forth. It takes a little practice to familiarise yourself with this table, but it turns to be a really useful resource to obtain dual formulations from primal problems.
 
-One remark to be made at this point is that, as is hopefully clearer now, the conversion of primal problems into duals is symmetric, meaning that reapplying the rules in Table \ref{p1c5:tab:primal-dual_conversion} would take you from the obtained dual back to the original primal. This is a property of linear programming problems and is called \emph{self dual}. Another remark is that equivalent reformulations made in the primal lead to equivalent duals. Specifically, transformations that replace variables $x \in \reals$ with $x^+ - x^-$, with $x^+, x^- \geq 0$, introduce of nonnegative slack variables, or remove redundant constraints lead to equivalent duals. 
+One remark to be made at this point is that, as is hopefully clearer now, the conversion of primal problems into duals is symmetric, meaning that reapplying the rules in Table \ref{p1c5:tab:primal-dual_conversion} would take you from the obtained dual back to the original primal. This is a property of linear programming problems and is called being \emph{self dual}. Another remark is that equivalent reformulations made in the primal lead to equivalent duals. Specifically, transformations that replace variables $x \in \reals$ with $x^+ - x^-$, with $x^+, x^- \geq 0$, introduce of nonnegative slack variables, or remove redundant constraints lead to equivalent duals. 
 
 For example, recall that the dual formulation for the primal problem 
 %
@@ -239,7 +244,7 @@ Corollary \ref{p1c5:cor:weak_duality} also provides an alternative way of identi
 
 \subsection{Strong duality}
 
-This bounding can also be used as a certificate of optimality, in case they match in value. This is precisely he notion of \emph{strong duality}, a property that is inherent to linear programming problems. This is stated in Theorem \ref{p1c5:thm:strong_duality}.
+This bounding property can also be used as a certificate of optimality, in case they match in value. This is precisely the notion of \emph{strong duality}, a property that is inherent to linear programming problems. This is stated in Theorem \ref{p1c5:thm:strong_duality}.
 
 \begin{theorem}[Strong duality]\label{p1c5:thm:strong_duality}
 	If $(P) : \mini\braces{c^\top x : Ax = b, x \geq 0}$ has an optimal solution, so does its dual $(D) : \maxi\braces{p^\top b : p^\top A \leq c^\top}$ and their respective optimal values are equal.
@@ -257,12 +262,12 @@ which, in turn, implies the optimality of $p$ (cf. Corollary \ref{p1c5:cor:weak_
 
 The proof of Theorem \ref{p1c5:thm:strong_duality} reveals something remarkable relating the simplex method and the dual variables $p$. As can be seen in \eqref{p1c5:eq:primal-dual}, for any primal feasible solution $x$, an associated dual (not necessarily) feasible solution $p$ can be immediately recovered. In case the associated solution is also feasible, then Theorem \ref{p1c5:thm:strong_duality} guarantees that optimality ensues.
 
-This means that we can interchangeably solve either a primal or a dual form of a given problem, taking into account aspects related to convenience and computational ease. This is particularly useful in the context of the simplex method, since this quantity is readily available as the algorithm progresses. In the next section, we will discuss several practical uses of this relationship in more detail. For now, let us halt this discussion for a moment and consider a geometrical interpretation of duality in the context of linear programming.
+This means that we can interchangeably solve either a primal or a dual form of a given problem, taking into account aspects related to convenience and computational ease. This is particularly useful in the context of the simplex method, since the prices $p$ are readily available as the algorithm progresses. In the next section, we will discuss several practical uses of this relationship in more detail. For now, let us halt this discussion for a moment and consider a geometrical interpretation of duality in the context of linear programming.
 
 
 \section{Geometric interpretation of duality}
 
-Linear programming duality has a interesting geometric interpretation that stems from the much more general framework of Lagrangian duality (of which linear programming duality is a special case) and its connection to optimality conditions, topics that will be further explored in \ref{part_2}. for now, let us focus on how linear programming duality can be interpreted in the context of balancing forces. 
+Linear programming duality has a interesting geometric interpretation that stems from the much more general framework of Lagrangian duality (of which linear programming duality is a special case) and its connection to optimality conditions, topics that will be further explored in Part \ref{part_2}. For now, let us focus on how linear programming duality can be interpreted in the context of balancing forces. 
 
 First, let $\overline{x}$ be the optimal solution of primal problem $P$ in the form
 %
@@ -271,7 +276,7 @@ First, let $\overline{x}$ be the optimal solution of primal problem $P$ in the f
 	\st & a_i^\top x \geq b_i, \ \forall i \in I.
 \end{align*}
 %
-Imagine that there is a particle within the polyhedral set representing the feasible region of $P$ and that this particle is subjected to a force represented by the vector $-c$. Notice that this is equivalent to minimising the function $z = c^\top x$ within the polyhedral set $\braces{a_i^\top x \geq b_i}_{i\in I}$, i.e., the feasible set of $P$. Assuming that the feasible set of $P$ is bounded in the direction $-c$, this particle will eventually come to a halt after hitting the ``walls'' of the feasible set, at a point where the pulling force $-c$ and the reaction of these walls reach an equilibrium. We can think of $\overline{x}$ as this stopping point. this is illustrated in Figure \ref{p1c5:fig:duality_geometry}.
+Imagine that there is a particle within the polyhedral set representing the feasible region of $P$ and that this particle is subjected to a force represented by the vector $-c$. Notice that this is equivalent to minimising the function $z = c^\top x$ within the polyhedral set $\braces{a_i^\top x \geq b_i}_{i\in I}$ representing the feasible set of $P$. Assuming that the feasible set of $P$ is bounded in the direction $-c$, this particle will eventually come to a halt after hitting the ``walls'' of the feasible set, at a point where the pulling force $-c$ and the reaction of these walls reach an equilibrium. We can think of $\overline{x}$ as this stopping point. This is illustrated in Figure \ref{p1c5:fig:duality_geometry}.
 
 \begin{figure}[h]
 	\begin{tikzpicture}
@@ -287,10 +292,10 @@ Imagine that there is a particle within the polyhedral set representing the feas
 	\caption{A geometric representation of duality for linear programming problems} \label{p1c5:fig:duality_geometry}	
 \end{figure}
 
-We can then think of the dual variables $p$ as the multipliers applied to the normal vectors associated with the hyperplanes (i.e., the walls) that are in contact with the particle. These multipliers $p$, in equilibrium, will be such that
+We can then think of the dual variables $p$ as the multipliers applied to the normal vectors associated with the hyperplanes (i.e., the walls) that are in contact with the particle to achieve this equilibrium. Hence, these multipliers $p$ will be such that
 %
 \begin{equation*}
-c = \sum_{i \in I}p_ia_i \text{ for some } p_i \geq 0, i \in I	
+c = \sum_{i \in I}p_ia_i, \text{ for some } p_i \geq 0, i \in I,	
 \end{equation*}
 %
 which is precisely the dual feasibility condition (i.e., constraint) associated with the dual of $P$, given by
@@ -313,29 +318,40 @@ One point that must be noticed is that, for the constraints that are not active 
 which again implies the optimality of $p$ (cf. Corollary \ref{p1c5:cor:weak_duality} (3)). This geometrical insight leads to another key result for linear programming duality, which is the notion of \emph{complementary slackness}.
 
 \begin{theorem}[Complementary slackness]
-	Let $x$ be a feasible solution for $(P) : \mini\braces{c^\top x : Ax = b, x \geq 0}$ and $p$ be a feasible solution for $(D) : \maxi\braces{p^\top b : p^\top A \leq c^\top}$. $x$ and $p$ are optimal solutions to $P$ and $D$, respectively, if and only if
-	$p_i(a_i^\top x - b_i) = 0, \forall i \in I$ and $	
-		(c_j - p^\top A_j)x_j = 0, \, \forall j \in J$. 
+	Let $x$ be a feasible solution for 
+	%
+	\begin{equation*}
+		(P) : \mini\braces{c^\top x : Ax = b, x \geq 0}	
+	\end{equation*}
+	%
+	and $p$ be a feasible solution for 
+	%
+	\begin{equation*}
+		(D) : \maxi\braces{p^\top b : p^\top A \leq c^\top}. 	
+	\end{equation*}
+	%
+	The vectors $x$ and $p$ are optimal solutions to $P$ and $D$, respectively, if and only if
+	$p_i(a_i^\top x - b_i) = 0, \forall i \in I$, and $(c_j - p^\top A_j)x_j = 0, \, \forall j \in J$. 
 \end{theorem}
 
 \begin{proof} 
 	From the proof of Theorem \ref{p1c5:thm:weak_duality} and with Theorem \ref{p1c5:thm:strong_duality} holding, we have that 
 %
 	\begin{equation*}
-		p_i(a_i^\top x - b_i) = 0, \forall i \in I \text{ and } 	
+		p_i(a_i^\top x - b_i) = 0, \forall i \in I, \text{ and } 	
 	(c_j - p^\top A_j)x_j = 0, \, \forall j \in J.
 	\end{equation*}
 %
 	In turn, if these hold, then $x$ and $p$ are optimal (cf. Corollary \ref{p1c5:cor:weak_duality} (3)). 
 \end{proof}
 
-For nondegenerate basic feasible solutions (BFS),  complementary slackness determine a \emph{unique} dual solution. That is
+For nondegenerate basic feasible solutions (BFS) (i.e., $x_j > 0$, $\forall j \in I_B$, where $I_B$ is the set of basic variable indices), complementary slackness determine a \emph{unique} dual solution. That is
 %
 \begin{equation*}
 	(c_j - p^\top A_j)x_j = 0, \text{ which yields } c_j = p^\top A_j, \, \forall j \in I_B,
 \end{equation*}
 %
-where $I_B$ is the set of basic variable indices. In the presence of degeneracy, this is not the case anymore, typically implying that a degenerate optimal BFS will multiple feasible dual variable.
+which has a unique solution $p^\top = c_B^\top B^{-1}$, as the columns $A_j$ of be are assumed to be linearly indepedent. In the presence of degeneracy, this is not the case anymore, typically implying that a degenerate optimal BFS will multiple feasible dual variable.
 
 
 \subsection{Dual feasibility and optimality}
@@ -343,19 +359,19 @@ where $I_B$ is the set of basic variable indices. In the presence of degeneracy,
 Combining what we have seen so far, the conditions for a \emph{primal-dual pair} $(x,p)$ to be optimal to their respective primal ($P$) and dual ($D$) problems are given by 
 %
 \begin{align}
-	& a_i^\top x \geq b_i, \, \forall i \in I & & \text{(primal feasibility)} \\
+	& a_i^\top x \geq b_i, \, \forall i \in I & & \text{(primal feasibility)}\label{p1c5:eq:primal_feas} \\
 	& p_i = 0, \, \forall i \notin I^0   & & \text{(complementary conditions)} \label{p1c5:eq:cc}\\
 	& \sum_{i \in I} p_i^\top a_i = c & & \text{(dual feasibility I)} \label{p1c5:eq:dual_feasI} \\
 	& p_i \geq 0, & & \text{(dual feasibility II)} \label{p1c5:eq:dual_feasII}
 \end{align}
 %
-where $I^0 = \braces{i \in I, a_i^\top x = b _i}$ are the active constraints. From \eqref{p1c5:eq:cc}-\eqref{p1c5:eq:dual_feasII}, we see that the optimality of the primal-dual pair has two main requirements. The first is that $x$ must be (primal) feasible. The second, expressed as 
+where $I^0 = \braces{i \in I, a_i^\top x = b _i}$ are the active constraints. From \eqref{p1c5:eq:primal_feas}--\eqref{p1c5:eq:dual_feasII}, we see that the optimality of the primal-dual pair has two main requirements. The first is that $x$ must be (primal) feasible. The second, expressed as 
 %
 \begin{equation*}
 	\sum_{i \in I^0} p_ia_i = c, \ p_i \geq 0,
 \end{equation*}
 %
-is equivalent to requiring $c$ to be expressed as a nonnegative linear combination (also known as a conic combination) of the active constraints. This has a nice geometrical interpretation: dual feasibility can be seen as having the vector $c$ inside the ``cone'' formed by the normal vectors of the active constraint, which in turn is a necessary condition for the existence of an equilibrium, as described in Figure \ref{p1c5:fig:duality_geometry}. Figure \ref{p1c5:fig:dual_feasibility} illustrates this fact.
+is equivalent to requiring $c$ to be expressed as a nonnegative linear combination (also known as a conic combination) of the active constraints. This has a nice geometrical interpretation: dual feasibility can be seen as having the vector $c$ inside the ``cone'' formed by the normal vectors of the active constraints, which in turn is a necessary condition for the existence of an equilibrium, as described in Figure \ref{p1c5:fig:duality_geometry}. Figure \ref{p1c5:fig:dual_feasibility} illustrates this fact.
 
 \begin{figure}
 	\begin{tikzpicture}
@@ -412,10 +428,9 @@ Recall that the optimality condition $\overline{c} = c^\top - c_B ^\top B^{-1}A 
 	c_B^\top B^{-1}(b + d) = p^\top(b + d). 
 \end{equation*}
 %
-Notice that $p^\top = c_B^\top B^{-1}$ is optimal for the (respective) dual problem. Thus, a change $d$ causes a change of $p^\top d$ in the optimal value, meaning that the components $p_i$ represent a marginal value/cost associated with the resource $i \in I$. 
+Notice that $p^\top = c_B^\top B^{-1}$ is optimal for the (respective) dual problem. Thus, a change $d$ causes a change of $p^\top d$ in the optimal value, meaning that the components $p_i$ represent a marginal value/cost associated with the independent term $b_i$, for $i \in I$. 
 
 This has important implications in practice, as it allows for pricing the the values of the resources associated with constraints. For example, if the dual value (or price) $p_i$ is associated with a resource whose requirement is given by $b_i$, this means that any opportunity of removing any units of $b_i$ for less than $p_i$ should be seized, since it costs $p_i$ to satisfy any additional unit in the requirement $b_i$. A similar interpretation can be made in the context of less-or-equal-than constraints, in which $p_i$ would indicate benefits (or loses, if $p_i > 0$) in increasing the availability of $b_i$. 
-
 
 % TODO: A simple numerical example coming back to the paint example would be helpful here
 
@@ -423,7 +438,7 @@ This has important implications in practice, as it allows for pricing the the va
 
 In general, solution methods in mathematical programming can be either \emph{primal methods}, in which primal feasibility of an initial solution is maintained while seeking for dual feasibility (i.e., primal optimality); or \emph{dual methods}, where dual feasibility is maintained while seeking for primal feasibility (i.e., dual optimality).
 
-AS we seen in chapter \ref{chapter_4}, the original (or primal) simplex method iterated from an initial basic feasible solution (BFS) until the optimality condition 
+As we have seen in Chapter \ref{chapter_4}, the original (or primal) simplex method iterated from an initial basic feasible solution (BFS) until the optimality condition 
 %
 \begin{equation*}
 	\overline{c} = c^\top - c_BB^{-1}A \geq 0
@@ -431,9 +446,9 @@ AS we seen in chapter \ref{chapter_4}, the original (or primal) simplex method i
 %
 was observed. Notice that this condition is precisely the dual feasibility condition $p^\top A \leq c$. 
 
-The dual version of the simplex method, or the \emph{dual simplex method}, being a dual method, consider conditions in a reverse order. That is, it starts from an initial dual feasible solution and iterates in a manner that the primal feasibility condition $B^{-1}b \geq 0$ is \emph{sought} for, while $\overline{c} \geq 0$, or equivalently, $p^\top A \leq c$, is maintained.
+Being a dual method, the dual version of the simplex method, or the \emph{dual simplex method}, consider conditions in a reverse order. That is, it starts from an initial dual feasible solution and iterates in a manner that the primal feasibility condition $B^{-1}b \geq 0$ is \emph{sought} for, while $\overline{c} \geq 0$, or equivalently, $p^\top A \leq c$, is maintained.
 
-To achieve that, one must revise the pivoting of the primal simplex method, such that the variable to leave the basis is some $i \in I_B$, with $x_{B(i)} < 0$, while the variable chosen to enter the basis is some $j \in I_N$, such that $\overline{c} \geq 0$ is maintained.
+To achieve that, one must revise the pivoting of the primal simplex method such that the variable to leave the basis is some $i \in I_B$, with $x_{B(i)} < 0$, while the variable chosen to enter the basis is some $j \in I_N$, such that $\overline{c} \geq 0$ is maintained.
 
  Consider the $l^\text{th}$ simplex tableau row for which $x_{B(i)} < 0$ of the form $[v_1,\dots, v_n, x_{B(i)}]$; i.e., $v_j$ is the $l^\text{th}$ component of $B^{-1}A_j$.
 	 
@@ -479,7 +494,8 @@ To clarify some of the previous points, let us consider a numerical example. Con
 	&x_1,x_2,x_3,x_4 \geq 0.	
 \end{align*}	
 %
-the first thing we must do is to convert the greater-or-equal-than inequalities into less-or-equal-than equalities and add the respective slacks. This allows us to avoid the inclusion of artificial variables, which are not required anymore since we can allow for primal feasibility. this leads to the equivalent standard form problem
+The first thing we must do is to convert the greater-or-equal-than inequalities into less-or-equal-than inequalities and add the respective slack variables. This allows us to avoid the inclusion of artificial variables, which are not required anymore since we can allow for primal infeasibility. This leads to the equivalent standard form problem
+%
 \begin{align*}
 	\mini &x_1 + x_2 \\
 	\st &-x_1 - 2x_2 + x_3 = -2 \\
@@ -514,10 +530,9 @@ Below is the sequence of tableaus after applying the dual simplex method to solv
 	\end{tabular}
 \end{center}
 
+Figure \ref{p1c5:fig:ex1} illustrates the progress of the algorithm both in the primal (Figure \ref{p1c5:fig:ex1_P}) and in the dual (Figure \ref{p1c5:fig:ex1_D}) variable space. Notice how in the primal space the solution remains primal infeasible until a primal feasible solution is reached, that being the optimal for the problem. Also, notice that the coordinates of the dual variables can be extracted from the zeroth row of the simplex tableau.
 
-Figure X illustrates the progress of the algorithm both in the primal (left) and in the dual (right) variable space. Notice how in the primal space the solution remains primal infeasible until a primal feasible solution is reached, that being the optimal for the problem. Also, notice that the coordinates of the dual variables can be extracted from the zeroth row of the simplex tableau.
-
-\begin{figure}
+\begin{figure}[h]
 	\centering
 	\begin{subfigure}{0.45\textwidth}
 		\centering
@@ -529,19 +544,34 @@ Figure X illustrates the progress of the algorithm both in the primal (left) and
 		\includegraphics{part_1/chapter_5/figures/dual_plot}
 		\caption{The dual-variable space}\label{p1c5:fig:ex1_D}
 	\end{subfigure}
-	\caption{The progress of the dual simplex method in the primal and dual space.}	
+	\caption{The progress of the dual simplex method in the primal and dual space.}	\label{p1c5:fig:ex1}
 \end{figure}
 
-Some interesting features related to the progress of the dual simplex algorithm are worth highlighting. First, notice that the objective function is monotonically increasing in this case, since $x_{B(l)}\frac{\overline{c}_{j'}}{|v_{j'}|}$ is added to $-c_BB^{-1}b$ and $x_{B(l)} < 0$, meaning that the dual cost increases (recall the convention o having a minus sign so that the zeroth row correctly represent the objective function value). This illustrates the gradual loss of optimality in the search for (primal) feasibility. For a nondegerate problem, this can also be used as an argument for eventual convergence, since the dual objective value can only increase and is bounded by the primal optimal value. However, in the presence of dual degeneracy, that is, $\overline{c}_{j} = 0$ for some $j \in I_N$ in the optimal solution, the algorithm can suffer from cycling. As we seen before, that is an indication that the primal problem has multiple optima. 
+Some interesting features related to the progress of the dual simplex algorithm are worth highlighting. First, notice that the objective function is monotonically increasing in this case, since $x_{B(l)}\frac{\overline{c}_{j'}}{|v_{j'}|}$ is added to $-c_BB^{-1}b$ and $x_{B(l)} < 0$, meaning that the dual cost increases (recall the convention of having a minus sign so that the zeroth row correctly represent the objective function value, given by the negative of the value displayed in the rightmost column). This illustrates the gradual loss of optimality in the search for (primal) feasibility. For a nondegerate problem, this can also be used as an argument for eventual convergence, since the dual objective value can only increase and is bounded by the primal optimal value. However, in the presence of dual degeneracy, that is, $\overline{c}_{j} = 0$ for some $j \in I_N$ in the optimal solution, the algorithm can suffer from cycling. As we seen before, that is an indication that the primal problem has multiple optima. 
 
 The dual simplex method is often the best choice of algorithm, because it typically precludes the need of a Phase I type of method as it is often trivial to find initial dual feasible solutions (the origin, for example, is typically dual feasible in minimisation problems with nonnegative coefficients; similar trivial cases are also well known).
 
-Moreover, dual simplex is the algorithm of choice for resolving a linear programming problem when after finding an optimal solution, you modify the feasible region. Turns out that this procedure is in the core of the methods used to solve integer programming problems, as well as in the Benders decomposition, both topics we will explore further. The dual simplex method is also more successful than its primal counterpart in combinatorial optimisation problems, which are typically plagued with degeneracy. As we have seen, primal degeneracy simply means multiple dual optima, which are far less problematic under an algorithmic standpoint.
+Moreover, dual simplex is the algorithm of choice for resolving a linear programming problem when after finding an optimal solution, you modify the feasible region. Turns out that this procedure is in the core of the methods used to solve integer programming problems, as well as in the Benders decomposition, both topics we will explore later on. The dual simplex method is also more successful than its primal counterpart in combinatorial optimisation problems, which are typically plagued with degeneracy. As we have seen, primal degeneracy simply means multiple dual optima, which are far less problematic under an algorithmic standpoint.
 
 Most professional implementations of the simplex method use by default the dual simplex version. This has several computational reasons, in particular related to more effective Phase I and pricing methods for the dual counterpart.
 
  
+\section*{Exercises}
 
+\subsection*{Exercise 5.1: Duality in the transportation problem}
+\input{part_1/chapter_5/exercises/E51-dualtransp}
+
+\subsection*{Exercise 5.2: Dual simplex}
+\input{part_1/chapter_5/exercises/E52-dualsimplex}
+
+\subsection*{Exercise 5.3: Unboundedness and duality}
+\input{part_1/chapter_5/exercises/E53-unboundedness}
+
+\subsection*{Exercise 5.4: Dual in matrix form}
+\input{part_1/chapter_5/exercises/E54-dualmatrix}
+
+\subsection*{Exercise 5.5: Primal-dual conversion and complementary slackness}
+\input{part_1/chapter_5/exercises/E55-complementarity}
 
 
 

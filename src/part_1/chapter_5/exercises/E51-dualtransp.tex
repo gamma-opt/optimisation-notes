@@ -1,0 +1,40 @@
+Recall \href{https://mycourses.aalto.fi/mod/folder/view.php?id=651668}{problem 1.4} in which we solved a capacitated transportation problem, answer the following questions based on the dual prices interpretation. The tables with the arcs capacities and supply/demand settings are once more presented in Tables \ref{table:supdem} and \ref{table:arcs}.
+
+\begin{table}[h!]
+	\begin{subtable}[h]{0.4\textwidth}
+		\begin{center}
+			\begin{tabular}{c|cc}
+				\textbf{node} & \textbf{o1} & \textbf{o2} \\
+				\hline
+				\textbf{s1 / f1} & 80 / 60 & 400 / 300 \\
+				\textbf{s2 / f2} & 200 / 100 & 1500 / 1000 \\
+				\textbf{s3 / f3} & 200 / 200 & 300 / 500 \\
+			\end{tabular}
+		\end{center}
+		\caption{Supplies availability and demand per oil type [in L]}
+		\label{table:supdem}
+	\end{subtable}
+	\hfill
+	\begin{subtable}[h]{0.55\textwidth}
+		\begin{center}
+			\begin{tabular}{c|ccc}
+				& \textbf{f1} & \textbf{f2} & \textbf{f3}\\
+				& \textbf{o1/o2 (cap)} & \textbf{o1/o2 (cap)} & \textbf{o1/o2 (cap)}\\
+				\hline
+				\textbf{s1} & 5/- ($\infty$) & 5/18 (300) & -/- (0)\\
+				\textbf{s2} & 8/15 (300) & 9/12 (700) & 7/14 (600)\\
+				\textbf{s3} & -/- (0) & 10/20 ($\infty$) & 8/- ($\infty$)\\
+			\end{tabular}
+		\end{center}
+		\caption{Arcs costs per oil type [in \euro~ per L] and arc capacities [in L]}
+		\label{table:arcs}
+	\end{subtable}
+	\caption{Supply chain data}
+	\label{table:sc}
+\end{table}
+%
+\begin{itemize}
+	\item [(a)] What would be the price the company would be willing to pay for raising in one unit any of the supplies availability?
+
+	\item [(b)] What would be the price the company would be willing to pay for raising in one unit any of the arcs capacity?	
+\end{itemize}
