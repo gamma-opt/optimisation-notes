@@ -1,0 +1,27 @@
+Consider the following linear programming problem and its optimal tableau below:
+
+\begin{align*}
+	\mini & -2x_1 - x_2 + x_3 \\
+	\st   & x_1 + 2x_2 + x_3 \le 8 \\
+		  & -x_1 + x_2 - 2x_3 \le 4 \\
+		  & 3x_1 + x_2 \le 10 \\
+		  & x_1, x_2, x_3 \ge 0.	 
+\end{align*}
+
+\begin{center}
+	\begin{tabular}{c|cccccc|c}
+		        & $x_1$ & $x_2$ & $x_3$ & $x_4$ & $x_5$ & $x_6$ & RHS \\
+		\hline
+		    $z$ &   0   &   0   &   1.2 &   0.2 &   0   &   0.6 & -7.6 \\
+		\hline
+		  $x_1$ &   1   &   0   &  -0.2 &  -0.2 &   0   &   0.4 &  2.4  \\
+		  $x_2$ &   0   &   1   &   0.6 &   0.6 &   0   &  -0.2 &  2.8  \\
+		  $x_5$ &   0   &   0   &  -2.8 &  -0.8 &   1   &   0.6 &  3.6  \\
+	\end{tabular}	
+\end{center}
+
+
+\begin{itemize}
+	\item [(a)] If you were to choose between increasing in 1 unit the right hand side of any constraints, which one would you choose, and why? What is the effect of the increase on the optimal cost?
+	\item [(b)] Perform a sensitivity analysis on the model to discover what is the range of alteration in the RHS in which the same effect calculated in item (a) can be expected. \emph{HINT}: JuMP (from version 0.21.6) includes the function ``lp\_sensitivity\_report()'' that you can use to help performing the analysis.
+\end{itemize}

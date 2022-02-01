@@ -1,0 +1,16 @@
+Consider the the linear programming problem below with optimal basis $[x_1, x_2, x_5, x_6]$ and dual variables $p_1, \dots, p_4$.
+
+\begin{align*}
+	\maxi & 2x_1 + x_2 \\
+	\st   & 2x_1 + 2x_2 \le 9 \quad (p_1) \\
+	      & 2x_1 - x_2 \le 3 \quad (p_2) \\
+	      & x_1 \le 3 \quad (p_3) \\
+	      & x_2 \le 4 \quad (p_4) \\
+	      & x_1, x_2 \ge 0.
+\end{align*}
+
+\begin{itemize}
+	\item[(a)] Find the primal and dual optimal solutions. \emph{HINT}: You can use complementary slackness, once having the primal optimum, to finding the dual optimal solution.
+	\item[(b)] Suppose we add a new constraint $6x_1 - x_2 \leq 6$, classify the primal and dual former optimal points saying if they: (i) keep being optimal ; (ii) turn to be feasible but not optimal ; or (iii) turn infeasible.
+	\item[(c)] Consider the new problem from item (b), find the new dual optimal point through one dual simplex iteration. After that, find the primal optimum.
+\end{itemize}
