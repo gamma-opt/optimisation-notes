@@ -1,36 +1,36 @@
-Recall \href{https://mycourses.aalto.fi/mod/folder/view.php?id=651668}{problem 1.4} in which we solved a capacitated transportation problem, answer the following questions based on the dual prices interpretation. The tables with the arcs capacities and supply/demand settings are once more presented in Tables \ref{table:supdem} and \ref{table:arcs}.
+Recall Exercise 1.4 in which we solved a capacitated transportation problem, answer the following questions based on the dual prices interpretation. The tables with the arc capacities and supply/demand settings are once more presented in Tables \ref{table:c5_supdem} and \ref{table:c5_arcs}.
 
 \begin{table}[h!]
 	\begin{subtable}[h]{0.4\textwidth}
 		\begin{center}
-			\begin{tabular}{c|cc}
-				\textbf{node} & \textbf{o1} & \textbf{o2} \\
-				\hline
-				\textbf{s1 / f1} & 80 / 60 & 400 / 300 \\
-				\textbf{s2 / f2} & 200 / 100 & 1500 / 1000 \\
-				\textbf{s3 / f3} & 200 / 200 & 300 / 500 \\
-			\end{tabular}
+		\begin{tabular}{c|cc}
+			\textbf{node} & \textbf{p1} & \textbf{p2} \\
+			\hline
+			\textbf{s1 / d1} & 80 / 60 & 400 / 300 \\
+			\textbf{s2 / d2} & 200 / 100 & 1500 / 1000 \\
+			\textbf{s3 / d3} & 200 / 200 & 300 / 500 \\
+		\end{tabular}
 		\end{center}
 		\caption{Supplies availability and demand per oil type [in L]}
-		\label{table:supdem}
+		\label{table:c5_supdem}
 	\end{subtable}
 	\hfill
 	\begin{subtable}[h]{0.55\textwidth}
 		\begin{center}
 			\begin{tabular}{c|ccc}
-				& \textbf{f1} & \textbf{f2} & \textbf{f3}\\
-				& \textbf{o1/o2 (cap)} & \textbf{o1/o2 (cap)} & \textbf{o1/o2 (cap)}\\
+				 & \textbf{d1} & \textbf{d2} & \textbf{d3}\\
+				 & \textbf{p1/p2 (cap)} & \textbf{p1/p2 (cap)} & \textbf{p1/p2 (cap)}\\
 				\hline
 				\textbf{s1} & 5/- ($\infty$) & 5/18 (300) & -/- (0)\\
 				\textbf{s2} & 8/15 (300) & 9/12 (700) & 7/14 (600)\\
 				\textbf{s3} & -/- (0) & 10/20 ($\infty$) & 8/- ($\infty$)\\
 			\end{tabular}
 		\end{center}
-		\caption{Arcs costs per oil type [in \euro~ per L] and arc capacities [in L]}
-		\label{table:arcs}
+		\caption{Arcs costs per oil type [in \euro \ per L] and arcs` capacities [in L]}
+		\label{table:c5_arcs}
 	\end{subtable}
 	\caption{Supply chain data}
-	\label{table:sc}
+	\label{table:c5_sc}
 \end{table}
 %
 \begin{itemize}
