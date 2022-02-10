@@ -167,7 +167,7 @@ A final point to note is that these operations are related to each other in term
 Then, adding a constraint of the form $p^\top A_{n+1} \leq c_{n+1}$ is equivalent to adding a variable to $P$, exactly as discussed in Section \ref{section_611}.
 
 
-\subsection{Changing input data}
+\subsection{Changing input data} \label{section_613}
 
 We now consider how changes in the input data can influence the optimality of a given basis. Specifically, we consider how to predict whether changes in the vector of independent terms $b$ and objective coefficients $c$ will affect the optimality of the problem. Notice that variations in the coefficient matrix $A$ are left aside.
 
@@ -387,7 +387,7 @@ The existence of extreme rays can be used to verify for unboundedness in linear 
 
 We can now expand the result to general polyhedral sets.
 
-\begin{theorem}[Unboundedness in polyhedral sets] 
+\begin{theorem}[Unboundedness in polyhedral sets]\label{p1c6:thm:unb_polyhedra} 
 	Let $(P) : \mini\braces{c^\top x : x \in X}$ with $X = \braces{x \in \reals^n : Ax \geq b}$ and assume that the feasible set has at least one extreme point. Then, the optimal value is $-\infty$ if and only if $c^\top d < 0$.  	
 \end{theorem}
 
