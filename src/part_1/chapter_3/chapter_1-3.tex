@@ -394,18 +394,18 @@ We will see later that we can devise a simply rule to define a value for $\theta
 
 A simple yet efficient way of deciding which nonbasic component $j \in I_N$ to make basic is to consider the immediate potential benefit that it would have for the objective function value. 
 
-Specifically, if we move along the feasible direction $d$ as previously defined, we have that the objective function value changes by 
+Using objective function $c^\top x$, if we move along the feasible direction $d$ as previously defined, we have that the objective function value changes by 
 %
 \begin{equation*}
-	c^\top d = c_B^\top d_B + c_j = c_j - c_BB^{-1}A_j,
+	c^\top d = c_B^\top d_B + c_j = c_j - c_B^\top B^{-1}A_j,
 \end{equation*}
 %
-where $c_B = (c_{B(1)}, \dots, c_{B(m)})$. The quantity $c_j - c_BB^{-1}A_j$ can be used, for example, in a greedy fashion, meaning that we choose the nonbasic variable index $j \in I_N$ with greatest \emph{potential of improvement}.
+where $c_B = [c_{B(1)}, \dots, c_{B(m)}]$. The quantity $c_j - c_BB^{-1}A_j$ can be used, for example, in a greedy fashion, meaning that we choose the nonbasic variable index $j \in I_N$ with greatest \emph{potential of improvement}.
 
 First, let us formaly define this quantity, which is know as the \emph{reduced cost}. 
 
 \begin{definition}[Reduced cost]
-	Let $x$ be a basic solution associated with the basis $B$ and objective value vector $c_B$. For each nonbasic variable $x_j$, with $j \in I_N$, we define the reduced cost $\overline{c}_j$ as
+	Let $x$ be a basic solution associated with the basis $B$ and let $c_B = [c_{B(1)}, \dots, c_{B(m)}]$ be the objective function coefficients associated with the basis $B$. For each nonbasic variable $x_j$, with $j \in I_N$, we define the reduced cost $\overline{c}_j$ as
 	%
 	\begin{equation*}
 		\overline{c}_j = c_j - c_B^\top B^{-1}A_j.
