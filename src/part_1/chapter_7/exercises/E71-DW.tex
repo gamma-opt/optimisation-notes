@@ -1,0 +1,39 @@
+Consider the following linear programming problem:
+
+\begin{center}
+\begin{tabular}{cccccccc}
+	 $\mini	$ 	&   		& $-x_{12}$	& 		& 		& $-x_{22}$	& $-x_{23}$	& 		\\
+ 	 $\st $		& $x_{11}$ 	& $+x_{12}$& $+x_{13}$&		&		&		& = 20   	\\
+	 		&		&		&		& $x_{21}$	& $+x_{22}$& $+x_{23}$& = 20   	\\
+	 		& $-x_{11}$ 	&		&		& $-x_{21}$	&		& 		& = -20   	\\
+			& 		& $-x_{12}$	&		&		& $-x_{22}$	&		& = -10   	\\
+			&		&		& $-x_{13}$	&		&		& $-x_{23}$	& = -10   	\\
+			& $x_{11}$ 	&		&		& 		& 		& $+x_{23}$& $\le$ 15   	\\
+			& $x_{11,}$ 	& $x_{12},$	& $x_{13},$	& $x_{21},$	& $x_{22},$	& $x_{23}$	& $\ge$ 0   	\\
+\end{tabular}	
+\end{center}
+
+We wish to solve this problem using Dantzig-Wolfe decomposition, where the constraint $x_{11}+x_{23} \le 15$ is the only ``coupling'' constraint and the remaining constraints define a single subproblem.
+
+\subsubsection*{a)}
+Consider the following two extreme points for the subproblem:
+
+$$x^1 = (20,0,0,0,10,10),$$
+
+and
+
+$$x^2 = (0,10,10,20,0,0).$$
+
+Construct a main problem in which $x$ is constrained to be a convex combination of $x^1$ and $x^2$. Find the optimal primal and dual solutions for the main problem.
+
+\subsubsection*{b)}
+
+Using the dual variables calculated in part a), formulate the subproblem and find its optimal solution.
+
+\subsubsection*{c)}
+
+What is the reduced cost of the variable $\lambda_3$ associated with the extreme point $x^3$ obtained from solving the subproblem in part b)?
+
+\subsubsection*{d)}
+
+Compute a lower bound on the optimal cost.
