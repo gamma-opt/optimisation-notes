@@ -1,10 +1,10 @@
 \section{Large-scale problems} \label{section_71}
 
-We now consider the notion of \emph{decomposition}, which consists of a general term used in the context of mathematical programming that refers to solution methods that utilise some separability mechanism to more efficiently solve large-scale problems.
+In this chapter, we consider the notion of \emph{decomposition}, which consists of a general term used in the context of mathematical programming to refer to solution methods that utilise some separability mechanism to more efficiently solve large-scale problems.
 
-In general, decomposition methods are based on the premise that it is more efficient, under a computational resource standpoint, to repeatedly resolve a (collection of) smaller instances of a linear programming problem than to solve the full-scale original problem. More recently, with the widespread adoption of multithreaded processors and computing clusters with multiple nodes, further perspectives have become attractive by means of parallelisation strategies, which can yield considerable computational savings. 
+In general, decomposition methods are based on the premise that it is more efficient, under a computational standpoint, to repeatedly resolve a (collection of) smaller instances of a problem than to solve the full-scale original problem. More recently, with the widespread adoption of multithreaded processors and computing clusters with multiple nodes, decomposition methods have become attractive as parallelisation strategies, which can yield considerable computational savings. 
 
-There a mainly two-classes of decomposition methods. The first class utilises the  explicit representation of polyhedral sets, as stated in Theorem \ref{p1c6:thm:resolution_theorem}, to iteratively reconstruct the full-scale problem, in the hope that the structure containing the optimal vertex will be successfully reconstructed at some point before all of the problem is reconstructed. It turns out that this is the case in many applications, which is precisely the feature that render these methods very efficient in some contexts. This is the class of methods we are going to analyse in this chapter, first the Dantzig-Wolfe decomposition and related column generation, and then its equivalent dual method, generally known as Benders' decomposition.
+There a mainly two-classes of decomposition methods. The first class utilises the explicit representation of polyhedral sets, as stated in Theorem \ref{p1c6:thm:resolution_theorem}, to iteratively reconstruct the full-scale problem, with the hope that the structure containing the optimal vertex will be successfully reconstructed before all of the problem itself is reconstructed. It turns out that this is the case in many applications, which is precisely the feature that render these methods very efficient in some contexts. This is the class of methods we are going to analyse in this chapter, first the Dantzig-Wolfe decomposition and related column generation, and then its equivalent dual method, generally known as Benders' decomposition.
 
 %TODO: Add appropriate references.
 
@@ -13,7 +13,7 @@ The second class of methods utilises Lagrangian duality for obtaining separabili
 In either case, decomposition methods are designed in a way that they seek to break problems into easier parts by removing linking elements. Specifically, let 
 %
 \begin{equation*}
-	(P) : \maxi \braces{c^\top x : x \in X},
+	(P) : \mini \braces{c^\top x : x \in X},
 \end{equation*}
 %
 where $X = \bigcap_{k=1}^K X_k,$ for some $K > 0$, and 
@@ -27,8 +27,7 @@ That is, $X$ is the intersection of $K$ standard-form polyhedral sets. Our objec
 \begin{center}
     \begin{tabular}{rcccc}
 	$(P): \maxi_x$ & $c_1^\top x_1$ & $+\dots+$ & $c_K^\top x_K$ & \\
-	        $\st$  & $A_1x_1$ & $+\dots+$ & $A_Kx_K$ & $=b$ \\
-	               & $D_1x_1$ &           &          & $= d_1$ \\
+	        $\st$  & $D_1x_1$ &           &          & $= d_1$ \\
 	               &          & $\ddots$  &          & $\vdots$ \\
 	               &          &           & $D_Kx_K$ & $= d_K$ \\
 	               &  $x_1$,  & $\dots$,  & $x_K$    & $\in \reals^n_+$ 
@@ -38,13 +37,19 @@ That is, $X$ is the intersection of $K$ standard-form polyhedral sets. Our objec
 has a structure that immediately allows for separation. That is, $P$ could be solved as $K$ independent problems 
 %
 \begin{equation*}
-	P_k : \maxi \braces{c_k^\top x_k : x_k \in X_k},	
+	P_k : \mini \braces{c_k^\top x_k : x_k \in X_k}	
 \end{equation*}
 %
-in parallel and then combine their individual solutions onto a solution for $P$, simply by making $\overline{x} = [x_k]_{k=1}^K$ and $c^\top \overline{x} = \sum_{i=1}^K c_k^\top \overline{x}_k$. Notice that, if we were to assume that the solution time scales linearly (it does not,; it grows faster than linear) and $K=10$, then solving $P$ like this would be ten fold faster (that is not true; there are bottlenecks and other considerations to take into account, but the point stands). 
+in parallel and then combine their individual solutions onto a solution for $P$, simply by making $\overline{x} = [x_k]_{k=1}^K$ and $c^\top \overline{x} = \sum_{i=1}^K c_k^\top \overline{x}_k$. Notice that, if we were to assume that the solution time scales linearly (it does not; it grows faster than linear) and $K=10$, then solving $P$ as $K$ separated problems would be ten times faster (that is not true; there are bottlenecks and other considerations to take into account, but the point stands). 
 
-Unfortunately, \emph{complicating structures} often compromise this natural separability, preventing one from being able to directly exploit this idea. Specifically, two types of complicating structures can be observed. The first is of the form of \emph{complicating constraint}. That is, we observe that a constraint is such that it connects variables from multiple of the subsets $X_k$. In this case, we would notice that $P$ has an additional constraint of the form
-
+Unfortunately, \emph{complicating structures} often compromise this natural separability, preventing one from being able to directly exploit this idea. Specifically, two types of complicating structures can be observed. The first is of the form of \emph{complicating constraint}. That is, we observe that a constraint is such that it connects variables from (some of) the subsets $X_k$. In this case, we would notice that $P$ has an additional constraint of the form
+%
+\begin{equation*}
+	A_1x_1 + \dots + A_Kx_K = b,
+\end{equation*}
+%
+which precludes separability, since the problem structure becomes
+% 
 \begin{center}
 	\begin{tabular}{rcccc}
 	    $P':  \maxi_x$ & $c_1^\top x_1$ & $+\dots+$ & $c_K^\top x_K$ & \\
@@ -56,7 +61,7 @@ Unfortunately, \emph{complicating structures} often compromise this natural sepa
 	\end{tabular}
 \end{center}
 
-The other type of complicating structure is the case in which the same set of decision variable is present in multiple constraints, or multiple subsets $X_k$. in this case, we observe that problem $P$ takes the form of
+The other type of complicating structure is the case in which the same set of decision variable is present in multiple constraints, or multiple subsets $X_k$. In this case, we observe that variables of a subproblem $k \in \braces{1,\dots,K}$ has nonzero coefficient in another subproblem $k' \neq k$, $k' \in \braces{1,\dots,K}$. Hence, problem $P$ takes the form of
 %
 \begin{center}
 	\begin{tabular}{rccccc}
@@ -68,14 +73,14 @@ The other type of complicating structure is the case in which the same set of de
 	\end{tabular}
 \end{center}
 %
-The challenging aspect is that, depending on the type of complicating structure, a specific method becomes more suitable. Therefore, being able to identify these structures is one of the key success factors in terms of the chosen method performance. As a general rule, problems with complicating constraints (as $P'$) are suitable to be solved by a delayed variable generation method such as column generation. Analogously, problem with complicating variables ($P''$)are better suited for employing delayed constraint generation methods such as Benders decomposition. 
+The challenging aspect is that, depending on the type of complicating structure, a specific method becomes more suitable. Therefore, being able to identify these structures is one of the key success factors in terms of the chosen method performance. As a general rule, problems with complicating constraints (as $P'$) are suitable to be solved by a delayed variable generation method such as column generation. Analogously, problem with complicating variables ($P''$) are better suited for employing delayed constraint generation methods such as Benders decomposition. 
 
-The development of professional-grade code employing decomposition methods is a somewhat recent occurrence. The commercial solver CPLEX offer a Benders decomposition implementation that requires the user to specify the separable structure. On the other hand, although there are some available frameworks for implementing column generation-based methods, these tend to be more ad hoc occurrences, yet reaping impressive results.  
+The development of professional-grade code employing decomposition methods is a somewhat recent occurrence. The commercial solver CPLEX offers a Benders decomposition implementation that requires the user to specify the separable structure. On the other hand, although there are some available frameworks for implementing column generation-based methods, these tend to be more ad hoc occurrences, yet often reaping impressive results.  
 
 
 \section{Dantzig-Wolfe decomposition and column generation} \label{section_72}
 
-We start with the Dantzig-Wolfe decomposition, which consists of an alternative approach for reducing memory requirements when solving large-scale linear programming problems. Then, we show how this can be expanded further with the notion of delayed generation to yield a truly decomposed problem.
+We start with the Dantzig-Wolfe decomposition, which consists of an alternative approach for reducing memory requirements when solving large-scale linear programming problems. Then, we show how this can be expanded further with the notion of delayed variable generation to yield a truly decomposed problem.
 
 
 \subsection{Dantzig-Wolfe decomposition}
@@ -88,7 +93,7 @@ As before, let $P_k = \braces{x_k \geq 0 : D_kx_k = d}$, with $P_k \neq \emptyse
 	& x_k \in P_k, \ \forall k \in \braces{1,\dots,K}. 
 \end{align*}
 %
-Notice that $P$ has a complicating constraint structure, due to the constraints $\sum_{k=1}^K A_k x_k = b$. In order to devise a decomposition method for this setting, let us first assume that we have available for each of the set $P_k$, $k \in K$, (i) all extreme points, represented by $x_k^j$, $\forall j \in J_k$; and (ii) all extreme rays $w_k^r$, $\forall r \in R_k$. As one might suspect, this is in principle a demanding assumption, but one that we will be able to drop later on.
+Notice that $P$ has a complicating constraint structure, due to the constraints $\sum_{k=1}^K A_k x_k = b$. In order to devise a decomposition method for this setting, let us first assume that we have available for each of the sets $P_k$, $k \in \braces{1,\dots,K}$, (i) all extreme points, represented by $x_k^j$, $\forall j \in J_k$; and (ii) all extreme rays $w_k^r$, $\forall r \in R_k$. As one might suspect, this is in principle a demanding assumption, but one that we will be able to drop later on.
 
 Using the Resolution theorem (Theorem \ref{p1c6:thm:resolution_theorem}), we know that any element of $P_k$ can be represented as 
 %
@@ -103,8 +108,8 @@ Using the identity represented in \eqref{p1c7:eq:resolution_representation}, we 
 \begin{align} 
 	(P_M) : \mini \ & \sum_{k =1}^K \left(\sum_{j \in J_k} \lambda_k^jc_k ^\top x^j_k   + \sum_{r \in R_k} \theta_{k}^rc_k^\top w_k^r \right)	\nonumber\\
 	\st & \sum_{k = 1}^K \left(\sum_{j \in J_k}\lambda_k^j A_k x_k^j + \sum_{r \in R_k} \theta_k^r A_k w_k^r\right) = b \label{p1c7:eq:pm_const}\\
-	& \sum_{j \in J_k}\lambda_k^j = 1, \ \forall k \in \braces{1,\dots,K} \label{p1c7:eq:cc_const}\\
-	& \lambda_k^j \geq 0,  \theta_k^r \geq 0, \forall j \in J_k, r \in R_k, k \in \braces{k}_{k=1}^K. \nonumber 
+	& \sum_{j \in J_k}\lambda_k^j = 1, \ \forall k \in \braces{1, \dots, K} \label{p1c7:eq:cc_const}\\
+	& \lambda_k^j \geq 0,  \theta_k^r \geq 0, \forall j \in J_k, r \in R_k, k \in \braces{1, \dots, K}. \nonumber 
 \end{align}
 %
 Notice that \eqref{p1c7:eq:pm_const} and \eqref{p1c7:eq:cc_const} can be equivalently represented as
@@ -115,7 +120,7 @@ Notice that \eqref{p1c7:eq:pm_const} and \eqref{p1c7:eq:cc_const} can be equival
 %	  	   
 where $e_k$ is the unit vector (i.e., with 1 in the $k^\text{th}$ component, and $0$ otherwise). Notice that $P_M$ has as many variables as the number of extreme points and extreme rays of $P$, which is likely to be prohibitively large.
 
-However, we can still solve it use a slightly modified version of the revised simplex method. To see that, let us consider that $b$ is a $m$-dimensional vector. Then, basis for $P_M$ would be of size $m + K$, since we have the original $m$ constraints plus one for each convex combination (arising from each subproblem $k \in K$). This means that we are effectively working with $(m + K) \times (m + K)$ matrices, i.e., the basic matrix $B$ and its inverse $B^{-1}$. Another element we need is the vector of simplex multipliers $p$, which is a vector of dimension $(m + K)$.
+However, we can still solve it if we use a slightly modified version of the revised simplex method. To see that, let us consider that $b$ is a $m$-dimensional vector. Then, a basis for $P_M$ would be of size $m + K$, since we have the original $m$ constraints plus one for each convex combination (arising from each subproblem $k \in K$). This means that we are effectively working with $(m + K) \times (m + K)$ matrices, i.e., the basic matrix $B$ and its inverse $B^{-1}$. Another element we need is the vector of simplex multipliers $p$, which is a vector of dimension $(m + K)$.
 
 The issue with the representation adopted in $P_M$ arises when we are required to calculate the reduced costs of \emph{all} the nonbasic variables, since this is the critical issue for its tractability. That is where the method provides a clever solution. To see that, notice that the vector $p$ is formed by components $p^\top = (q, r_1, \dots, r_K)^\top$, where $q$ represent the $m$ dual variables associated with \eqref{p1c7:eq:pm_const}, and $r_k$, $\forall k \in \braces{1,\dots,K}$, are the dual variables associated with \eqref{p1c7:eq:cc_const}. 
 
@@ -130,7 +135,7 @@ Analogously, the reduced cost associated with extreme-ray variables $\theta_k^r$
 	c_k^\top w_k^r - [q^\top ~ r_1 ~ \dots ~ r_K]	\begin{bmatrix} A_k w_k^r \\ 0 \end{bmatrix} = (c_k^\top - q^\top A_k)w_k^r.
 \end{equation}
 %
-The main difference is how we assess the reduced costs of the non-basic variables. Instead of explicitly calculating the reduced costs of all variables, we instead rely on an optimisation-based approach to consider them only implicitly. For that, we can use the subproblem 
+The main difference is how we assess the reduced costs of the non-basic variables. Instead of explicitly calculating the reduced costs of all variables, we instead rely on an optimisation-based approach to consider them only \emph{implicitly}. For that, we can use the subproblem 
 %
 \begin{align*}
 	(S_k):  \mini_x \overline{c}_k = \ & (c_k^\top - q^\top A_k)x_k \\
@@ -161,7 +166,9 @@ Otherwise, being $S_k$ bounded, i.e., $\overline{c}_k < \infty$, two other cases
 %
 associated with $\lambda_k^j$ and make it enter the basis.
 
-The last possible case is when we observe that $r_k < \overline{c}_k < \infty$. In this case, the pricing problem could not identify beneficial, and therefore there is not one, extreme point or ray with negative reduced cost for subproblem $k$. If this condition holds for all $k = 1, dots, K$, then all necessary extreme points and rays to characterise the region where the optimal extreme point (or one of the extreme points, in the case of multiple solutions) lies and the optimal solution can be recovered. 
+The last possible case is when we observe that $r_k < \overline{c}_k < \infty$. In this case, the pricing problem could not identify a beneficial variable to be made basic, and therefore there is not an extreme point or ray with negative reduced cost for subproblem $k$. If this condition holds for all $k = 1, dots, K$, then all necessary extreme points and rays to characterise the region where the optimal extreme point lies (or one of the extreme points, in the case of multiple solutions) have been found and the optimal solution can be recovered. 
+
+Algorithm \ref{p1c7:alg:DW} summarises the Dantzig-Wolfe method. The two most remarkable features of the method are (i) the fact that columns are not explicitly represented, but generated ``on demand'' and (ii) the fact that the pricing problem requires the solution of another linear programming problem. Analogously to the simplex method, it might be necessary to employ a ``Phase 1'' approach to obtain an initial basis to start the algorithm.
 
 \begin{algorithm}[h]
 \caption{Dantzig-Wolfe decomposition} \label{p1c7:alg:DW}
@@ -186,25 +193,14 @@ The last possible case is when we observe that $r_k < \overline{c}_k < \infty$. 
 \end{algorithmic}  
 \end{algorithm}
 
-Algorithm \ref{p1c7:alg:DW} summarises the Dantzig-Wolfe method. The two most remarkable features of the method are (i) the fact that columns are not explicitly represented, but generated ``on demand'' and (ii) the fact that the pricing problem requires the solution of another linear programming problem. Analogously to the simplex method, it might be necessary to employ a ``Phase 1'' approach to obtain an initial basis.
+Under a theoretical standpoint, the Dantzig-Wolfe method is equally efficient as the revised simplex method. There are however two settings where the decomposition is most favourable. The first, consists of applications in which the pricing problem can be solved in a closed-form, without invoking a method to solve an additional linear programming subproblem. There are a few examples in which this happens to be the case and certainly many others yet to be discovered.
 
-Under a computational standpoint, the use of the Dantzig-Wole method is typically not faster than the revised simplex method. There are however two settings where the decomposition is most favourable. The first, consists of applications in which the pricing problem can be solved in a closed-form, without invoking a method to solve an additional linear programming subproblem. There are a few examples in which this happens to be the case and certainly many others yet to be discovered.
-
-Secondly, the memory requirements of the Dantzig-Wolfe decomposition makes it an interesting approach for very large-scale problems. The original simplex method requires an amount of memory space that is $O((m + K \times m_0)^2)$, where $m_0$ is the number of rows of $D_k$, for $\forall k \in \braces{1,\dots, K}$. This is essentially the size of the inverse basic matrix $B^{-1}$. In contrast, the Dantzig-Wolfe reformulation requires $O((m + K)^2) + K \times O(m_0^2)$ or memory space, being the first term referring to the main problem inverse basic matrix and the second to the pricing problems basic matrices. For example, for a problem in which $m = m_0$ and much larger than, say, $K=10$, this implies that the space memory space required by the Dantzig-Wolfe reformulation is 100 times smaller, which can substantially enlarge the range of large-scale problems that can be solved.
+Secondly, the memory requirements of the Dantzig-Wolfe decomposition makes it an interesting approach for very large-scale problems. The original simplex method requires an amount of memory space that is $O((m + K \times m_0)^2)$, where $m_0$ is the number of rows of $D_k$, for $\forall k \in \braces{1,\dots, K}$. This is essentially the size of the inverse basic matrix $B^{-1}$. In contrast, the Dantzig-Wolfe reformulation requires $O((m + K)^2) + K \times O(m_0^2)$ of memory space, with the first term referring to the main problem inverse basic matrix and the second to the pricing problems basic matrices. For example, for a problem in which $m = m_0$ and much larger than, say, $K=10$, this implies that the memory space required by the Dantzig-Wolfe reformulation is 100 times smaller, which can substantially enlarge the range of large-scale problems that can be solved for the same amount of computational resources available.
 
 
 \subsection{Delayed column generation}
  
-The term column generation can also refer to a related, and perhaps more wider known, variant of the Dantzig-Wolfe decomposition. In that, the main problem $P_M$ is also repeatedly solved, each time being incremented by one additional variable, that associated with the column(s) identified with negative reduced costs in the pricing problem $S_k$, $k \in \braces{1,\dots,K}$. This is particularly useful for problems exponentially increasing number of variables, or with a large number of variables associated with the complicating constraints (i.e., when $m$ is a large number).
-
-The (delayed) column generation method is presented in Algorithm \ref{p1c7:alg:CG}. Notice in Line \ref{p1c7:alg:CGcolgen} the step that is generating new columns in the main problem $P_M$, represented in the statement $\tilde{X}_k \gets \tilde{X}_k \cup \braces{\overline{x}^{*l}_k}$. That is precisely when a new variable $\lambda_k^{t}$ is introduced in the $P_M$ with coefficients represented by the column
-\begin{equation*}
-	\begin{pmatrix}
-            c_k\overline{x}_k^{*l}\\
-            A_k\overline{x}_k^{*l}\\
-            e_k
-    \end{pmatrix}.
-\end{equation*}
+The term column generation can also refer to a related, and perhaps more widely known, variant of the Dantzig-Wolfe decomposition. In that, the main problem $P_M$ is also repeatedly solved, each time being incremented by an additional variable (or variables) associated with the column(s) identified with negative reduced costs in the pricing problem $S_k$, $k \in \braces{1,\dots,K}$. This is particularly useful for problems with exponentially increasing number of variables, or with a large number of variables associated with the complicating constraints (i.e., when $m$ is a large number).
 
 \begin{algorithm}[h]
     \caption{Column generation algorithm} \label{p1c7:alg:CG}
@@ -227,19 +223,31 @@ The (delayed) column generation method is presented in Algorithm \ref{p1c7:alg:C
     \end{algorithmic}
 \end{algorithm}
 
-Notice that the unbounded case is not treated to simplify the pseudocode, but could be trivially adapted to return extreme rays to be used in $P_M$, like the previous variant. Also, notice that the method is assumed to be initialised with a collection of columns (i.e., extreme points) $\tilde{X}_k$, which can normally be obtained from inspection or using a specialised method
+The (delayed) column generation method is presented in Algorithm \ref{p1c7:alg:CG}. Notice in Line \ref{p1c7:alg:CGcolgen} the step that is generating new columns in the main problem $P_M$, represented in the statement $\tilde{X}_k \gets \tilde{X}_k \cup \braces{\overline{x}^{*l}_k}$. That is precisely when new variables $\lambda_k^{t}$ are introduced in the $P_M$ with coefficients represented by the column
+%
+\begin{equation*}
+	\begin{pmatrix}
+            c_k\overline{x}_k^{*l}\\
+            A_k\overline{x}_k^{*l}\\
+            e_k
+    \end{pmatrix}.
+\end{equation*}
 
-We finalise showing that the Dantzig-Wolfe and column generation methods can provide information related to its own convergence. This means that we have access to an optimality bound tat can be used to monitor the convergence of the method and allow for a preemptive termination of the method given an acceptable tolerance. This bounding property is stated in Theorem \ref{p1c7:thm:CG_bound}.
+Notice that the unbounded case is not treated to simplify the pseudocode, but could be trivially adapted to return extreme rays to be used in $P_M$, like the previous variant presented in Algorithm \ref{p1c7:alg:DW}. Also, notice that the method is assumed to be initialised with a collection of columns (i.e., extreme points) $\tilde{X}_k$, which can normally be obtained from inspection or using a heuristic method.
+
+We finalise showing that the Dantzig-Wolfe and column generation methods can provide information related to its own convergence. This means that we have access to an optimality bound that can be used to monitor the convergence of the method and allow for a preemptive termination given an acceptable tolerance. This bounding property is stated in Theorem \ref{p1c7:thm:CG_bound}.
 
 \begin{theorem} \label{p1c7:thm:CG_bound}
-	Suppose $P_M$ is feasible with finite optimal value $\overline{z}$. Let $z$ be the cost associated with $P_M$ at a given iteration $l$ of the DW method. Also, let $r_k$ be the dual variable associated with the convex combination of the $k^\text{th}$ subproblem and $z_k$ its optimal cost. Then
+	Suppose $P$ is feasible with finite optimal value $z$. Let $\overline{z}$ be the optimal cost associated with $P_M$ at a given iteration $l$ of the Dantzig-Wolfe method. Also, let $r_k$ be the dual variable associated with the convex combination of the $k^\text{th}$ subproblem and $z_k$ its optimal cost. Then
+		%
 		\begin{equation*}
-			z + \sum_{k=1}^K (z_k - r_k) \leq \overline{z} \leq z.	
+			z + \sum_{k=1}^K (z_k - r_k) \leq z \leq \overline{z}.	
 		\end{equation*}
 \end{theorem}
 
 \begin{proof}
-	$\overline{z} \leq z$ is because a solution for $P_M$ is primal feasible and thus feasible for $P$.
+	
+	We know that $z \leq \overline{z}$, because a solution for $P_M$ is primal feasible and thus feasible for $P$.
 	
 	Now, consider the dual of $P_M$
 	%
@@ -251,12 +259,11 @@ We finalise showing that the Dantzig-Wolfe and column generation methods can pro
 	%
 	We know that strong duality holds, and thus $z = q^\top b + \sum_{k=1}^K r_k $ for dual variables $(q, r_1, \dots, r_K)$. 
 	
-	Now, since $z_k$ are finite, we have $\min_{j \in J_k}(c_k^\top x_k^j - q^\top A_k x_k^j) = z_k$ and $\min_{r \in R_k}(c_k^\top w_k^r - q^\top D_k w_k^r) \geq 0$,
-	meaning that $(q, z_1, \dots, z_K)$ is feasible to $D_M$. By weak duality, we have that
+	Now, since $z_k$ are finite, we have $\min_{j \in J_k}(c_k^\top x_k^j - q^\top A_k x_k^j) = z_k$ and $\min_{r \in R_k}(c_k^\top w_k^r - q^\top D_k w_k^r) \geq 0$, meaning that $(q, z_1, \dots, z_K)$ is feasible to $D_M$. By weak duality, we have that
 	%
-	\begin{align*}
-		\overline{z} & \geq q^\top b + \sum_{k=1}^K	z_k = q^\top b + \sum_{k=1}^K r_k + \sum_{k=1}^K (z_k - r_k) = z + \sum_{k=1}^K (z_k - r_k). \qedhere	
-	\end{align*}
+	\begin{equation*}
+		z \geq q^\top b + \sum_{k=1}^K	z_k = q^\top b + \sum_{k=1}^K r_k + \sum_{k=1}^K (z_k - r_k) = z + \sum_{k=1}^K (z_k - r_k). \qedhere	
+	\end{equation*}
 \end{proof}
 
 
@@ -264,31 +271,31 @@ We finalise showing that the Dantzig-Wolfe and column generation methods can pro
 \section{Benders decomposition}
 
 
-Benders decomposition is an alternative decomposition method, suitable for settings in which one observe the presence of \emph{complicating variables}. Differently than the Dantzig-Wolfe decomposition, the method presume from the get-go the employment of delayed constraint generation. 
+Benders decomposition is an alternative decomposition method, suitable for settings in which \emph{complicating variables} are present. Differently than the Dantzig-Wolfe decomposition, the method presume from the get-go the employment of delayed constraint generation. 
 
 Benders decomposition has made significant inroads into practical applications. Not only it is extensively used in problems related to multi-period decision making under uncertainty, but it is also available in the commercial solver CPLEX to be used directly, only requiring the user to indicate (or annotate) which are the complicating variables. 
 
 Once again, let the problem $P$ be defined as
 %
 \begin{align*}
-	(P) :\mini_{x,y} &c^\top x + \sum_{k=1}^K f_k^\top y_k \\
-		  &Ax = b \\
-		  &C_k x + D_k y_k = e_k,  & &k =1, \dots, K \\
-		  &x \geq 0, y_k \geq 0, & &k = 1,\dots, K. 
+	(P) :\mini_{x,y} & c^\top x + \sum_{k=1}^K f_k^\top y_k \\
+		  			 & Ax = b \\
+		  			 & C_k x + D_k y_k = e_k, \ k \in \braces{1, \dots, K} \\
+		  			 & x \geq 0, y_k \geq 0, \ k \in \braces{1,\dots, K}. 
 \end{align*}
 %
 Notice that this is equivalent to the problem $P'$ presented in Section \ref{section_71}, but with a notation modified to make it easier to track how the terms are separated in the process. Again, we can see that $P$ has a set of complicating variables $x$, which becomes obvious when we recast the problem as
 %
 \begin{center}
-\begin{tabular}{cccccccccc}
-	 $c^\top x$ & + & $f_1^\top y_1$ & + & $f_2^\top y_2$ & + & $\dots$ & + & $f_k^\top y_k$  &  \\
- 	 $Ax$       &   &                &   &                &   &         &   &                 & = $b$ \\
-	 $C_1 x$    & + & $D_1 y_1$      &   &                &   &         &   &                 & = $e_1$  \\
-	 $C_2 x$    &   &                & + & $D_2 y_2$      &   &         &   &                 & = $e_2$    \\
-	 $\vdots$   &   &  $\vdots$      &   &                &   & $\ddots$&   &                 &  $\vdots$   \\
-	 $C_K x$    &   &                &   &                &   &         & + & $D_k y_k$       & = $e_K$  \\
-	 $x$        &   & $y_1$          &   &  $y_2$         &   & $\dots$ &   & $y_k$           & $\geq 0$  
-\end{tabular}	
+	\begin{tabular}{cccccccccc}
+		 $c^\top x$ & + & $f_1^\top y_1$ & + & $f_2^\top y_2$ & + & $\dots$ & + & $f_k^\top y_k$  &  \\
+	 	 $Ax$       &   &                &   &                &   &         &   &                 & = $b$ \\
+		 $C_1 x$    & + & $D_1 y_1$      &   &                &   &         &   &                 & = $e_1$  \\
+		 $C_2 x$    &   &                & + & $D_2 y_2$      &   &         &   &                 & = $e_2$    \\
+		 $\vdots$   &   &  $\vdots$      &   &                &   & $\ddots$&   &                 &  $\vdots$   \\
+		 $C_K x$    &   &                &   &                &   &         & + & $D_k y_k$       & = $e_K$  \\
+		 $x$        &   & $y_1$          &   &  $y_2$         &   & $\dots$ &   & $y_k$           & $\geq 0$  
+	\end{tabular}	
 \end{center}
  
 This structure is sometimes referred to as block-angular, referring to the initial block of columns on the left (as many as there are components in $x$) and the diagonal structure representing the elements associated with the variables $y$. In this case, notice that if the variable $x$ were to be removed, or fixed to a value $x = \overline{x}$, the problem becomes separable in $K$ independent parts
@@ -324,13 +331,13 @@ First, let us consider the dual formulation of the subproblems $k \in \braces{1,
 	\st   & p_k^\top D_k \leq f_k.	 
 \end{align*}
 %
-The main advantage of utilising the equivalent dual formulation is to ``move'' the original decision variable $x$ to the objective function, a trick that will present its benefits shortly. Next, let 
+The main advantage of utilising the equivalent dual formulation is to ``move'' the original decision variable $x$ to the objective function, a trick that will present its benefits shortly. Next, let us denote the feasibility set of $S^D_k$ as 
 %
 \begin{equation}
 	P_k =\braces{p : p^\top D_k \leq f_k}, \forall k \in \braces{1,\dots,K}, 
 \end{equation}
 %
-and assume that each $P_k \neq \emptyset$ with at least one extreme point. Relying on the representation theorem, we can define the sets of extreme points of $P_k$, given by $p_k^i$, $i \in I_k$, and extreme rays $w^r_k$, $r \in R_k$.
+and assume that each $P_k \neq \emptyset$ with at least one extreme point. Relying on the resolution theorem, we can define the sets of extreme points of $P_k$, given by $p_k^i$, $i \in I_k$, and extreme rays $w^r_k$, $r \in R_k$.
 
 As we assume that $P_k \neq \emptyset$, two cases can occur when we solve $S^D_k$, $k \in \braces{1,\dots, K}$. Either $S^D_k$ is unbounded, meaning that the relative primal subproblem is infeasible, or $S^D_k$ is bounded, meaning that $z^D_k < \infty$.
 
@@ -374,12 +381,12 @@ By doing so, at a given iteration $l$, we have at hand a \emph{relaxed main prob
 	      & x \geq 0, 
 \end{align*}
 %
-where $I_k^l \subseteq I_k$ represent subsets of extreme points $p^i_k$ of $P_k$, and $R^l_k \subset R_k$ subsets of extreme rays $w^r_k$ of $P_k$.
+where $I_k^l \subseteq I_k$ represent subsets of extreme points $p^i_k$ of $P_k$, and $R^l_k \subseteq R_k$ subsets of extreme rays $w^r_k$ of $P_k$.
 
 One can iteratively obtain these extreme points and rays from the subproblems $S_k$, $k \in \braces{1, \dots, K}$. To see that, let us fist define that, at iteration $l$, we solve the the main problem $P_M^l$ and obtain a solution
 %
 \begin{equation*}
-	\argmin_{x, \theta} \braces{P_M^l} = (\overline{x}^l, \braces{\overline{\theta}^l_k}_{k=1}^K) 
+	\argmin_{x, \theta} \braces{P_M^l} = (\overline{x}^l, \overline{\theta}^l_1, \dots \overline{\theta}^l_K). 
 \end{equation*}
 %
 We can then solve the subproblems $S_k^l$, $k \in \braces{1, \dots, K}$, for that fixed solution $\overline{x}^l$ and then observe if we can find additional constraints that were to be violated if they had been in the relaxed main problem in the first place. In other words, we can identify if the solution $\overline{x}^l$ allows for identifying additional extreme points $p^i_k$ or extreme rays $w^r_k$ of $P_k$ that were not yet included in $P_M^l$.
@@ -421,7 +428,7 @@ Algorithm \ref{p1c7:alg:benders} presents a pseudocode for the Benders decomposi
   \end{algorithmic}
 \end{algorithm}
 
-Notice that the algorithm terminates if no violated constraint is found. This in practice implies that $(p^i_k)^\top(e_k - C_k \overline{x}) \leq \overline{\theta}_k$ for all $k \in K$, and thus $(\overline{x}, \braces{\overline{\theta}_k}_{k=1}^K)$ is optimal for $P$. In a way, if one consider the dual version subproblem, $S_k^D$, one can notice that it is acting as an implicit search for values of $p^i_k$ that can be larger than $overline{\theta}_k$, meaning that the current solution $\overline{x}$ violates \ref{p1c7:eq:opt_cut} and is thus not feasible to $P$. 
+Notice that the algorithm terminates if no violated constraint is found. This in practice implies that $(p^i_k)^\top(e_k - C_k \overline{x}) \leq \overline{\theta}_k$ for all $k \in \braces{1,\dots,K}$, and thus $(\overline{x}, \braces{\overline{\theta}_k}_{k=1}^K)$ is optimal for $P$. In a way, if one consider the dual version subproblem, $S_k^D$, one can notice that it is acting as an implicit search for values of $p^i_k$ that can make $(p^i_k)^\top(e_k - C_k \overline{x})$ larger than $\overline{\theta}_k$, meaning that the current solution $\overline{x}$ violates \ref{p1c7:eq:opt_cut} and is thus not feasible to $P_M^l$. 
 
 Also, every time one solves $P_M^l$, a dual (lower for minimisation) bound $LB^l = z_{P_M}^l$ is obtained. This is simply because the relaxed main problem is a relaxation of the $P$, i.e., contains less constraints than the original problem $P$. A primal (upper) bound can also be calculated at every iteration, which allows for keeping track of the progress of the algorithm in terms of convergence and preemptively terminate it at any arbitrary optimality tolerance. That can be achieved by setting
 %
@@ -430,14 +437,19 @@ Also, every time one solves $P_M^l$, a dual (lower for minimisation) bound $LB^l
 	&= \min\braces{z_P^{k-1}, z_{P_M}^l - \sum_{k=1}^K \theta_k + \sum_{k=1}^K z_D^{kl}},
 \end{align*}
 %
-where $\overline{y}_k^l = \argmin_y \braces{S_k^l}$. 
+where $\overline{y}_k^l = \argmin_y \braces{S_k^l}$. Notice that, differently from the lower bound $LB^l$, there are no guarantees that the upper bound $UB^l$ will decrease monotonically. Therefore, one must compare the bound obtained at a given iteration $l$ using the solution $(\overline{x}^l, \overline{y}_1^l,\dots, \overline{y}^l_K)$ against an incumbent (or best-so-far) bound $UB^l$.
 
 
 \pagebreak	
 
 \section*{Exercises}
 
-
-
 \subsection*{Exercise 7.1: Dantzig-Wolfe decomposition}
 \input{part_1/chapter_7/exercises/E71-DW}
+
+%\subsection*{Exercise 7.2: Cutting stock (CS) problem}
+%\input{part_1/chapter_7/exercises/E72-CS}
+
+\subsection*{Exercise 7.2: Benders decomposition}
+\input{part_1/chapter_7/exercises/E73-Benders}
+

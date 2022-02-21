@@ -1,0 +1,37 @@
+Consider a wholesaler company planning to structure its supply chain to the retailers of a given product. The company needs to distribute the production from many suppliers to a collection of distribution points from which the retailers can collect as much product as they need for a certain period. By default, a pay-as-you-consume contract between wholesaler and retailers is signed and, therefore, the demand at each point is unknown at the moment of shipping. Consider there is no penalty for any unfulfilled demand and any excess must be discarded from one period to the other. The following parameters are given:
+
+\begin{itemize}
+	\item $B_i$: production cost at supplier $i$
+	\item $C_i$: production capacity at supplier $i$
+	\item $D_{js}$: total orders from distribution point $j$ in scenario $s$
+	\item $T_{ij}$: transportation cost between $i$ and $j$
+	\item $R_j$: revenue for sale at distribution point $j$
+	\item $W_j$: disposal cost at distribution point $j$
+\end{itemize}
+
+Let the variables be:
+
+\begin{itemize}
+	\item $p_i$: production at supplier $i$
+	\item $t_{ij}$: amount of products transported between $i$ and $j$
+	\item $l_{js}$: amount of products sold from the distribution point $j$ in scenario $s$
+	\item $w_{js}$: amount of products discarded from the distribution point $j$ in scenario $s$
+	\item $r_j$: amount pre-allocated in the distribution point $j$
+\end{itemize}
+
+The model for minimising the cost (considering revenue as a negative cost) is given below,
+%
+\begin{align*}
+	\mini & \sum\limits_{i \in I} B_i p_i + \sum\limits_{i \in I, j \in J} T_{ij} t_{ij} + \sum\limits_{s \in S} P_s \left( \sum\limits_{j \in J} (-R_j l_{js} + W_j w_{js}) \right)                  \\
+	 \st & p_i \leq C_i, \                              \forall i \in I                  \\
+	     & p_i = \sum\limits_{j \in J}t_{ij}, \         \forall i \in I                  \\
+	     & r_j = \sum\limits_{i \in I}t_{ij}, \         \forall j \in J                  \\
+	     & r_j = l_{js} + w_{js}, \                     \forall j \in J, \forall s \in S \\
+	     & l_{js} \leq D_{js}, \                        \forall j \in J, \forall s \in S \\
+	     & p_i \geq 0, \                                \forall i \in I                  \\
+	     & r_j \geq 0, \                                \forall j \in J                  \\
+	     & t_{ij} \geq 0, \                             \forall i \in I, \forall j \in J \\
+	     & l_{js}, w_{js} \geq 0, \                     \forall j \in J, \forall s \in S. 
+\end{align*}
+
+Solve an instance of the wholesaler's distribution problem proposed using Benders decomposition. 

@@ -1,0 +1,37 @@
+A paper company has a supply of $P = \{1,\dots,p\}$ large rolls of paper, each of width $W\in \integers_+$. The company has $M = \{1,\dots,m\}$ customers. Each customer $i\in M$ has a demand of $n_i\in \integers_+$ paper stripes of width $w_i \in \integers_+$ with $w_i \leq W$. The company seeks to satisfy customer demands while minimizing the total number of large paper rolls used. We assume that the company has enough rolls $p \in \integers_+$ to satisfy all customer demands. For example, we can assume that
+
+\[
+p = \sum_{i\in M} \lceil \frac{n_i}{\lfloor W/w_i \rfloor} \rceil.
+\]
+
+This problem is called the Cutting Stock (CS) problem.
+
+\begin{itemize}[itemsep=10pt]
+\item[(a)] Formulate the CS as an integer programming problem $IP$ using the following variables:
+
+\begin{enumerate}[itemsep=0pt]
+\item $y_j\in \{0,1\}$ for all large paper rolls $j \in P$, with $y_j = 1$ if paper roll $j$ is used and \lb $y_j = 0$ otherwise.
+\item $x_{ij} \in \integers_+$ for all customers $i\in M$ and paper rolls $j \in P$, where $x_{ij}$ is equal to the number of stripes of width $w_i$ cut from a large paper roll $j$.
+\end{enumerate}
+
+Use two sets of constraints: \emph{demand constraints} imposing that number of stripes cut for each customer $i\in M$ is at least $n_i$, and \emph{capacity constraints} imposing that sum of stripe widths $\sum_{i\in M} w_i x_{ij}$ cut from each paper roll $j\in \{1,\dots,P\}$ is smaller than maximum width $W$.
+\item[(b)] Show that the optimal cost $z_{LP}$ of the linear programming relaxation $LP$ of the problem $IP$ in part (a) is
+
+\[
+z_{LP} = \frac{\sum_{i\in M} w_i n_i}{W}.
+\]
+ 
+\item[(c)] Apply Dantzig-Wolfe reformulation to the problem $IP$ in part (a) with the demand \lb constraints as linking constraints. Write the resulting integer master problem $(IPM)$ and the corresponding \emph{pricing problem} which is used to generate new cutting patterns. 
+\item[(d)] Consider a CS problem instance with the following data.
+\vspace{5pt}
+\begin{enumerate}
+ \item Roll width $W = 273$
+ \item \textbf{Customer 1}: $w_1 = 18$ ~with $n_1 = 233$
+ \item \textbf{Customer 2}: $w_2 = 91$ ~with $n_2 = 310$
+ \item \textbf{Customer 3}: $w_3 = 21$ ~with $n_3 = 122$ 
+ \item \textbf{Customer 4}: $w_4 = 136$     ~with $n_4 = 157$
+ \item \textbf{Customer 5}: $w_5 = 51$ ~with $n_5 = 120$
+\end{enumerate}
+\vspace{5pt}
+Solve the $LP$ relaxation of $IPM$ with this input data with the column generation algorithm. Try to also obtain a feasible solution by rounding the fractional solution. The Julia notebook \href{https://mycourses.aalto.fi/mod/folder/view.php?id=651694}{E101-cutstock.ipynb} has the column generation algorithm readily implemented.
+\end{itemize}
