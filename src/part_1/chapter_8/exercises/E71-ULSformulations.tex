@@ -1,0 +1,94 @@
+Consider the following formulations $P_{\text{ULS-1}}^{(x,s,y)}$ and $P_{\text{ULS-2}}^{(w,y)}$ as relaxations for the ULS problem defined over $N = \{1,\dots,n\}$ periods:
+\renewcommand*{\arraystretch}{1.1}
+\[P_{\text{ULS-1}}^{(x,s,y)} = \left\{
+  \begin{array}{llr}
+  	(x,s,y): & s_{t-1} + x_t = d_t + s_t, & \forall t\in N\\
+    	     & x_t  \leq M y_t, 		  & \forall t\in N\\
+    	     & s_0 = 0, 			      & 			  \\
+    	     & s_t \geq 0, 				  & \forall t\in N\\
+    	     & x_t \geq 0, 			      & \forall t\in N\\
+    	     & 0 \leq y_{t} \leq 1, 	  & \forall t\in N
+  \end{array}\right\}
+  \quad~\left|
+  \begin{array}{rr}
+  	x_t  & \text{production in period } t\\
+    s_t  & \text{stock in period }      t\\
+    y_t  & \text{setup in period }      t\\[5pt]
+    d_t  & \text{demand in period }     t\\
+    M    & \text{maximum production}\\
+%         & \text{capacity}\\
+         & M = \sum_{t\in N}d_t
+  \end{array}\right.
+\]\\[-30pt]
+
+
+\[~~~P_{\text{ULS-2}}^{(w,y)} = \left\{
+  \begin{array}{llr}
+    (w,y): & \sum \limits_{i=1}^t w_{it} = d_t, &\forall t\in N\\
+    	   & w_{it} \leq d_t y_i,  				&\forall i,t\in N : i\leq t\\
+    	   & w_{it} \geq 0,        				&\forall i,t\in N : i\leq t\\
+    	   & 0 \leq y_{t} \leq 1,  				&\forall t\in N 
+  \end{array}\right\}
+  \quad~~\left|
+  \begin{array}{rr}
+  	w_{it} & \text{production in period } i\\
+      	   & \text{to be used in period } t\\[3pt]
+       y_t & \text{setup in period } t\\
+       	   & \\[7pt] 
+  \end{array}\right.
+\]
+
+\vspace{5pt}
+
+(a) Use projection to show that $P_{\text{ULS-2}}^{(w,y)}$ is stronger than $P_{\text{ULS-1}}^{(x,s,y)}$, i.e, $P_{\text{ULS-2}}^{(w,y)} \subset P_{\text{ULS-1}}^{(x,s,y)}$.
+
+\emph{Hint:} 
+First, construct an extended formulation $P_{\text{ULS-2}}^{(x,s,y,w)}$ by writing the variables $x_t$ and $s_t$ in terms of variables $w_{it}$ and add them to $P_{\text{ULS-2}}^{(w,y)}$. Then, use projection to show that 
+\begin{equation*}
+\proj_{x,s,y}\,(P_{\text{ULS-2}}^{(x,s,y,w)}) \subseteq P_{\text{ULS-1}}^{(x,s,y)},
+\end{equation*} 
+which is equivalent to $P_{\text{ULS-2}}^{(w,y)} \subseteq P_{\text{ULS-1}}^{(x,s,y)}$. Do this by verifying that each constraint of $P_{\text{ULS-1}}^{(x,s,y)}$ is satisfied by all $(x,s,y)\in P_{\text{ULS-2}}^{(x,s,y,w)}$. Finally, show that a solution $(\bar{x},\bar{s},\bar{y})$ with $\bar{x}_t = d_t$ and \lb $\bar{y}_t = d_t/M$, for all $t \in N$, satisfies $(\bar{x},\bar{s},\bar{y}) \in P_{\text{ULS-1}}^{(x,s,y)} \setminus P_{\text{ULS-2}}^{(x,s,y,w)}$.
+
+\vspace{5pt}
+
+(b) The optimisation problems associated with the two ULS formulations are
+\begin{align*}
+	\begin{array}{lrlr}
+		\text{(ULS-1)} & \mini\limits_{x,s,y} & \sum\limits_{t\in N} (f_ty_t + p_tx_t + q_ts_t)\\
+		         & \st  & s_{t-1} + x_t = d_t + s_t, & \forall t\in N\\
+		    	 &      & x_t  \leq M y_t, 		  & \forall t\in N\\
+		    	 &      & s_0 = 0, 			      & 			  \\
+		    	 &      & s_t \geq 0, 			  & \forall t\in N\\
+		    	 &      & x_t \geq 0, 			  & \forall t\in N\\
+		    	 &      & 0 \leq y_{t} \leq 1, 	  & \forall t\in N
+	 \end{array}
+	 \quad~\left|
+	 \begin{array}{rr}
+	  	x_t  & \text{production in period } t\\
+	    s_t  & \text{stock in period }      t\\
+	    y_t  & \text{setup in period }      t\\[5pt]
+	    d_t  & \text{demand in period }     t\\
+	    M    & \text{maximum production}\\
+	 %         & \text{capacity}\\
+	         & M = \sum_{t\in N}d_t
+	 \end{array}\right.
+\end{align*}\\[-30pt]
+
+\begin{align*}
+	\begin{array}{lrlr}
+		\text{(ULS-2)} & \mini\limits_{w,y} & \multicolumn{2}{c}{\sum \limits_{t \in N} \brackets{f_ty_t + p_t\sum \limits_{i=t}^{n}w_{ti} + q_t\sum\limits_{i=1}^{t}\left(\sum \limits_{j=i}^{n}w_{ij} - d_i\right)}}\\
+		               & \st                & \sum \limits_{i=1}^t w_{it} = d_t, &\forall t\in N\\              
+		    	       &                    & w_{it} \leq d_t y_i,  			 &\forall i,t\in N : i\leq t\\  
+		    	       &                    & w_{it} \geq 0,        			 &\forall i,t\in N : i\leq t\\  
+		    	       &                    & 0 \leq y_{t} \leq 1,  			 &\forall t\in N                   
+    \end{array}
+    \quad~\left|
+    \begin{array}{rr}
+ 	  	w_{it} & \text{production in period } i\\
+ 	      	   & \text{to be used in period } t\\%[3pt]
+ 	       y_t & \text{setup in period } t\\
+ 	       	   & %[20pt] 
+    \end{array}\right.
+\end{align*}\\[-20pt]
+
+Consider a ULS problem instance over $N = \{1,\dots,6\}$ periods with demands $d = (6,7,4,6,3,8)$, set-up costs $f = (12,15,30,23,19,45)$, unit production costs $p = (3,4,3,4,4,5)$, unit storage costs \lb $q = (1,1,1,1,1,1)$, and maximum production capacity $M = \sum_{i=1}^6d_j = 34$. Solve the problems ULS-1 and ULS-2 with Julia using JuMP to verify the result of part (a) computationally.

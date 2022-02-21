@@ -1,0 +1,11 @@
+Solve a 15 node TSP instance using the formulation $P_{MTZ}$ presented in Exercise 8.1. You can randomly generate city coordinates in x-y plane for all $N = \{1,\dots,n\}$ cities. Letting $c_{ij}$ denote the distance between cities $i$ and $j$, the problem MTZ can be formulated as
+%
+\begin{align*}
+	(MTZ) : \mini_{x,u} & ~~\,\sum_{i\in N}\sum_{j\in N} c_{ij}x_{ij}\\
+		    \st & \sum_{j \in N \setminus \{i\}} x_{ij} = 1, & \forall i \in N, \\
+		        & \sum_{j \in N \setminus \{i\}} x_{ji} = 1, & \forall i \in N, \\   
+		        & ~~\,u_{i} - u_{j} + (n-1) x_{ij} \leq n - 2, & \forall i,j \in N \setminus \{ 1 \} : i \neq j,\\
+		        & ~~\,x_{ij} \in \{0,1\}, & \forall i,j \in N : i\neq j.
+\end{align*}
+%
+Implement the model and solve the problem instance with Julia using JuMP.

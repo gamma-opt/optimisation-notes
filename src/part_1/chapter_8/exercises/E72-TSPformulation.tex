@@ -1,0 +1,25 @@
+Show that the following formulation $P_{MTZ}$ is valid for the TSP defined on a directed graph \lb $G = (N,A)$ with $N = \{1,\dots,n\}$ cities and arcs $A = \{(i,j) : i,j\in N, i\neq j\}$ between cities.
+\renewcommand*{\arraystretch}{1.3}
+\[P_{MTZ} = \left\{
+   \begin{array}{ll}
+   \displaystyle \sum_{j \in N \setminus \{i\}} x_{ij} = 1, & \forall i \in N \\
+   \displaystyle \sum_{j \in N \setminus \{i\}} x_{ji} = 1, & \forall i \in N \\   
+   \displaystyle u_{i} - u_{j} + (n-1) x_{ij} \leq n - 2, & \forall i,j \in N \setminus \{ 1 \} : i \neq j ~~(*)\\
+    x_{ij} \in \{0,1\}, & \forall i,j \in N : i\neq j\\
+  \end{array}
+\right.
+\]
+where $x_{ij} = 1$ if city $j\in N$ is visited immediately after city $i \in N$, and $x_{ij} = 0$ otherwise. Constraints $(*)$ with the variables $u_i \in \reals$ for all $i\in N$ are called \emph{Miller-Tucker-Zemlin} (MTZ) subtour elimination constraints. 
+
+\emph{Hint:} Formulation $P_{MTZ}$ is otherwise similar to the formulation presented, except for the constraints $(*)$ which replace either the cutset constraints
+$$\sum_{i \in S}\sum_{j \in N \setminus S}x_{ij} \geq 1, \ \forall S \subset N, S \neq \emptyset,$$
+or the subtour elimination constraints        
+$$\sum_{i \in S}\sum_{j \in S}x_{ij} \leq |S|-1, \ \forall S \subset N, 2 \leq |S| \leq n-1,$$
+which are used to prevent subtours in TSP solutions. Thus, you have to show that: 
+\begin{enumerate}
+\item Constraints $(*)$ prevent subtours in any solution $x\in P_{MTZ}$.
+\item Every TSP solution $x$ (on the same graph $G$) satisfies the constraints $(*)$.
+\end{enumerate}
+You can prove 1. by contradiction. First, assume that a solution $x\in P_{MTZ}$ has a subtour with $k$ arcs $(i_1,i_2),\dots,(i_{k-1},i_k),(i_k,i_1)$ and $k$ nodes $\{i_1,\dots,i_k\} \in N\setminus\{1\}$. Then, write the constraints $(*)$ for all arcs in this subtour and try to come up with a contradiction.
+
+You can prove 2. by finding suitable values for each $u_2,\dots,u_n$ that will satisfy the constraints $(*)$ for any TSP solution $x$. Recall that a TSP solution represents a \emph{tour} that visits each of the $N = \{1,\dots,n\}$ cities exactly once and returns to the starting city.
