@@ -214,7 +214,7 @@ The central element in the simplex method is the calculation of the matrix $B^{-
 
 First, let us consider a more natural way of implementing the simplex method, so then we can point out how the method can be revised to be more computationally efficient. We will refer to this version as the naive simplex. The main differences between the naive and its revised version will be how $B^{-1}A_j$ is computed and the amount of information being carried over between iterations.
 
-A somewhat natural way to implement the simplex method would be to first store in an auxiliary variable the term $p^\top = c_BB^{-1}$, by solving the linear system $p^\top B = c_B^\top$. These terms have an importance on themselves, as we will see later, and they are often referred to as the ``simplex multipliers''.
+A somewhat natural way to implement the simplex method would be to first store in an auxiliary variable the term $p^\top = c_B^\top B^{-1}$, by solving the linear system $p^\top B = c_B^\top$. These terms have an importance on themselves, as we will see later, and they are often referred to as the ``simplex multipliers''.
 
 Once the simplex multipliers $p$ are available, the reduced cost $c_j$ associated with the nonbasic variable index $j \in I_N$ is simply 
 %
@@ -300,7 +300,7 @@ We can restate the simplex method in its revised form. This is presented in Algo
 	\caption{Revised simplex method} \label{p1c4:alg:revised_ximplex_method}
 	\begin{algorithmic}[1] %line numbering frequency. 
 	\State {\bf initialise.} Initial basis $B$, associated BFS $x$, and $B^{-1}$ are available.
-	\State Calculate $p^\top = c_B^\top B^{-1}$ and $\overline{c_j} = c_j - pA_j$ for $j \in N$.
+	\State Calculate $p^\top = c_B^\top B^{-1}$ and $\overline{c_j} = c_j - p^\top A_j$ for $j \in N$.
 	\While {$\overline{c}_j < 0$ for some $j \in N$} \label{p1c4:alg:opt_condition} 
 	    \State Choose some $j$ for which $\overline{c_j} < 0$. Calculate $u = B^{-1}A_j$. 
 	    \If {$u \leq 0$} \label{p1c4:alg:unb_condition}
@@ -310,7 +310,7 @@ We can restate the simplex method in its revised form. This is presented in Algo
 			\State Set $x_j = \overline{\theta}$ and $x_B = x - \overline{\theta}u$.
 			\State Form the matrix $[B^{-1} \,|\, u]$ and perform EROs to convert it to $[\overline{B}^{-1} \, | \, e_l]$. 
 			\State Make $B = B \setminus \braces{l} \cup \braces{j}$ and $B^{-1} = \overline{B}^{-1}$. 
-			\State Calculate $p^\top = c_B^\top B^{-1}$ and $\overline{c}_j = c_j - pA_j$ for all $j \in I_N = J \setminus I_B$.
+			\State Calculate $p^\top = c_B^\top B^{-1}$ and $\overline{c}_j = c_j - p^\top A_j$ for all $j \in I_N = J \setminus I_B$.
 		\EndIf
 	\EndWhile
 	\State {\bf return} optimal basis $B$ and optimal solution $x$.
@@ -328,7 +328,7 @@ The main aspect that actually make the revised simplex method ``revised'' is a m
 	\end{bmatrix}
 \end{equation*}
 %  
-which, after each series of elementary row operations yield a not only $\overline{B}^{-1}$, but also the updated simplex multipliers $\overline{p}$ and $overline{p}^\top b = c_B \overline{B}^{-1}b = c_B ^\top \overline{x}_B$, which represents the objective function value of the new basic feasible solution $\overline{x} = [\overline{x_B}, \overline{x}_N]$. This bookkeeping savings will become obvious once we discuss the tabular (or non-revised) version of the simplex method. 
+which, after each series of elementary row operations yield not only $\overline{B}^{-1}$, but also the updated simplex multipliers $\overline{p}$ and $\overline{p}^\top b = c_B^\top \overline{B}^{-1}b = c_B ^\top \overline{x}_B$, which represents the objective function value of the new basic feasible solution $\overline{x} = [\overline{x}_B, \overline{x}_N]$. This bookkeeping savings will become obvious once we discuss the tabular (or non-revised) version of the simplex method. 
 
 Three main issues arise when considering the efficiency of implementations of the simplex method, namely, matrix (re)inversion, representation in memory, and the use of matrix decomposition strategies.
 %
