@@ -1,0 +1,486 @@
+\section{Valid inequalities}
+
+In this chapter, we will discuss the idea of generating and adding constraints to improve a formulation of a (possibly mixed-)integer programming problem. This idea can either be implemented in a priori setting, for example before employing the branch-and-bound method, or as the solution method itself. These constraints are often called valid inequalities or cuts, though the latter typically is typically used in the context of cutting-planes methods.
+
+Let us start by defining the integer programming problem
+%
+\begin{equation*}
+	(IP) : \maxi_x \braces{c^\top x : x \in X}
+\end{equation*}
+%
+where $X = P \cap \integers^n$ and $P = \braces{x \in \reals^n : Ax \leq b, x \geq 0}$, with $A \in \reals^{m \times n}$ and $b \in \reals^m$. 
+
+The idea of using constraints to solve $IP$ is founded in the following observations. We know that $\conv(X)$ is a (convex) polyhedral set (cf. Definition \ref{p1c2:def:convex_combination_hull}) and, being so, there exists a finite set of inequalities $\tilde{A}x \le \tilde{b}$ such that 
+%
+\begin{equation*}
+	\conv(X) = \braces{x \in \reals^n: \tilde{A}x \leq \tilde{b}, x \geq 0}	
+\end{equation*}
+%
+Furthermore, if we had available $\tilde{A}x \le \tilde{b}$, then we could solve $P$ by solving its linear programming relaxation.
+
+Cutting-plane methods are based on the idea of iteratively approximating the set of inequalities $\tilde{A}x \le \tilde{b}$ by adding constraints to the formulation $P$ of $IP$. These constraints are called \emph{valid inequalities}, a term we define more precisely in Definition \ref{p1c10:def:valid_inequality}.
+
+\begin{definition}[Valid inequality] \label{p1c10:def:valid_inequality}
+	An inequality $\pi^\top  x \leq \pi_0$ is valid for $X \subset \reals^n$ if $\pi^\top  x \leq \pi_0$ for all $x \in X$.
+\end{definition}
+
+Notice that the condition for an inequality to be valid is that it does not remove any of the point in the original integer set $X$. In light of the idea of gradually approximating $\conv(X)$, one can infer that good valid inequalities are those that can ``cut off'' some of the area defined by the polyhedral set $P$, but without removing any of the points in $X$. This is precisely where the name \emph{cut} comes from. Figure \ref{p1c10:fig:valid_inequality} illustrates the process of adding a valid inequality to a formulation $P$. Notice how the inequality expose one of the facets of the convex hull of $X$. Cuts like such are called ``facet-defining'' and are the strongest types of cuts one can generate. We will postpone the discussion of stronger cuts to later in this chapter.
+
+\begin{figure}
+	\centering
+	\begin{subfigure}{0.49\textwidth}
+		\centering
+		\begin{tikzpicture}[scale = 1,
+		point/.style={circle, fill=gray!40, inner sep=1pt},
+		feas point/.style={circle, fill=blue, inner sep=1pt}]
+			\draw[help lines] (0,0) grid (4,4);  
+			\fill[blue!40, opacity=0.5] (0,0) -- (1.5, 0) -- (2.2, 0.7) --(20/7, 3) -- (0,3);          
+			\foreach \x in {0,...,4}{
+			  \foreach \y in {0,...,4} {
+			      \node[point] (\x,\y) at (\x, \y) {};
+			  }}
+			\foreach \x in {0,...,4}{
+			  \node[font=\scriptsize] at (\x,-0.4) {$\x$};
+			}
+			\foreach \y in {0,...,4}{
+			  \node[font=\scriptsize] at (-0.4,\y) {$\y$};
+			}                      
+			\draw[thick, <->] (4.5,0) node[below, font=\scriptsize]{$x_1$} -- (0,0) -- (0,4.5) node[left, font=\scriptsize]{$x_2$};    
+			\draw[domain=0:4.5, thick, variable=\x, blue] plot (\x,{3});
+			\draw[domain=2:22/7, thick, variable=\x, blue] plot (\x,{-14/2 + 7/2*\x});
+			\draw[domain=1.5:4, thick,variable=\x,blue] plot ({\x},{-3/2 + \x});
+			\node[feas point] at (0,0){};
+			\node[feas point] at (1,0){};
+			\foreach \x in {0,...,2}{ 
+			  \foreach \y in {1,...,3}{        
+			      \node[feas point] at (\x,\y){};
+			}}
+		\end{tikzpicture}	
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.49\textwidth}
+		\centering
+		\begin{tikzpicture}[scale = 1,
+		point/.style={circle, fill=gray!40, inner sep=1pt},
+		feas point/.style={circle, fill=blue, inner sep=1pt}]
+			\draw[help lines] (0,0) grid (4,4);  
+			\fill[blue!40, opacity=0.5] (0,0) -- (1.5, 0) -- (2, 0.5) --(2, 3) -- (0,3);          
+			\foreach \x in {0,...,4}{
+			  \foreach \y in {0,...,4} {
+			      \node[point] (\x,\y) at (\x, \y) {};
+			  }}
+			\foreach \x in {0,...,4}{
+			  \node[font=\scriptsize] at (\x,-0.4) {$\x$};
+			}
+			\foreach \y in {0,...,4}{
+			  \node[font=\scriptsize] at (-0.4,\y) {$\y$};
+			}                      
+			\draw[thick, <->] (4.5,0) node[below, font=\scriptsize]{$x_1$} -- (0,0) -- (0,4.5) node[left, font=\scriptsize]{$x_2$};    
+			\draw[domain=0:4.5, thick, variable=\x, blue] plot (\x,{3});
+			\draw[domain=2:22/7, thick, variable=\x, blue] plot (\x,{-14/2 + 7/2*\x});
+			\draw[domain=1.5:4, thick,variable=\x,blue] plot ({\x},{-3/2 + \x});
+			\draw[orange, thick] (2,0) -- (2,4);
+			\node[feas point] at (0,0){};
+			\node[feas point] at (1,0){};
+			\foreach \x in {0,...,2}{ 
+			  \foreach \y in {1,...,3}{        
+			      \node[feas point] at (\x,\y){};
+			}}
+		\end{tikzpicture}	
+	\end{subfigure}
+	\caption{Illustration of a valid inequality being added to a formulation $P$. Notice how the inequality cuts of a portion of the polyhedral set $P$ while not removing any of the feasible points $X$ (represented by the dots)} \label{p1c10:fig:valid_inequality}
+\end{figure}
+
+
+\section{The Chv\'atal-Gomory procedure}
+
+To develop a systematic procedure for generating valid inequalities in the context of a solution method for integer programming problems, we will rely on a two step procedure. First, a cut that is valid for the polyhedral set $P$ is (somewhat automatically) generated, and then it is made valid for the integer set $X$ by a simple rounding procedure. Before we proceed, let us define the notion of valid inequalities in the context of linear programming problems.
+
+\begin{proposition}[Valid inequalities for polyhedral sets] \label{p1c10:prop:valid_inequality_LP}
+	An inequality $\pi^\top x \leq \pi_0$ is valid for $P = \braces{x \in \reals^n : Ax \leq b, x \geq 0}$, if and only if $P \neq \emptyset$ and there exists $u \geq 0$ such that $u^\top A \geq \pi$ and $u^\top b \leq \pi_0$.
+\end{proposition}
+
+\begin{proof}
+	We can use linear programming duality to show this relationship. First, notice that, if the proposition holds, for $u \ge 0$ and $x \in P$, we have 
+	%
+	\begin{align*}
+		Ax & \le b \\
+		u^\top Ax & \le u^\top b \\
+		\pi ^\top x \le u^\top Ax & \le u^\top b \le \pi_0,
+	\end{align*}
+	%
+	and, thus, it implies the validity of the cut, i.e., that $\pi^\top x \leq \pi_0, \forall x \in P$. Now, consider the primal problem
+	%
+	\begin{align*}
+		\maxi & \pi ^\top x \\
+		\st   & Ax \leq b \\
+		      & x \geq 0
+	\end{align*}
+	%
+	and its dual 
+	%
+	\begin{align*}
+		\mini & u^\top b \\
+		\st   & u^\top A \geq \pi \\
+		      & u \geq 0. 
+	\end{align*}
+	%
+	Thus, $u^\top A\geq \pi$ can be seen as a consequence of dual feasibility. Furthermore, strong duality gives $u^\top b = \pi ^\top x \leq \pi_0$, completing the proof. 
+\end{proof}
+
+One thing to notice though is that, valid cuts in the context of polyhedral sets are somewhat redundant, since, by definition, they do not alter the polyhedral set in any means. However, the concept can be combined with a simple yet powerful way of generating valid inequalities for integer set by using rounding. This is stated in Proposition \ref{p1c10:prop:valid_inequality_IP}. 
+%
+\begin{proposition}[Valid inequalities for integer sets] \label{p1c10:prop:valid_inequality_IP}
+	Let $X = \braces{y \in \integers^1 : y \leq b}$. The inequality $y \leq \floor{b}$ is valid for $X$.
+\end{proposition}
+%
+The proof of Proposition \ref{p1c10:prop:valid_inequality_IP} is somewhat straightforward and left as a thought exercise. 
+
+We can combine Propositions \ref{p1c10:prop:valid_inequality_LP} and \ref{p1c10:prop:valid_inequality_IP} into a single procedure to automatically generate valid inequalities. Let us start with a numerical example. Consider the set $X = P \cap \integers^n$ where $P$ is defined by
+	%
+	\begin{equation*}
+		P = \braces{x \in \reals^2_+ : 7x_1 -2x_2 \leq 14, x_2 \leq 3, 2x_1 - 2x_2 \leq 3}.
+	\end{equation*}
+	
+First, let $u=\left[\frac{2}{7}, \frac{37}{63}, 0\right]$, which, for now, we can assume that they were arbitrarily chosen. We can then combine the constraints in $P$ (the $Ax \le b$ in Proposition \ref{p1c10:prop:valid_inequality_LP}) forming the constraint (equivalent to $u^\top Ax \le u^\top b$)
+	%
+	\begin{equation*}
+		2x_1 + \frac{1}{63}x_2 \leq \frac{121}{21}.
+	\end{equation*}
+	
+Now, notice that the constraint would remain valid for $P$ if we simply \emph{round down} the coefficients on the lefthand side (as $x \ge 0$ and all coefficients are positive). This would lead to the new constraint (notice that this yields a vector $\pi$ in Proposition \ref{p1c10:prop:valid_inequality_LP})
+	%
+	\begin{equation*}
+		2x_1 + 0x_2 \leq \frac{121}{21}.
+	\end{equation*}
+	
+Finally, we can invoke Proposition \ref{p1c10:prop:valid_inequality_IP} to generate a cut valid for $X$. This can be achieved by simply rounding down the righthand side (yielding $\pi_0$), obtaining
+	%
+	\begin{equation*}
+		2x_1 + 0x_2 \leq 5,
+	\end{equation*}
+	%
+	which is valid for $X$, but not for $P$. Notice that, apart from the vector of weights $u$ used to combine the constraints, everything else in the procedure of generating the valid inequality for $X$ is automated. This procedure is known as the \emph{Chv\'atal-gomory procedure} and can be formalised as follows.
+	
+\begin{definition}[Chv\'atal-Gomory procedure] \label{p1c10:def:CG-procedure}
+	Consider the set $X = P \cap \integers^n$ where $P = \braces{x \in \reals^n_+ : Ax \leq b}$, $A$ is an $m \times n$ matrix with columns $\braces{A_1, \dots, A_n}$ and $u \in \reals^m_+$.
+	
+	The Chv\'atal-Gomory procedure consists of the following set of steps to generate valid inequalities for $X$:
+	\begin{enumerate}
+	    \item $\sum_{j=1}^n u^\top A_jx_j \leq u^\top b$ is valid for $P$ as $u\geq 0$;
+	    \item $\sum_{j=1}^n \floor{u^\top A_j}x_j \leq u^\top b$ is valid for $P$ as $x \geq 0$;
+	    \item $\sum_{j=1}^n  \floor{u^\top A_j}x_j \leq \floor{u^\top b}$ is valid for $X$ as LHS is integer.
+	\end{enumerate}		
+\end{definition}
+	
+Perhaps the most striking result in the theory of integer programming is that \emph{every} valid inequality for an integer set $X$ can be obtained by employing the Chv\'atal-gomory procedure a number of times. This is formalised in Theorem \ref{p1c10:thm:VG_valid_inequality}.
+
+\begin{theorem} \label{p1c10:thm:VG_valid_inequality}
+	Every valid inequality for $X$ can be obtained by applying the Chv\'atal-Gomory procedure a finite number of times.
+\end{theorem}
+	
+% TODO: Add a reference	to the proof in the big Nemhauser and Wolsey book.
+	
+	
+\section{The cutting-plane method}
+
+Let us now consider how one could use valid inequalities to devise a solution method. The working paradigm behind a cutting-plane method is the \emph{separation principle}. 
+
+The separation principle states that, given an integer set $X = P \cap \integers^n$ if a solution $x \notin X$, then there exists a hyperplane $\pi^\top x \leq \pi_0$ separating $x$ and $X$ \footnote{the separation principle is a consequence of the separation theorem (Theorem \ref{p2c2:thm:separation}) in Part \ref{part_2}.}. 	
+
+As one might infer, the challenge is how one can generate such pairs $(\pi, pi_0)$. This is precisely what is called the \emph{separation problem}, in the context of integer programming.
+
+In general, these valid inequalities are generated from a family of inequalities $\mathcal{F}$, which are related to each other by properties related to, e.g., problem structure or nature of the inequality itself. One way of thinking about it is to see the family of inequalities $\mathcal{F}$ as a means to dictate, to some extent, how the selection of weights $u$ in the Chv\'atal-Gomory procedure is defined.
+
+In any case, in possession of a family of inequalities and a method to to solve the separation problem, we can pose a cutting-plane methods in general terms. This is stated in Algorithm \ref{p1c10:alg:cuting-plane}.
+
+\begin{algorithm}[h]
+	\caption{Cutting-plane algorithm} \label{p1c10:alg:cuting-plane}
+	\begin{algorithmic}[1] %line numbering frequency. 
+		\State {\bf initialise.} let $\mathcal{F} \subseteq \braces{(\pi, \pi_0) : \pi^\top  x \leq \pi_0 \text{ is valid for } X}$. $k \gets 0$. 
+		\While {$x_{LP}^k \notin \integers^n$} \label{Alg2:loop}
+		    \State solve the LP relaxation over $P$, obtaining $z_{LP}^k$ and $x_{LP}^k$. 
+		    \If {$x_{LP}^k \notin \integers^n$} 
+		        find $(\pi^k, \pi^k_0) \in \mathcal{F}$ such that ${\pi^k}^\top x > \pi^k_0$. \label{Alg2:SepProb}
+		    \EndIf
+		    \State $P \gets P \cup \braces{{\pi^k}^\top x \leq \pi^k_0}$. $k \gets k+1$.
+		\EndWhile
+	    \State {\bf return} ($x_{LP}^k, z_{LP}^k$).
+	\end{algorithmic}
+\end{algorithm}
+
+Notice that we have already discussed a cutting-plane method before in Chapter \ref{chapter_7}, when we presented the Benders decomposition. In that case, the optimality and feasibility cuts form the family of valid inequalities $\mathcal{F}$ while the separation problem was the subproblem responsible to find the cuts that were violated by the current man problem solution. 
+
+Like it was the case in Benders decomposition, the motivation of cutting-plane algorithms lies in the belief that one a few of all inequalities $|\mathcal{F}|$ (assuming $\mathcal{F}$ is finite, which might not be necessarily the case) are necessary, circumventing the computationally prohibitive need of generating all possible inequalities from $\mathcal{F}$.
+
+There are some other complicating aspects that must be observed when dealing with cutting-plane algorithms. First, it might be so that a given family of valid inequalities $\mathcal{F}$ is not sufficient to expose the optimal solution $x \in X$, which might be the case, for example, if $\mathcal{F}$ cannot fully describe $\conv(X)$ or if the separation problem is unsolvable. In that case, the algorithm will terminate with a solution for the LP relaxation tat is not integer, i.e., $x_{LP}^k \notin \integers^n$. 
+
+However, failing to converge to an integer solution is not a complete failure since, in the process, we have improved the formulation $P$ (cf. Definition \ref{p1c8:def:better_formulations}). If fact, this idea plays a major role in the professional-grade implementations of mixed-integer programming solvers, as we will see later. 
+
+
+\section{Gomory's fractional cutting-plane method}
+
+One important cutting-plane method that is guaranteed to converge (in theory) to integer solution is the Gomory's fractional cutting plane method. Basically, the method consists of exploiting the Chv\'atal-Gomory procedure (cf .Definition \ref{p1c10:def:CG-procedure}) to be the family of cuts generated, while solving separation problem being simply the process of rounding to be applied to solutions of LP relaxations. 
+
+Specifically, consider the integer programming problem 
+%
+\begin{equation*}
+	P: \maxi_x\braces{c^\top x : x \in X}
+\end{equation*}
+%
+where $X = \braces{x \in \integers^n_+ : Ax = b}$. Recall that the optimal solution of the LP relaxation is characterised by a basis $B$ formed by columns of the matrix $A$, i.e.,
+%
+\begin{equation*}
+	A = [B ~|~ N] \text{ and } x = (x_B, x_N),	
+\end{equation*}
+%
+where $x_B$ are the basic components of the solution and $x_N = 0$ the onbasic components. The matrix $N$ if formed by columns of $A$ associated with the nonbasic variables $x_N$.
+
+As we have discussed in Chapters \ref{chapter_3}, the system of equation $Ax= b$ can be written as
+%
+\begin{equation*}
+	Bx_B + Nx_N = b \text{ or } x_B + B^{-1}Nx_N = B^{-1}b,
+\end{equation*}
+%
+which is equivalent to $B^{-1}Ax = B^{-1}b$. Now, let $\overline{a}_{ij}$ be the element in row $i$ and column $j$ in $B^{-1}A$, and let $\overline{a}_{i0} = (B^{-1}b)_i$ be the $i$-th component of $B^{-1}b$. With that, we can represent the set of feasible solutions $X$ as
+%
+\begin{align*}
+	&x_{B(i)} + \sum_{j \in I_N} \overline{a}_{ij}x_j = \overline{a}_{i0},  \forall i \in I\\
+	&x_j \in \integers_+, \forall j \in J,
+\end{align*}
+%
+where $I = \braces{1, \dots, m}$, $J = \braces{i, \dots, n}$, $I_B \subset J$ are the indices of basic variables and $I_N = J \setminus I_B$ the indices of nonbasic variables. Notice that, at this point, we are simply recasting $P$ by performing permutations of columns, since basic feasible solutions for the LP relaxation do not necessarily translate into a feasible solution for $X$.
+
+However, assume we solve The LP relaxation of the integer programming problem $P$ and obtain an optimal solution $x = (x_B, x_N)$ with associated optimal basis $B$. If $x$ is fractional, then it means that $\overline{a}_{i0}$ is fractional for some $i$.
+
+From any of the rows $i$ with fractional $\overline{a}_{i0}$, we can derive a valid inequality using the Chav\'atal-Gomory procedure. These inequalities, commonly referred to as \emph{CG cuts}, take the form
+%
+\begin{equation}
+	x_{B(i)} + \sum_{j \in I_N} \floor{\overline{a}_{ij}}x_j \leq \floor{\overline{a}_{i0}}. \label{p1c10:eq:CG_cut}	
+\end{equation}
+
+As this is thought to be used in conjunction with the simplex method, we must be able to state \eqref{p1c10:eq:CG_cut} in terms of the nonbasic variables $x_j$, $\forall j \in I_N$. To do so, we can replace $x_{B(i)} = \overline{a}_{i0} - \sum_{j \in I_N} \overline{a}_{ij}x_j$, obtaining 
+%
+\begin{equation*}
+	\sum_{j \in I_N} (\overline{a}_{ij} - \floor{\overline{a}_{ij}})x_j \geq (\overline{a}_{i0} - \floor{\overline{a}_{i0}}),
+\end{equation*}
+%
+which, by defining $f_{ij} = \overline{a}_{ij} - \floor{\overline{a}_{ij}}$, can be written in the more conventional form
+%
+\begin{equation}
+	\sum_{j \in I_N} f_{ij}x_j \geq f_{i0}. \label{p1c10:eq:gomorycut}
+\end{equation}
+%
+In the form of \eqref{p1c10:eq:gomorycut}, this inequality is referred to as the Gomory (fractional) cut. 
+
+Notice that the inequality \eqref{p1c10:eq:gomorycut} is not satisfied by the optimal solution of the LP relaxation, since $x_j = 0, \forall j \in I_N$ and $f_{i0} > 0$. Therefore, this indicates that a cutting-plane method using this idea benefits from the employment of dual simplex, in line with the discussion in Section\ref{section_612}. 
+
+Let us present an numerical example illustrating the employment of Gomory's fractional cutting plane algorithm for solving the following integer programming problem
+%
+\begin{align*}
+	z = \maxi_x & 4x_1 - x_2\\
+	\st & 7x_1 - 2x_2 \leq 14\\
+	& x_2 \leq 3 \\
+	&2x_1 -2x_2 \leq 3 \\
+	&x_1, x_2 \in \integers_+ 
+\end{align*}
+
+Figure \ref{p1c10:fig:LP_1} illustrates the feasible region of the problem and indicates the solution of the its LP relaxation. Considering the tableau representation of the optimal basis for the LP relaxation, we have
+
+\begin{center}
+	\begin{tabular}{ccccc|c} 
+		$x_1$ & $x_2$ & $x_3$ & $x_4$ & $x_5$ & $z_{LP}$ \\ \hline
+		0 & 0 & -4/7 & -1/7 & 0 & 59/7 \\ \hline 
+		1 & 0 & 1/7 & 2/7 & 0 & 20/7 \\
+		0 & 1 &  0  &  1  & 0 & 3 \\
+		0 & 0 & -2/7 & 10/7 & 1 & 23/7
+	\end{tabular}	
+\end{center}
+
+Notice that the tableau indicate that the component $x_1$ in the optimal solution is fractional. Thus, we can choose that rom to generate a Gomory cut. This will lead to the new constraint (with added respective slack variable $s \ge 0$.
+%
+\begin{equation*}
+	\frac{1}{7}x_3 + \frac{2}{7}x_4 - s = \frac{6}{7}.	
+\end{equation*}
+
+We can proceed to add this new constraint onto the problem, effectively adding an additional row to the tableau. After multiplying it by -1 (so we have $s$ as a basic variable complementing the augmented basis), we obtain the new tableau
+
+\begin{center}
+	\begin{tabular}{cccccc|c}
+		$x_1$ & $x_2$ & $x_3$ & $x_4$ & $x_5$ & $s$ & $z_{LP}$ \\ \hline
+		0 & 0 & -4/7 & -1/7 &  0 & 0 & 59/7 \\ \hline
+		1 & 0 & 1/7 & 2/7   &  0 & 0 & 20/7 \\
+		0 & 1 &  0  &  1    &  0 & 0 & 3    \\
+		0 & 0 &-2/7 & 10/7  &  1 & 0 & 23/7 \\
+		0 & 0 &-1/7 & -2/7  &  0 & 1 & -6/7 
+	\end{tabular}	
+\end{center}
+
+
+Notice that the solution remains dual feasible, which indicates the suitability of the dual simplex method. Applying the dual simplex method leads to the optimal tableau 
+
+\begin{center}
+	\begin{tabular}{c|cccccc}
+		$z_{LP}$ & $x_1$ & $x_2$ & $x_3$ & $x_4$ & $x_5$ & s\\ \hline
+		15/2 & 0 & 0 & 0 &  0  & -1/2 & -3 \\ \hline
+		2   & 1 & 0 & 0 &  0  &  0   &  1 \\
+		1/2  & 0 & 1 & 0 &  0  & -1/2 &  1 \\
+		1    & 0 & 0 & 1 &  0  & -1   & -5 \\ 
+		5/2  & 0 & 0 & 0 &  1  &  1/2 & -1
+	\end{tabular}	
+\end{center}
+
+Notice that we still have a fractional component, this time associated with $x_2$. We proceed in an analogous fashion, first generating the Gomory cut and adding the slack variable $t \ge 0$, thus obtaining 
+%
+\begin{equation*}
+	\frac{1}{2}x_5 - t = \frac{1}{2}.
+\end{equation*}
+%
+Then, adding it to the previous tableau and employing the dual simplex again, leads to the optimal tableau
+
+\begin{center}
+	\begin{tabular}{ccccccc|c}
+	$x_1$ & $x_2$ & $x_3$ & $x_4$ & $x_5$ & $s$ & $t$ & $z_{LP}$ \\ \hline
+	0  &  0  &  0  &  0  &  0  & -4  & -1  &  7  \\ \hline 
+	1  &  0  &  0  &  0  &  0  &  1  & 0   &  2  \\ 
+	0  &  1  &  0  &  0  &  0  &  0  & -1  &  1  \\
+	0  &  0  &  1  &  0  &  0  & -7  & -2  &  2  \\ 
+	0  &  0  &  0  &  1  &  0  &  0  &  1  &  2  \\
+	0  &  0  &  0  &  0  &  1  & -2  & -2  &  1 
+	\end{tabular}
+\end{center}
+
+Notice that now all variables are integer, and thus, an optimal for solution for the original integer programming problem was found. 
+
+Some points are worth noticing. First, notice that, at the optimum, all variables, including the slacks, are integer. This is a consequence of having the Gomory cuts active at the optimal solution since \eqref{p1c10:eq:CG_cut}, and consequently \eqref{p1c10:eq:gomorycut}, have both the left and righthand sides integer. Also, notice tat at each iteration the problem increases in size, due to the new constraint being added, which implies that the basis also increase in size. Thought this is an issue also in branch-and-bound method, it can be a more prominent computational issue in the context of cutting-plane methods. 
+
+We can also interpret the progresso of the algorithm in graphical terms. First of all, notice that we can express the cuts in terms of the original variables $(x_1,x_2)$ by noticing that the original formulation gives $x_3 = 14 - 7x_1 + x_2$ and $x_4 = 3-x_2$. Substituting $x_3$ and $x_4$ in the cut $\frac{1}{7}x_3 + \frac{2}{7}x_4 - s = \frac{6}{7}$ gives $x_1 \leq 2$. More generally, we have that 
+
+\begin{proposition}
+     Let $\beta$ be the row $l$ of $B^{-1}$ selected to generate the cut, and let $q_i = \beta_i - \floor{\beta_i}$, $i \in \braces{1,\dots, m}$. Then the cut $\sum_{j \in I_N}f_{lj}x_j \geq f_{l0}$, written in terms of the original variables, is the Chv\'atal-Gomory inequality 
+ $$ \sum_{j=1}^n \floor{qA_j}x_j \leq \floor{qb}. $$
+ \end{proposition}
+
+\begin{figure}[h]
+	
+	\begin{subfigure}{0.32\textwidth}
+		\centering
+		\begin{tikzpicture}[scale = 0.8,
+			point/.style={circle, fill=gray!40, inner sep=1pt},
+			feas point/.style={circle, fill=blue, inner sep=1pt}]
+			\draw[help lines] (0,0) grid (4,4);  
+			
+			\fill[blue!40, opacity=0.5] (0,0) -- (1.5, 0) -- (2.2, 0.7) --(20/7, 3) -- (0,3);	
+			\foreach \x in {0,...,4}{
+			  \foreach \y in {0,...,4} {
+			      \node[point] (\x,\y) at (\x, \y) {};
+			  }}
+			\foreach \x in {0,...,4}{
+			  \node[font=\scriptsize] at (\x,-0.4) {$\x$};
+			}
+			\foreach \y in {0,...,4}{
+			  \node[font=\scriptsize] at (-0.4,\y) {$\y$};
+			}                      
+			\draw[thick, <->] (4.5,0) node[below, font=\scriptsize]{$x_1$} -- (0,0) -- (0,4.5) node[left, font=\scriptsize]{$x_2$};    
+			\draw[domain=0:4.5, thick, variable=\x, blue] plot ({\x},{3});
+			\draw[domain=2:22/7, thick, variable=\x, blue] plot ({\x},{-14/2 + 7/2*\x});
+			\draw[domain=1.5:4, thick,variable=\x,blue] plot ({\x},{-3/2 + \x});
+			\node[fill=orange, inner sep=2pt] (LP) at (20/7, 3) {};          
+			\node[font=\scriptsize, below right,inner sep=1pt] at (LP) {$x_{LP}^0$};
+			\node[feas point] at (0,0){};
+			\node[feas point] at (1,0){};
+			\foreach \x in {0,...,2}{ 
+			  \foreach \y in {1,...,3}{        
+			      \node[feas point] at (\x,\y){};
+			}}     
+		\end{tikzpicture}	
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.32\textwidth}
+		\centering
+		\begin{tikzpicture}[scale = 0.8,
+          point/.style={circle, fill=gray!40, inner sep=1pt},
+          feas point/.style={circle, fill=blue, inner sep=1pt}]
+          \draw[help lines] (0,0) grid (4,4);  
+          \fill[blue!40, opacity=0.5] (0,0) -- (1.5, 0) -- (2, 0.5) --(2, 3) -- (0,3);
+          \foreach \x in {0,...,4}{
+              \foreach \y in {0,...,4} {
+                  \node[point] (\x,\y) at (\x, \y) {};
+              }}
+          \foreach \x in {0,...,4}{
+              \node[font=\scriptsize] at (\x,-0.4) {$\x$};
+          }
+          \foreach \y in {0,...,4}{
+              \node[font=\scriptsize] at (-0.4,\y) {$\y$};
+          }                      
+          \draw[thick, <->] (4.5,0) node[below, font=\scriptsize]{$x_1$} -- (0,0) -- (0,4.5) node[left, font=\scriptsize]{$x_2$};    
+          \draw[domain=0:4.5, thick, variable=\x, blue] plot ({\x},{3});
+          \draw[domain=2:22/7, thick, variable=\x, blue] plot ({\x},{-14/2 + 7/2*\x});
+          \draw[domain=1.5:4, thick,variable=\x,blue] plot ({\x},{-3/2 + \x});
+          \draw[orange, thick] (2,0) -- (2,4);
+          \node[fill=orange, inner sep=2pt] (LP) at (20/7, 3) {};          
+          \node[font=\scriptsize, below right,inner sep=1pt] at (LP) {$x_{LP}^0$};
+          \node[fill=orange, inner sep=2pt] (LP) at (2, 1/2) {};          
+          \node[font=\scriptsize, below right,inner sep=1pt] at (LP) {$x_{LP}^1$};
+          \node[feas point] at (0,0){};
+          \node[feas point] at (1,0){};
+          \foreach \x in {0,...,2}{ 
+              \foreach \y in {1,...,3}{        
+                  \node[feas point] at (\x,\y){};
+          }}
+      \end{tikzpicture}	
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.32\textwidth}
+		\centering
+		\begin{tikzpicture}[scale = 0.9,
+          point/.style={circle, fill=gray!40, inner sep=1pt},
+          feas point/.style={circle, fill=blue, inner sep=1pt}]
+          \draw[help lines] (0,0) grid (4,4);  
+          \fill[blue!40, opacity = 0.5] (0,0) -- (0,3) --(2,3) -- (2,1)	-- (1,0);
+          \foreach \x in {0,...,4}{
+              \foreach \y in {0,...,4} {
+                  \node[point] (\x,\y) at (\x, \y) {};
+              }}
+          \foreach \x in {0,...,4}{
+              \node[font=\scriptsize] at (\x,-0.4) {$\x$};
+          }
+          \foreach \y in {0,...,4}{
+              \node[font=\scriptsize] at (-0.4,\y) {$\y$};
+          }                      
+          \draw[thick, <->] (4.5,0) node[below, font=\scriptsize]{$x_1$} -- (0,0) -- (0,4.5) node[left, font=\scriptsize]{$x_2$};    
+          \draw[domain=0:4.5, thick, variable=\x, blue] plot ({\x},{3});
+          \draw[domain=2:22/7, thick, variable=\x, blue] plot ({\x},{-14/2 + 7/2*\x});
+          \draw[domain=1.5:4, thick, variable=\x,blue] plot ({\x},{-3/2 + \x});
+          \draw[orange, thick] (2,0) -- (2,4);
+          \draw[orange, thick] (1,0) -- (4,3);
+          \node[fill=orange, inner sep=2pt] (LP) at (20/7, 3) {};          
+          \node[font=\scriptsize, below right, inner sep=1pt] at (LP) {$x_{LP}^0$};
+          \node[fill=orange, inner sep=2pt] (LP) at (2, 1/2) {};          
+          \node[font=\scriptsize, below right, inner sep=1pt] at (LP) {$x_{LP}^1$};
+          \node[fill=orange, inner sep=2pt] (LP) at (2, 1) {};          
+          \node[font=\scriptsize, above left, inner sep=1pt] at (LP) {$x_{LP}^2$};
+          \node[feas point] at (0,0){};
+          \node[feas point] at (1,0){};
+          \foreach \x in {0,...,2}{ 
+              \foreach \y in {1,...,3}{        
+                  \node[feas point] at (\x,\y){};
+          }}         
+      \end{tikzpicture}	
+	\end{subfigure}
+
+      \caption{Feasible region of the LP relaxation (polyhedral set) and of the integer programming problem (blue dots) at each of three iterations taken to solve the integer programming problem. The inequalities in orange represent the Gomory cut added at each iteration} \label{p1c10:fig:LP_1}	
+\end{figure}
+
+
+\section{Stronger inequalities}
+
+..
+ 
+
+
+
+ 
+
+
+
