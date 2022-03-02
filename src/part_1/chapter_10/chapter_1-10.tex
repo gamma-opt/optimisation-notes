@@ -473,14 +473,141 @@ We can also interpret the progresso of the algorithm in graphical terms. First o
 \end{figure}
 
 
-\section{Stronger inequalities}
+\section{Obtaining stronger inequalities}
 
-..
- 
-
+We finalise this chapter discussing the notion of strong inequalities and providing an example on how they can be made stronger in some cases by means of an external process. 
 
 
- 
+\subsection{Strong inequalities}
 
+The notion of strong inequalities arises from the notion of stronger formulations, cf. Definition \ref{p1c8:def:better_formulations}. That is, we say that an inequality is strong in terms of its relative quality in describing the convex hull of integer set.
+
+However, in this context we are interested in comparing two alternative inequalities to decide which is stronger. For that, we can rely on the notions of \emph{dominance} and related \emph{redundancy} of inequalities. 
+
+Consider two valid inequalities $\pi x \leq \pi_0$ and $\mu x \leq \mu_0$ that are valid for a polyhedral set $P = \braces{x \in \reals^n_+ : Ax \leq b}$. Definition \ref{p1c10:def:dominance} formalises the notion of dominance.
+
+\begin{definition}[Dominance] \label{p1c10:def:dominance}
+    $\pi x \leq \pi_0$ \emph{dominates} $\mu x \leq \mu_0$ if these exists $u > 0$ such that $\pi \geq u\mu$, $\pi_0 \leq u\mu_0$, and $(\pi, \pi_0) \neq (u\mu, u\mu_0)$.
+\end{definition}
+
+Let us illustrate the concept of dominance with a numerical example. Consider the inequalities $2x_1 + 4x_2 \leq 9$ and $x_1 + 3x_2 \leq 4$, which are valid for $P = \conv(X)$, where 
+	%
+	\begin{equation*}
+	X = \braces{(0,0), (0,1), (0,2), (0,3), (0,4), (1,0), (1,1)}.	
+	\end{equation*}
+	
+Notice that, if we consider $u = 1/2$, we have that, for any $x=(x_1,x_2)$, that $1x_1 + 3x_2 \geq u(2x_1 + 4x_2) = x_1 + 2x_2$ and that $4 \leq 9u = 9/2$. Thus, we say that $x_1 + 3x_2 \le 4$ dominates $2x_1 + 4x_2 \leq 9$. Figure \ref{p1c10:fig:dominance} illustrates the two inequalities. Notice that $x_1 + 3x_2 \le 4$ is a stronger inequality, since it is more efficient in representing the convex hull of $X$ than $2x_1 + 4x_2 \le 9$.   
+
+\begin{figure}
+	\begin{tikzpicture}[scale = 0.9,
+		point/.style={circle, fill=gray!40, inner sep=1pt},
+		feas point/.style={circle, fill=blue, inner sep=1pt}]
+		\fill[blue!10] (0,0) -- (0,1) -- (1,1) -- (4,0) -- cycle;
+		\foreach \x in {0,...,5}{
+		  \node[font=\small] at (\x,-0.4) {$\x$};
+		}
+		\foreach \y in {0,...,3}{
+		  \node[font=\small] at (-0.4,\y) {$\y$};
+		}                      
+		\draw[thick, <->] (5.5,0) node[below, font=\small]{$x_1$} -- (0,0) -- (0,3.5) node[left, font=\small]{$x_2$};    
+		
+		\draw[domain=0:4, thick, variable=\x, blue] plot ({\x},{-\x/3 + 4/3});
+		\draw[domain=0:4.5, thick, variable=\x, orange] plot ({\x},{-\x/2 + 9/4});
+		\node[feas point] at (2,0){};
+		\node[feas point] at (3,0){};
+		\node[feas point] at (4,0){};
+		\foreach \x in {0,...,1}{ 
+		  \foreach \y in {0,...,1}{        
+		      \node[feas point] at (\x,\y){};
+		}}
+		\node [right,font=\small] at (1,2) {{\color{orange}$2x_1+4x_2 \leq 9$}};
+		\node [right,font=\small] at (1.2,1.1) {{\color{blue}$x_1+3x_2 \leq 4$}};
+		\node [right,font=\small] at (0,0.5) {$\conv(X)$};         
+	\end{tikzpicture}
+	\caption{Illustration of dominance between constraints. Notice that $x_1 + 3x_2 \le 4$ dominates $2x_1 + 4x_2 \le 9$ and is thus stronger}	\label{p1c10:fig:dominance}
+\end{figure}
+
+Another related concept is the notion of redundancy. Clearly, the presence of two constraints in which one dominates the other, the dominated constraint is also redundant and can be safely removed from the formulation of a polyhedral set $P$. However, in some cases one might not be able to identify redundant constraints simply because no constraint is clearly dominated by another. Even then, there might be a way to identify weak (or redundant) constraints by combining two or more constraints that then form a dominating constraint. This is formalised in Definition \ref{p1c10:def:redundancy}.
+
+\begin{definition}[Redundancy] \label{p1c10:def:redundancy}
+	$\pi x \leq \pi_0$ is \emph{redundant} for $P$ if there exists $k \geq 1$ valid inequalities $\pi^i x \leq \pi_0^i$ and $k\geq 1$ vectors $u_i > 0$, for $i \in \braces{1,\dots, k}$, such that $\left( \sum_{i=1}^k u_i\pi^i\right)x \leq \sum_{i=1}^ku_i\pi_0^i$ dominates $\pi x \leq \pi_0$.
+\end{definition}
+
+Once again, let us illustrate the concept with a numerical example. Consider we generate the inequality $5x_1 - 2x_2 \leq 6$, which is valid for the polyhedral set 
+%
+\begin{equation*}
+	P = \braces{x \in \reals^2_+ : 6x_1 - x_2 \le 9, 9x_1 - 5x_2 \le 6}.
+\end{equation*}
+%
+The inequality $5x_1 - 2x_2 \leq 6$ is not dominated by any of the inequalities forming $P$. However, if we set $u_i= (\frac{1}{3}, \frac{1}{3})$, we obtain $5x_1 - 2x_2 \leq 5$, which in turn dominates $5x_1 - 2x_2 \leq 6$. Thus, we can conclude that the generated inequality is redundant and does not improve the formulation of $P$.
+
+As one might realise, checking whether a newly generated inequality improves the current formulation is a demanding task, as it requires finding the correct set of coefficients $u$ for all constraints currently forming the polyhedral set $P$. Nonetheless, the notions of redundancy and dominance can be used to guide procedures that generate or improve existing inequalities. Let us discuss one of such procedures, in the context of 0-1 knapsack inequalities.
+
+
+\subsection{Strengthening 0-1 knapsack inequalities}
+
+Let us consider the family of constraints known as knapsack constraints and see how they can be strengthened. For that, let us first define the knapsack set
+%
+\begin{equation*}
+	X = \braces{x \in \braces{0,1}^n : \sum_{j=1}^n a_jx_j \leq b}.	
+\end{equation*}
+%
+We assume that $a_j \geq 0$, $j \in N = \braces{1, \dots, n}$, and $b > 0$.
+
+Let us start by defining the notion of a \emph{minimal cover}.
+
+\begin{definition} [minimal cover] \label{p1c10:def:minimal_cover}
+	A set $C \subseteq N$ is a cover if $\sum_{j \in C} a_j > b$. A cover $C$ is minimal if $C \setminus \braces{j}$ for all $j \in C$ is not a cover.  
+\end{definition} 
+
+Notice that a cover $C$ refers to any selection of items that exceed the budget $b$ of the constraint and this selection is said to be a minimal over if, upon removing of any item of the selection, the constraint becomes satisfied. This logic allows us to design a way to generate valid inequalities using covers. This is the main result in Proposition \ref{p1c10:prop:cover_inequalities}
+\begin{proposition} \label{p1c10:prop:cover_inequalities}
+	If $C \subseteq N$ is a cover for $X$, then a valid cover inequality for $X$ is
+	% 
+	\begin{equation*}
+		\sum_{j \in C} x_j \leq |C|-1.		
+	\end{equation*}
+\end{proposition}
+
+\begin{proof} 
+	Let $R = \braces{j \in N : x^R_j = 1}$, for $x^R \in X$. If $\sum_{j \in C}x_j^R > |C|-1$, then $|R \cap C| = |C|$ and $C \subseteq R$. Thus, $\sum_{j\in N}a_j x_j^R = \sum_{j\in R}a_j > b$, which violates the inequality and implies that $x^R \notin X$.  
+\end{proof}
+
+The usefulness of Proposition \ref{p1c10:prop:cover_inequalities} becomes evident if $C$ is a minimal cover. Let us consider a numerical example to illustrate this. c=Consider the knapsack set 
+%
+\begin{equation*}
+	X = \braces{x \in \braces{0,1}^7 : 11x_1 + 6x_2 + 6x_3 + 5x_4 + 5x_5 + 4x_6 + x_7 \leq 19}.	
+\end{equation*}
+
+The following are minimal cover inequalities for $X$. 
+%
+\begin{align*}
+&x_1 + x_2 + x_3 \leq 2\\
+&x_1 + x_2 +x_6 \leq 2\\
+&x_1 + x_5 + x_6 \leq 2\\
+&x_3 + x_4 + x_5 + x_6 \leq 3
+\end{align*}
+
+Notice that we would obtain a non-minimal cover $C^\prime$ by adding an inequality $x_i \leq 1$, $i \in C^\prime\setminus C$, to a minimal cover inequality of $C$, which makes the cover inequality somewhat redundant. For example, adding $x_7 \leq 1$ to a minimal cover inequality $x_1 + x_2 + x_3 \leq 2$ of $C = \{1,2,3\}$ yields a non-minimal cover $C^\prime = \braces{1,2,3,7}$ with inequality $x_1 + x_2 + x_3 + x_7 \leq 3$.
+
+There is a simple way to strengthen cover inequalities, using the the notion of \emph{extended} cover inequalities. One can extend a cover inequality by expanding the set $C$ with elements that have a coefficient $a_j$, $j \in N \setminus C$ greater than all coefficients $a_i$, $i \in C$. this guarantees that a substitution between elements must happen, meaning that the righthand side of the constraint remains $|C| - 1$. This is summarised in Proposition X
+
+\begin{proposition}
+	If $C$ is a cover for $X$, the extended cover inequality
+	%
+	\begin{equation*}
+		\sum_{j \in E(C)} x_j \leq |C|-1
+	\end{equation*}
+	% 
+	with $E(C) = C \cup \braces{j\in N: a_j \geq a_i, \forall i \in C}$ is valid for $X$.
+\end{proposition}
+
+We leave the proof as a thought exercise. Let us however illustrate this using the previous numerical example. For $C = \braces{3,4,5,6}$, $E(C) = \braces{1,2,3,4,5,6}$, yielding the inequality 
+%
+\begin{equation*}
+	x_1 + x_2 + x_3 + x_4 + x_5 + x_6 \leq 3	
+\end{equation*}
+%
+which is stronger than $x_3 + x_4 + x_5 + x_6 \leq 3$ as the former dominates the latter, cf. Definition \ref{p1c10:def:dominance}. 
 
 
