@@ -1,0 +1,41 @@
+\textbf{(a)}  Let $N = \{1,\dots,n\}$ be a set of potential facilities and $M = \{1,\dots,m\}$ a set of clients. Let $y_j = 1$ if facility $j$ is opened, and $y_j = 0$ otherwise. Moreover, let $x_{ij}$ be the fraction of client $i$'s demand satisfied from facility $j$. The UFL can be formulated as the mixed-integer problem (MIP): 
+
+\begin{align}
+ \text{(UFL-W)} : \quad &\mini_{x,y} \sum_{j\in N} f_jy_j + \sum_{i\in M}\sum_{j\in N} c_{ij}x_{ij} \label{IP:1}\\
+       &\st\nonumber \\
+       &\quad \sum_{j\in N}x_{ij} = 1, &\forall i \in M,\label{IP:2}\\
+       &\quad \sum_{i\in M}x_{ij} \leq my_j, &\forall  j \in N,\label{IP:3}\\
+       &\quad x_{ij} \geq 0, &\forall i \in M, \forall j \in N,\label{IP:4}\\
+       &\quad y_j \in \{0,1\}, &\forall j\in N,\label{IP:5}
+\end{align}
+
+where $f_j$ is the cost of opening facility $j$, and $c_{ij}$ is the cost of satisfying client $i$'s demand from facility $j$. Consider an instance of the UFL with opening costs $f=(4,3,4,4,7)$ and client costs
+
+\begin{equation*}
+ (c_{ij}) = \left(
+	\begin{array}{ccccc}
+		12 & 13 & 6 & 0  & 1 \\
+		8  & 4  & 9 & 1  & 2 \\
+		2  & 6  & 6 & 0  & 1 \\
+		3  & 5  & 2 & 1  & 8 \\
+		8  & 0  & 5 & 10 & 8 \\
+		2  & 0  & 3 & 4  & 1
+	\end{array}
+ \right)
+\end{equation*}
+
+Implement (the model) and solve the problem with Julia using JuMP.
+
+\textbf{(b)} An alternative formulation of the UFL is of the form
+
+\begin{align}
+ \text{(UFL-S)} : \quad &\mini_{x,y} \sum_{j\in N}f_jy_j + \sum_{i\in M}\sum_{j\in N}c_{ij}x_{ij}\label{SIP:1}\\
+       &\st\nonumber \\
+       &\quad \sum_{j\in N}x_{ij} = 1, &\forall i \in M,\label{SIP:2}\\
+       &\quad x_{ij} \leq y_j, &\forall  i\in M, \forall j \in N,\label{SIP:3}\\
+       &\quad x_{ij} \geq 0, &\forall i \in M, \forall j \in N,\label{SIP:4}\\
+       &\quad y_j \in \{0,1\}, &\forall j\in N.\label{SIP:5}
+\end{align}
+
+
+Linear programming (LP) relaxations of these problems can be obtained by relaxing the binary constraints $y_j\in \{0,1\}$ to $0 \leq y_j \leq 1$ for all $j \in N$. For the same instance as in part (a), solve the LP relaxations of UFL-W and UFL-S and compare the optimal costs of the LP relaxations against the optimal integer cost obtained in part (a).
