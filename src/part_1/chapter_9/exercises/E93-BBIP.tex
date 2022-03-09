@@ -1,15 +1,23 @@
 Consider the following integer programming problem $IP$:
 
-\begin{table}[H]
-	\centering
-	\begin{tabular}{V{0.4cm} r V{0.1cm} r V{0.1cm} l}
-		$\text{(IP)}$  & \multicolumn{4}{l}{z = max \ $x_1\ +\ 2x_2$}  \vspace{10pt}\\ 
-		        $\st$  & $-\ 3x_1$ & $+$ & 4$x_2$ & $\leq$ &  4                     \\
-		               &    3$x_1$ & $+$ & 2$x_2$ & $\leq$ & 11                     \\
-		               &    2$x_1$ & $-$ &  $x_2$ & $\leq$ &  5        \vspace{10pt}\\
-		               & \multicolumn{2}{l}{$x_1, x_2 \in \integers_+$}   
-	\end{tabular}
-\end{table}
+%\begin{table}[H]
+%	\centering
+%	\begin{tabular}{V{0.4cm} r V{0.1cm} r V{0.1cm} l}
+%		$\text{(IP)}$  & \multicolumn{4}{l}{z = max \ $x_1\ +\ 2x_2$}  \vspace{10pt}\\ 
+%		        $\st$  & $-\ 3x_1$ & $+$ & 4$x_2$ & $\leq$ &  4                     \\
+%		               &    3$x_1$ & $+$ & 2$x_2$ & $\leq$ & 11                     \\
+%		               &    2$x_1$ & $-$ &  $x_2$ & $\leq$ &  5        \vspace{10pt}\\
+%		               & \multicolumn{2}{l}{$x_1, x_2 \in \integers_+$}   
+%	\end{tabular}
+%\end{table}
+
+\begin{align*}
+	(IP) : \maxi z =~& x_1 + 2x_2   \\
+	\st & -3x_1 + 4x_2 \le 4 \\
+		& 3x_1 + 2x_2 \le 11 \\
+		& 2x_1 - x_2 \le 5   \\
+		& x_1, x_2 \in \integers_+
+\end{align*}
 
 Plot (or draw) the feasible region of the linear programming (LP) relaxation of the problem $IP$, then solve the problems using the figure. Recall that the LP relaxation of $IP$ is obtained by replacing the integrality constraints $x_1,x_2\in \integers_+$ by linear nonnegativity $x_1,x_2\geq 0$ and upper bounds corresponding to the upper bounds of the integer variables ($x_1,x_2\leq 1$ for binary variables). 
 

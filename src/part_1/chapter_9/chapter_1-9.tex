@@ -2,14 +2,14 @@
 
 \section{Optimality for integer programming problems}
 
-We will now discuss a method to solve mixed-integer programming problems that relies on the successive solution of linear programming relaxations. Although there are several methods that can be employed to solve combinatorial optimisation problems, most of than are not capable of providing optimality guarantees for the solution obtained (e.g., are heuristics or metaheuristics) or do not exploit the availability of a (linear) mathematical programming formulation. To date, the only method capable of both is something that is generally known as a \emph{branch-and-cut} method.
+We will now discuss a method to solve mixed-integer programming problems that relies on the successive solution of linear programming relaxations. Although there are several methods that can be employed to solve combinatorial optimisation problems, most of them are not capable of providing optimality guarantees for the solution obtained (e.g., are heuristics or metaheuristics) or do not exploit the availability of a (linear) mathematical programming formulation. To date, the most widespread method that is capable of both is something that is generally known as a \emph{branch-and-cut} method.
 
 Branch-and-cut methods are composed of a combination of multiple parts, including, among other techniques, a branch-and-bound approach, cutting planes, and heuristics as well. In the next chapters we will focus on each of these parts individually, starting with the branch-and-bound method.
 
 
 \section{Relaxations}
 
-Before we present the method itself, let us discuss the more general concept of relaxation. We have visited the concept somewhat informally before, but now we will concentrate on a more concrete definition.
+Before we present the method itself, let us discuss the more general concept of \emph{relaxation}. We have visited the concept somewhat informally before, but now we will concentrate on a more concrete definition.
 
 Consider an integer programming problem of the form
 %
@@ -17,9 +17,9 @@ Consider an integer programming problem of the form
 	z = \mini_x \braces{c^\top x : x \in X \subseteq \integers^n}.
 \end{equation*}
 %
-To prove that a given solution $x^*$ is optimal, we must rely on the notion of bounding. That is, we must provide a pair of upper and lower bounds that are as close (or tight) as possible. In the occasion that these bounds are the same, and thus match the value of $z = c^\top x^*$, we have available a certificate of optimality of $x^*$. This concept must be familiar to you. We already used a similar argumentation in Chapter \ref{chapter_5}, when we introduced the notion of dual bounds.
+To prove that a given solution $x^*$ is optimal, we must rely on the notion of \emph{bounding}. That is, we must provide a pair of upper and lower bounds that are as close (or tight) as possible. In the occasion that these bounds are the same, and thus match the value of $z = c^\top x^*$, we have available a certificate of optimality for $x^*$. This concept must be familiar to you. We already used a similar arguments in Chapter \ref{chapter_5}, when we introduced the notion of dual bounds.
 
-Most methods that can prove optimality work by \emph{bounding} an optimal solution. In this context, bounding means to construct an increasing sequence of lower bounds
+Most methods that can prove optimality work by bounding an optimal solution. In this context, bounding means to construct an increasing sequence of lower bounds
 %
 \begin{equation*}
 	\underline{z}_1 < \underline{z}_2 < \dots < \underline{z}_s \leq z	
@@ -31,9 +31,9 @@ and a decreasing sequence of upper bounds
 	\overline{z}_1 > \overline{z}_2 > \dots > \overline{z}_t \geq z
 \end{equation*}
 %
-to obtain as tight as possible lower ($\underline{z} \leq z$) and upper ($\overline{z} \geq z$) bounds. Notice that the process can be arbitrarily stopped when $\overline{z}_t - \underline{z}_s \leq \epsilon$, where $s$ and $t$ are some positive integers and $\epsilon > 0$ is a predefined (suitably small) tolerance. The term $\epsilon$ represents an \emph{absolute optimality gap}, meaning that one can guarantee that the optimal value is no larger (smaller) than $\epsilon$ units than $\underline{z}$ ($\overline{z}$).
+to obtain as tight as possible lower ($\underline{z} \leq z$) and upper ($\overline{z} \geq z$) bounds. Notice that the process can be arbitrarily stopped when $\overline{z}_t - \underline{z}_s \leq \epsilon$, where $s$ and $t$ are some positive integers and $\epsilon > 0$ is a predefined (suitably small) tolerance. The term $\epsilon$ represents an \emph{absolute optimality gap}, meaning that one can guarantee that the optimal value is at most greater than $\underline{z}$ by $\epsilon$ units and at most smaller than $\overline{z}$ by $\epsilon$ units. In other words, the optimal value must be either $\underline{z}$, $\overline{z}$, or a value in between.
 
-This framework immediately poses the key challenge of deriving such bounds efficiently. It turns out that this is a challenge that goes beyond the context of mixed integer programming problems. In fact, we have already seen this idea of bounding in Chapter \ref{chapter_7}, when we discussed decomposition methods, which also generate lower and upper bounds during their execution.
+This framework immediately poses the key challenge of deriving such bounds efficiently. It turns out that this is a challenge that goes beyond the context of mixed-integer programming problems. In fact, we have already seen this idea of bounding in Chapter \ref{chapter_7}, when we discussed decomposition methods, which also generate lower and upper bounds during their execution.
 
 Regardless of the context, bounds are typically of two types: \emph{primal} bounds, which are bounds obtained by evaluating a \emph{feasible} solution (i..e, that satisfy primal feasibility conditions); and \emph{dual} bounds, which are typically attained when a primal feasibility is allowed to be violated so that a dual feasible solution is obtained. In the context of minimisation, primal bounds are upper bounds (to be minimised), while dual bounds are lower bounds (to be maximised). Clearly, in the case of maximisation, the reverse holds. 
 
@@ -63,11 +63,13 @@ Clearly, for relaxations to be useful in the context of solving mixed-integer pr
 	If RP is a relaxation of P, then $z_{RP}$ is a dual bound for $z$. 
 \end{proposition}
     
-\begin{proof} For any optimal solution $x^*$ of P, we have 
+\begin{proof} For any optimal solution $x^*$ of $P$, we have that $x^* \in X \subseteq \overline{X}$, which implies that $x^* \in \overline{X}$. Thus, we have that
   \begin{equation*}
-  	x^* \in X \subseteq \overline{X} \Rightarrow x^* \in \overline{X} \Rightarrow z = c^\top x^* \geq \overline{c}^\top x^* \geq z_{RP}.	\qedhere
+  	 z = c^\top x^* \geq \overline{c}^\top x^* \geq z_{RP}.	\qedhere
   \end{equation*}
 \end{proof}
+
+The first inequality is due to Definition \ref{p1c9:def:relaxation} and the second is because $x^*$ is simply a feasible solution, but not necessarily the optimal, for $z_{RP}$. 
 
 \begin{proposition} \label{p1c9:prop:relaxation_optimality}
   The following statements are true:
@@ -84,7 +86,7 @@ Clearly, for relaxations to be useful in the context of solving mixed-integer pr
 
 \subsection{Linear programming relaxation}
 
-In the context of solving (mixed-)integer programming, we will rely on the notion of linear programming (LP) relaxations. We have briefly discussed the idea in the previous chapter, but, for the sake of precision, let us first define what we man by the term. 
+In the context of solving (mixed-)integer programming problems, we will rely on the notion of linear programming (LP) relaxations. We have briefly discussed the idea in the previous chapter, but, for the sake of precision, let us first define what we man by the term. 
 
 \begin{definition}[Linear programming (LP) relaxation]
   The LP relaxation of an integer programming problem $\mini \braces{c^\top x : x \in P \cap \integers^n}$ with $P = \braces{x \in \reals^n_+ : Ax \leq b}$ is the linear programming problem $\mini \braces{c^\top x : x \in P}$.
@@ -146,7 +148,7 @@ We can now briefly return to the discussion about better (or stronger) formulati
 		\mini_x \braces{c^\top x : x \in X} \text{ with } X = P_1 \cap \integers^n = P_2 \cap \integers^n.	
 	\end{equation*} 
 	%
-	Assume $P_1$ is a better formulation than $P_2$ (i.e., $P_1 \subset P_2$). Let $z_{LP}^i = \mini_x \braces{c^\top x : x \in P_i}$ for $i=1,2$. Then $z_{LP}^1 \geq z_{LP}^2$ for any cost vector $c$.
+	Assume $P_1$ is a better formulation than $P_2$ (i.e., $P_1 \subset P_2$). Let $z_{LP}^i = \mini \braces{c^\top x : x \in P_i}$ for $i=1,2$. Then $z_{LP}^1 \geq z_{LP}^2$ for any cost vector $c$.
 \end{proposition}
 
 \begin{proof}
@@ -160,7 +162,7 @@ There is another important type of relaxation that is often exploited in the con
 
 Efficient algorithms are known for some combinatorial optimisation problems, and this can be exploited in a solution method for problem to which the combinatorial relaxation happens to be one of such problems. 
 
-Let us illustrate the concept with a couple of example. Consider the travelling salesperson problem (TSP). Recall that, without considering the tour elimination constraints, we recover the assignment problem. It so turns out that the assignment problem can be solved efficiently (see the Hungarian method) and thus can be used as a relaxation for the TSP, i.e.,
+Let us illustrate the concept with a couple of example. Consider the travelling salesperson problem (TSP). Recall that, without considering the tour elimination constraints, we recover the assignment problem. It so turns out that the assignment problem can be solved efficiently (for example, using the so-called the Hungarian method) and thus can be used as a relaxation for the TSP, i.e.,
 %
 \begin{align*}
 	z_{TSP} = &\mini_{T\subseteq A}\braces{\sum_{(i,j)\in T} c_{ij} : T \text{ forms a tour}} \geq \\
@@ -216,14 +218,14 @@ Once again, it so turns out that several efficient algorithms are known for form
 \section{Branch-and-bound method}
 
 
-Relaxations play a major role in solving mixed-integer programming and/or combinatorial optimisation problems. However, they are only part of the framework (specifically, the bounding part of the branch-and-bound method). One still needs to be able to somehow, from the solution of said relaxations, be able to construct a solution to the original problem.
+Relaxations play a major role in solving mixed-integer programming and/or combinatorial optimisation problems. However, they are only part of the framework (specifically, the bounding part of the branch-and-bound method). One still needs to be able to, from the solution of said relaxations, be able to construct a solution to the original problem.
 
 \emph{Branch-and-bound} is an algorithmic strategy that is far broader than mathematical programming and optimisation. In essence, it consists of a \emph{divide-and-conquer} strategy, in which we first break an original problem into smaller and manageable (or solvable) parts and then recombine the solution of these parts into a solution for the original problem.
 
 Specifically, let 
 %
 \begin{equation*}
-	P: z_{IP} = \maxi_x \braces{c^\top x : x\ \in S}. 
+	P: z = \maxi_x \braces{c^\top x : x\ \in S}. 
 \end{equation*}
 %
 The working principle behind this strategy is based on the principle formalised in Proposition \ref{p1c9:prop:divide-and-conquer}.
@@ -232,15 +234,15 @@ The working principle behind this strategy is based on the principle formalised 
     Let $K = \braces{1,\dots,|K|}$ and  $\bigcup_{k \in K} S_k = S$ be a decomposition of $S$. Let $z^k = \maxi_x\braces{c^\top x : x \in  S_k}, \forall k \in K$. Then 
 	%
     \begin{equation*}
-    	z_{IP} = \max_{k \in K} \braces{z^k}.	
+    	z = \max_{k \in K} \braces{z^k}.	
     \end{equation*}
 \end{proposition}
 
-Notice the use of the word \emph{decomposition} in Proposition \ref{p1c9:prop:divide-and-conquer}. Indeed, the principle is philosophically the same, and this connection will be exploited in later chapters when we discuss in more details technology for solving mixed-integer programming problems.
+Notice the use of the word \emph{decomposition} in Proposition \ref{p1c9:prop:divide-and-conquer}. Indeed, the principle is philosophically the same, and this connection will be exploited in later chapters when we discuss in more detail the available technology for solving mixed-integer programming problems.
 
 Now, one challenging aspect related with divide-and-conquer approaches is that, in order to be able to find a solution, one might need to repeat several times the strategy based on Proposition \ref{p1c9:prop:divide-and-conquer}, leading to a multi-layered collection of subproblems. To address this issue, such methods typically rely on tree structures called \emph{enumerative trees}, which are simply a representation that allows for keeping track the relationship (represented by branches) between subproblems (represented by nodes).
 
-Figure \ref{p1c9:fig:binary_tree} represent an enumerative tree for a generic problem $S \subseteq \braces{0,1}^3$ in which one must define the value of a three-dimensional binary variable. The subproblems are formed by, at each level, fixing one of the components to zero or one, forming then two subproblems. Any strategy to form subproblems that generate two subproblems (or children) is called a \emph{binary branching}.
+Figure \ref{p1c9:fig:binary_tree} represents an enumerative tree for a generic problem $S \subseteq \braces{0,1}^3$ in which one must define the value of a three-dimensional binary variable. The subproblems are formed by, at each level, fixing one of the components to zero or one, forming then two subproblems. Any strategy to form subproblems that generate two subproblems (or children) is called a \emph{binary branching}.
 
 \begin{figure}[h]
 	\begin{tikzpicture}[circle, level distance=1cm,
@@ -313,7 +315,7 @@ Pruning branches is made possible by combining relaxations and global primal bou
 
 
 
-\subsection{Linear-programming-based branch-and-bound for integer-programming problems}
+\subsection{Linear-programming-based branch-and-bound}
 
 \emph{Branch-and-bound} is the general nomenclature given to methods that operate based on solving relaxations of subproblems and using bounding information to preemptively prune branches in the enumerative search tree. 
 
@@ -330,7 +332,7 @@ Notice that this implies that each of the subproblems will be disjunct (i.e., wi
 
 Bounding can occur in three distinct ways. The first case is when the solution of the LP relaxation happens to be integer and, therefore, optimal for the subproblem itself. In this case, no further exploration along that subproblem is necessary and we say that the node has been \emph{pruned by optimality}.
 
-Figure \ref{p1c9:fig:prune_by_optimality} illustrates the process of pruning by optimality. Each box denotes a subproblem, with the interval denoting known lower (primal) and upper (dual) bounds for the problem and $x$ denoting a solution for a relaxation of the subproblem. In Figure \ref{p1c9:fig:prune_by_optimality}, we see a pruning that is caused because a solution to the original subproblem has been identified by solving its relaxation, akin to the leaves in the enumerative tree represented in Figure \ref{p1c9:fig:binary_tree}. This can be attested because the solution of subproblem $S_1$ is integer. 
+Figure \ref{p1c9:fig:prune_by_optimality} illustrates the process of pruning by optimality. Each box denotes a subproblem, with the interval denoting known lower (primal) and upper (dual) bounds for the problem and $x$ denoting the solution for the LP relaxation of the subproblem. In Figure \ref{p1c9:fig:prune_by_optimality}, we see a pruning that is caused because a solution to the original (integer) subproblem has been identified by solving its (LP) relaxation, akin to the leaves in the enumerative tree represented in Figure \ref{p1c9:fig:binary_tree}. This can be concluded because the solution of the LP relaxation of subproblem $S_1$ is integer. 
 
 \begin{figure*}[h]
 	\begin{tikzpicture}[level distance=1.5cm, 
@@ -356,7 +358,7 @@ Figure \ref{p1c9:fig:prune_by_optimality} illustrates the process of pruning by 
 	 \caption{An example of pruning by optimality. Since the solution of LP relaxation of subproblem $S_1$ is integer, $x = (2,2)$ must be optimal for $S_1$} \label{p1c9:fig:prune_by_optimality}	
 \end{figure*}
 
-Another type of pruning takes place when known global (primal) bounds can be used to prevent further exploration of a branch in the enumeration tree. Continuing the example in Figure \ref{p1c9:fig:prune_by_optimality}, notice that the global lower (primal) bound $\underline{z} = 11$ becomes available and can be transmitted to all subproblems. Now suppose we solve the LP relaxation of $S_2$ and obtain the optimal value of $\overline{z}_2 = 9.7$. Notice that we are precisely in the situation described in Section \ref{section_913}. That is, the nodes descending from $S_2$ can only yield solutions that have objective function value worse than the dual bound of $S_2$, which, in turn, is worse than a known global primal (lower) bound. Thus, any further exploration among the descendants of $S_2$ would be fruitless in terms of yielding better solutions and can be pruned. This is known as \emph{pruning by bound}, and is illustrated in Figure \ref{p1c9:fig:pruning_by_bound}.
+Another type of pruning takes place when known global (primal) bounds can be used to prevent further exploration of a branch in the enumeration tree. Continuing the example in Figure \ref{p1c9:fig:prune_by_optimality}, notice that the global lower (primal) bound $\underline{z} = 11$ becomes available and can be transmitted to all subproblems. Now suppose we solve the LP relaxation of $S_2$ and obtain the optimal value of $\overline{z}_2 = 9.7$. Notice that we are precisely in the situation described in Section \ref{section_913}. That is, the nodes descending from $S_2$ (i.e., their descendants) can only yield solutions that have objective function value worse than the dual bound of $S_2$, which, in turn, is worse than a known global primal (lower) bound. Thus, any further exploration among the descendants of $S_2$ would be fruitless in terms of yielding better solutions and can be pruned. This is known as \emph{pruning by bound}, and is illustrated in Figure \ref{p1c9:fig:pruning_by_bound}.
 
 \begin{figure}[h]
 	\begin{tikzpicture}[level distance=1.5cm, 
@@ -385,7 +387,7 @@ The third type of pruning is called \emph{pruning by infeasibility}, which takes
 
 Algorithm \ref{p1c9:alg:BB} presents a pseudocode for an LP-based branch-and-bound method. Notice that the algorithm keeps a list $\mathcal{L}$ of subproblems to be solved and requires that a certain rule to select which subproblem is solved next to be employed. This subproblem selection (often referred to as \emph{search strategy}) can have considerable impacts on the performance of the method. Similarly, in case multiple components are found to be fractional, one must be chosen. Defining such \emph{branching priorities} also has consequences to performance. We will discuss these in more depth later on.
 
-Also, recall that we have seen how to efficiently resolve a linear programming problem from an optimal basis once we include an additional constraint. It so turns out that an efficient dual simplex    method is the kingpin of an efficient branch-and-bound method for (mixed)-integer programming problems.
+Also, recall that we have seen how to efficiently resolve a linear programming problem from an optimal basis once we include an additional constraint (in Chapter \ref{chapter_6}). It so turns out that an efficient dual simplex method is the kingpin of an efficient branch-and-bound method for (mixed)-integer programming problems.
 
 Finally, although we developed the method in the context of integer programming problems, the method can be readily applied to mixed-integer programming problems, with the only difference being that the branch-and-bound steps are only applied to the integer variables while the continuous variables are naturally taken care of in the solution of the LP relaxations.
 
@@ -415,8 +417,8 @@ Finally, although we developed the method in the context of integer programming 
 Let us finalise presenting a numerical example of the employment of branch-and-bound method to solve an integer programming problem. Consider the problem:
 %
 \begin{align*}
-    \maxi_x z =~& 4x_1 - x_2 \\
-    &7x_1 - 2x_2 \leq 14 \\
+    \maxi_x z = & 4x_1 - x_2 \\
+    \st & 7x_1 - 2x_2 \leq 14 \\
     &x_2 \leq 3 \\
     &2x_1 - 2x_2 \leq 3 \\
     &x \in \integers^2_+
@@ -601,14 +603,17 @@ Next, we choose to solve the LP relaxation of $S_{12}$, which yields an integer 
 
 Notice that in this example, the order in which we solved the subproblems was crucial for pruning by bound the subproblem $S_{11}$, only possible because we happened to solve the LP relaxation of $S_{12}$ first and that happened to yield a feasible solution and associated primal bound. This illustrates an important aspect associated with the branch and bound method: having good feasible solutions available early on in the process increases the likelihood of performing more pruning by bound, which is highly desirable in terms of computational savings (and thus, performance). We will discuss in more detail the impacts of different search strategies later on when we consider this and other aspects involved in the implementation of mixed-integer programming solvers.
 
+\pagebreak 
 
 \section{Exercises}
 
 \subsection*{Problem 9.1: Uncapacitated Facility Location (UFL)}
 \input{part_1/chapter_9/exercises/E91-UFL}
 
+\pagebreak
 \subsection*{Problem 9.2: LP-based branch-and-bound method}
 \input{part_1/chapter_9/exercises/E92-LPBB}
+
 
 \subsection*{Problem 9.3: Employing the branch-and-bound method graphically}
 \input{part_1/chapter_9/exercises/E93-BBIP}
