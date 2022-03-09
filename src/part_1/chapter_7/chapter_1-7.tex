@@ -430,14 +430,14 @@ Algorithm \ref{p1c7:alg:benders} presents a pseudocode for the Benders decomposi
 
 Notice that the algorithm terminates if no violated constraint is found. This in practice implies that $(p^i_k)^\top(e_k - C_k \overline{x}) \leq \overline{\theta}_k$ for all $k \in \braces{1,\dots,K}$, and thus $(\overline{x}, \braces{\overline{\theta}_k}_{k=1}^K)$ is optimal for $P$. In a way, if one consider the dual version subproblem, $S_k^D$, one can notice that it is acting as an implicit search for values of $p^i_k$ that can make $(p^i_k)^\top(e_k - C_k \overline{x})$ larger than $\overline{\theta}_k$, meaning that the current solution $\overline{x}$ violates \ref{p1c7:eq:opt_cut} and is thus not feasible to $P_M^l$. 
 
-Also, every time one solves $P_M^l$, a dual (lower for minimisation) bound $LB^l = z_{P_M}^l$ is obtained. This is simply because the relaxed main problem is a relaxation of the $P$, i.e., contains less constraints than the original problem $P$. A primal (upper) bound can also be calculated at every iteration, which allows for keeping track of the progress of the algorithm in terms of convergence and preemptively terminate it at any arbitrary optimality tolerance. That can be achieved by setting
+Also, every time one solves $P_M^l$, a dual (lower for minimisation) bound $LB^l = z_{P_M}^l$ is obtained. This is simply because the relaxed main problem is a relaxation of the problem $P$, i.e., it contains less constraints than the original problem $P$. A primal (upper) bound can also be calculated at every iteration, which allows for keeping track of the progress of the algorithm in terms of convergence and preemptively terminate it at any arbitrary optimality tolerance. That can be achieved by setting
 %
 \begin{align*}
-	UB^l &= \min\braces{z_P^{k-1}, c^\top \overline{x}^l + \sum_{k=1}^K f^\top \overline{y}_k^l} \\	
-	&= \min\braces{z_P^{k-1}, z_{P_M}^l - \sum_{k=1}^K \theta_k + \sum_{k=1}^K z_D^{kl}},
+	UB^l &= \min\braces{UB^{l-1}, c^\top \overline{x}^l + \sum_{k=1}^K f^\top \overline{y}_k^l} \\	
+	&= \min\braces{UB^{l-1}, z_{P_M}^l - \sum_{k=1}^K \overline{\theta}_k^l + \sum_{k=1}^K z^{Dl}_{k}},
 \end{align*}
 %
-where $\overline{y}_k^l = \argmin_y \braces{S_k^l}$. Notice that, differently from the lower bound $LB^l$, there are no guarantees that the upper bound $UB^l$ will decrease monotonically. Therefore, one must compare the bound obtained at a given iteration $l$ using the solution $(\overline{x}^l, \overline{y}_1^l,\dots, \overline{y}^l_K)$ against an incumbent (or best-so-far) bound $UB^l$.
+where $(\overline{x}^l, \braces{\overline{\theta}^{l}_k}_{k=1}^K) = \argmin_{x, \theta} \braces{P_M^l}$, $\overline{y}_k^l = \argmin_y \braces{S_k^l}$, and $z^{Dl}_{k}$ is the objective function value of the dual subproblem $S_k^D$ at iteration $l$. Notice that, differently from the lower bound $LB^l$, there are no guarantees that the upper bound $UB^l$ will decrease monotonically. Therefore, one must compare the bound obtained at a given iteration $l$ using the solution $(\overline{x}^l, \overline{y}_1^l,\dots, \overline{y}^l_K)$ against an incumbent (or best-so-far) bound $UB^{l-1}$.
 
 
 \pagebreak	
