@@ -1,0 +1,49 @@
+Consider the set $X = P \cap \integers^n$ where $P = \{x \in \reals^n : Ax \leq b, x\geq 0 \}$ and in which $A$ is an $m \times n$ matrix with columns $\{A_1, \dots, A_n\}$. Let $u \in \reals^m$ with $u\geq 0$. The Chvátal-Gomory (C-G) procedure to construct valid inequalities for $X$ uses the following 3 steps:
+    \begin{enumerate}
+        \item $\sum\limits_{j=1}^n uA_jx_j \leq ub$ is valid for $P$, as $u\geq 0$ and $\sum\limits_{j=1}^n A_jx_j \leq b$.
+        \item $\sum\limits_{j=1}^n \floor{uA_j}x_j \leq ub$ is valid for $P$, as $x \geq 0$.
+        \item $\sum\limits_{j=1}^n  \floor{uA_j}x_j \leq \floor{ub}$ is valid for $X$, as any $x\in X$ is integer and thus $\sum\limits_{j=1}^n\floor{uA_j}x_j$ is integer.
+    \end{enumerate}
+Show that every valid inequality for $X$ can be obtained by applying the Chvátal-Gomory procedure a finite number of times.
+
+\emph{Hint:} We show this for the 0-1 case. Thus, let $P = \{x\in \reals^n : Ax\leq b, 0\leq x \leq 1\}$, $X = P \cap \integers^n$, and suppose that $\pi x \leq \pi_0$ with $\pi,\pi_0\in \integers$ is a valid inequality for $X$. We show that $\pi x \leq \pi_0$ can be obtained by applying Chvátal-Gomory procedure a finite number of times. We do this in parts by proving the following claims \textbf{C1}, \textbf{C2}, \textbf{C3}, \textbf{C4}, and \textbf{C5}.\\
+
+\textbf{C1.} An inequality $\pi x \leq \pi_0 + t$ with $t\in \integers_+$ is valid for $P$.\\
+
+\textbf{C2.} For a large enough $M\in \integers_+$, the inequality 
+\begin{equation}\label{eq:M}
+\pi x \leq \pi_0 + M\bigg{(}\sum_{j\in N^0}x_j + \sum_{j\in N^1}(1-x_j)\bigg{)}
+\end{equation}
+is valid for $P$ for every partition $(N^0,N^1)$ of $N$.\\
+
+\textbf{C3.} If $\pi x \leq \pi_0 + \tau + 1$ is a valid inequality for $X$ with $\tau\in \integers_+$, then
+\begin{equation}\label{eq:tau}
+\pi x \leq \pi_0 + \tau + \sum_{j\in N^0} x_j + \sum_{j\in N^1}(1-x_j)
+\end{equation}
+is also a valid inequality for $X$ for every partition $(N^0,N^1)$ of $N$.\\
+
+\textbf{C4.} If 
+\begin{equation}\label{eq:41}
+\pi x \leq \pi_0 + \tau + \sum_{j\in T^0\cup \{p\}} x_j + \sum_{j\in T^1} (1-x_j)
+\end{equation}
+and 
+\begin{equation}\label{eq:42}
+\pi x \leq \pi_0 + \tau + \sum_{j\in T^0} x_j + \sum_{j\in T^1\cup \{p\}} (1-x_j)
+\end{equation}
+are valid inequalities for $X$, where $\tau \in \integers_+$ and $(T^0,T^1)$ is any partition of $\{1,\dots,p-1\}$, then
+\begin{equation}\label{eq:C4}
+\pi x \leq \pi_0 + \tau + \sum_{j\in T^0} x_j + \sum_{j\in T^1} (1-x_j)
+\end{equation}
+is also a valid inequality for $X$.\\
+
+\textbf{C5.} If 
+\begin{equation}\label{eq:C51}
+\pi x \leq \pi_0 + \tau + 1
+\end{equation}
+is a valid inequality for $X$ with $\tau \in \integers_+$, then
+\begin{equation}\label{eq:C52}
+\pi x \leq \pi_0 + \tau
+\end{equation}
+is also a valid inequality for $X$.
+
+Finally, after proving the claims \textbf{C1} - \textbf{C5}, if we start with $\tau = t-1 \in \integers_+$ and successively apply \textbf{C5} for $\tau = t-1,\dots,0$, turning each valid inequality \eqref{eq:C51} of $X$ into a new one \eqref{eq:C52}, it leads to the inequality $\pi x\leq \pi_0$ which is valid for $X$. This shows that every valid inequality $\pi x \leq \pi_0$ of $X$ with $\pi,\pi_0\in \integers_+$ can be obtained by applying the C-G procedure a finite number of times. 

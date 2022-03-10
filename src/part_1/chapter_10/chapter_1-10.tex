@@ -1,6 +1,6 @@
 \section{Valid inequalities}
 
-In this chapter, we will discuss the idea of generating and adding constraints to improve a formulation of a (possibly mixed-)integer programming problem. This idea can either be implemented in a priori setting, for example before employing the branch-and-bound method, or as the solution method itself. These constraints are often called valid inequalities or cuts, though the latter typically is typically used in the context of cutting-planes methods.
+In this chapter, we will discuss the idea of generating and adding constraints to improve a formulation of a (possibly mixed-)integer programming problem. This idea can either be implemented in a priori setting, for example before employing the branch-and-bound method, or as the solution method itself. These constraints are often called \emph{valid inequalities} or \emph{cuts}, though the latter is typically used in the context of cutting-planes methods.
 
 Let us start by defining the integer programming problem
 %
@@ -16,7 +16,7 @@ The idea of using constraints to solve $IP$ is founded in the following observat
 	\conv(X) = \braces{x \in \reals^n: \tilde{A}x \leq \tilde{b}, x \geq 0}	
 \end{equation*}
 %
-Furthermore, if we had available $\tilde{A}x \le \tilde{b}$, then we could solve $P$ by solving its linear programming relaxation.
+Furthermore, if we had available $\tilde{A}x \le \tilde{b}$, then we could solve $IP$ by solving its linear programming relaxation.
 
 Cutting-plane methods are based on the idea of iteratively approximating the set of inequalities $\tilde{A}x \le \tilde{b}$ by adding constraints to the formulation $P$ of $IP$. These constraints are called \emph{valid inequalities}, a term we define more precisely in Definition \ref{p1c10:def:valid_inequality}.
 
@@ -101,7 +101,7 @@ To develop a systematic procedure for generating valid inequalities in the conte
 \end{proposition}
 
 \begin{proof}
-	We can use linear programming duality to show this relationship. First, notice that, if the proposition holds, for $u \ge 0$ and $x \in P$, we have 
+	We can use linear programming duality to prove this statement. First, notice that, if the proposition holds, for $u \ge 0$ and $x \in P$, we have 
 	%
 	\begin{align*}
 		Ax & \le b \\
@@ -125,10 +125,10 @@ To develop a systematic procedure for generating valid inequalities in the conte
 		      & u \geq 0. 
 	\end{align*}
 	%
-	Thus, $u^\top A\geq \pi$ can be seen as a consequence of dual feasibility. Furthermore, strong duality gives $u^\top b = \pi ^\top x \leq \pi_0$, completing the proof. 
+	Thus, $u^\top A\geq \pi$ can be seen as a consequence of dual feasibility, which is guaranteed to hold for some $u$ since $\pi^\top x$ is bounded. Furthermore, strong duality gives $u^\top b = \pi ^\top x \leq \pi_0$, completing the proof. 
 \end{proof}
 
-One thing to notice though is that, valid cuts in the context of polyhedral sets are somewhat redundant, since, by definition, they do not alter the polyhedral set in any means. However, the concept can be combined with a simple yet powerful way of generating valid inequalities for integer set by using rounding. This is stated in Proposition \ref{p1c10:prop:valid_inequality_IP}. 
+One thing to notice is that valid cuts in the context of polyhedral sets are somewhat redundant, since, by definition, they do not alter the polyhedral set in any means. However, the concept can be combined with a simple yet powerful way of generating valid inequalities for integer set by using rounding. This is stated in Proposition \ref{p1c10:prop:valid_inequality_IP}. 
 %
 \begin{proposition}[Valid inequalities for integer sets] \label{p1c10:prop:valid_inequality_IP}
 	Let $X = \braces{y \in \integers^1 : y \leq b}$. The inequality $y \leq \floor{b}$ is valid for $X$.
@@ -163,7 +163,7 @@ Finally, we can invoke Proposition \ref{p1c10:prop:valid_inequality_IP} to gener
 	which is valid for $X$, but not for $P$. Notice that, apart from the vector of weights $u$ used to combine the constraints, everything else in the procedure of generating the valid inequality for $X$ is automated. This procedure is known as the \emph{Chv\'atal-gomory procedure} and can be formalised as follows.
 	
 \begin{definition}[Chv\'atal-Gomory procedure] \label{p1c10:def:CG-procedure}
-	Consider the set $X = P \cap \integers^n$ where $P = \braces{x \in \reals^n_+ : Ax \leq b}$, $A$ is an $m \times n$ matrix with columns $\braces{A_1, \dots, A_n}$ and $u \in \reals^m_+$.
+	Consider the integer set $X = P \cap \integers^n$ where \lb $P = \braces{x \in \reals^n_+ : Ax \leq b}$, $A$ is an $m \times n$ matrix with columns $\braces{A_1, \dots, A_n}$ and $u \in \reals^m_+$.
 	
 	The Chv\'atal-Gomory procedure consists of the following set of steps to generate valid inequalities for $X$:
 	\begin{enumerate}
@@ -186,22 +186,22 @@ Perhaps the most striking result in the theory of integer programming is that \e
 
 Let us now consider how one could use valid inequalities to devise a solution method. The working paradigm behind a cutting-plane method is the \emph{separation principle}. 
 
-The separation principle states that, given an integer set $X = P \cap \integers^n$ if a solution $x \notin X$, then there exists a hyperplane $\pi^\top x \leq \pi_0$ separating $x$ and $X$ \footnote{the separation principle is a consequence of the separation theorem (Theorem \ref{p2c2:thm:separation}) in Part \ref{part_2}.}. 	
-
-As one might infer, the challenge is how one can generate such pairs $(\pi, pi_0)$. This is precisely what is called the \emph{separation problem}, in the context of integer programming.
+The separation principle states that, given an integer set $X = P \cap \integers^n$ if a solution $x \notin X$, then there exists a hyperplane $\pi^\top x \leq \pi_0$ separating $x$ and $X$\footnote{the separation principle is a consequence of the separation theorem (Theorem \ref{p2c2:thm:separation}) in Part \ref{part_2}.}. As one might infer, the challenge is how one can generate such pairs $(\pi, \pi_0)$. This is precisely what is called the \emph{separation problem}, in the context of integer programming.
 
 In general, these valid inequalities are generated from a family of inequalities $\mathcal{F}$, which are related to each other by properties related to, e.g., problem structure or nature of the inequality itself. One way of thinking about it is to see the family of inequalities $\mathcal{F}$ as a means to dictate, to some extent, how the selection of weights $u$ in the Chv\'atal-Gomory procedure is defined.
 
-In any case, in possession of a family of inequalities and a method to to solve the separation problem, we can pose a cutting-plane methods in general terms. This is stated in Algorithm \ref{p1c10:alg:cuting-plane}.
+In any case, in possession of a family of inequalities and a method to solve the separation problem, we can pose a cutting-plane methods in general terms. This is stated in Algorithm \ref{p1c10:alg:cuting-plane}.
 
 \begin{algorithm}[h]
 	\caption{Cutting-plane algorithm} \label{p1c10:alg:cuting-plane}
 	\begin{algorithmic}[1] %line numbering frequency. 
 		\State {\bf initialise.} let $\mathcal{F} \subseteq \braces{(\pi, \pi_0) : \pi^\top  x \leq \pi_0 \text{ is valid for } X}$. $k \gets 0$. 
 		\While {$x_{LP}^k \notin \integers^n$} \label{Alg2:loop}
-		    \State solve the LP relaxation over $P$, obtaining $z_{LP}^k$ and $x_{LP}^k$. 
+		    \State solve the LP relaxation over $P$, obtaining the optimal objective value $z_{LP}^k$ and optimal solution $x_{LP}^k$. 
 		    \If {$x_{LP}^k \notin \integers^n$} 
 		        find $(\pi^k, \pi^k_0) \in \mathcal{F}$ such that ${\pi^k}^\top x > \pi^k_0$. \label{Alg2:SepProb}
+		    \Else 
+		    	\State {\bf return} ($x_{LP}^k, z_{LP}^k$).
 		    \EndIf
 		    \State $P \gets P \cup \braces{{\pi^k}^\top x \leq \pi^k_0}$. $k \gets k+1$.
 		\EndWhile
@@ -209,23 +209,23 @@ In any case, in possession of a family of inequalities and a method to to solve 
 	\end{algorithmic}
 \end{algorithm}
 
-Notice that we have already discussed a cutting-plane method before in Chapter \ref{chapter_7}, when we presented the Benders decomposition. In that case, the optimality and feasibility cuts form the family of valid inequalities $\mathcal{F}$ while the separation problem was the subproblem responsible to find the cuts that were violated by the current man problem solution. 
+Notice that we have already discussed a cutting-plane method before in Chapter \ref{chapter_7}, when we presented the Benders decomposition. In that case, the optimality and feasibility cuts form the family of valid inequalities $\mathcal{F}$, while the separation problem was the subproblem responsible to find the cuts that were violated by the current main problem solution. 
 
-Like it was the case in Benders decomposition, the motivation of cutting-plane algorithms lies in the belief that one a few of all inequalities $|\mathcal{F}|$ (assuming $\mathcal{F}$ is finite, which might not be necessarily the case) are necessary, circumventing the computationally prohibitive need of generating all possible inequalities from $\mathcal{F}$.
+Like it was the case in Benders decomposition, the motivation of cutting-plane algorithms lies in the belief that one a few of all $|\mathcal{F}|$ inequalities (assuming $\mathcal{F}$ is finite, which might not be necessarily the case) are necessary, circumventing the computationally prohibitive need of generating all possible inequalities from $\mathcal{F}$.
 
 There are some other complicating aspects that must be observed when dealing with cutting-plane algorithms. First, it might be so that a given family of valid inequalities $\mathcal{F}$ is not sufficient to expose the optimal solution $x \in X$, which might be the case, for example, if $\mathcal{F}$ cannot fully describe $\conv(X)$ or if the separation problem is unsolvable. In that case, the algorithm will terminate with a solution for the LP relaxation tat is not integer, i.e., $x_{LP}^k \notin \integers^n$. 
 
-However, failing to converge to an integer solution is not a complete failure since, in the process, we have improved the formulation $P$ (cf. Definition \ref{p1c8:def:better_formulations}). If fact, this idea plays a major role in the professional-grade implementations of mixed-integer programming solvers, as we will see later. 
+However, failing to converge to an integer solution is not a complete failure since, in the process, we have improved the formulation $P$ (cf. Definition \ref{p1c8:def:better_formulations}). In fact, this idea plays a major role in professional-grade implementations of mixed-integer programming solvers, as we will see later. 
 
 
 \section{Gomory's fractional cutting-plane method}
 
-One important cutting-plane method that is guaranteed to converge (in theory) to integer solution is the Gomory's fractional cutting plane method. Basically, the method consists of exploiting the Chv\'atal-Gomory procedure (cf .Definition \ref{p1c10:def:CG-procedure}) to be the family of cuts generated, while solving separation problem being simply the process of rounding to be applied to solutions of LP relaxations. 
+One important cutting-plane method that is guaranteed to converge (in theory) to an integer solution is the Gomory's fractional cutting plane method. Basically, the method consists of exploiting the Chv\'atal-Gomory procedure (cf .Definition \ref{p1c10:def:CG-procedure}) to be the family of cuts generated, while solving separation problem becomes simply the process of rounding to be applied to solutions of LP relaxations. 
 
 Specifically, consider the integer programming problem 
 %
 \begin{equation*}
-	P: \maxi_x\braces{c^\top x : x \in X}
+	(P): \maxi_x\braces{c^\top x : x \in X}
 \end{equation*}
 %
 where $X = \braces{x \in \integers^n_+ : Ax = b}$. Recall that the optimal solution of the LP relaxation is characterised by a basis $B$ formed by columns of the matrix $A$, i.e.,
@@ -234,9 +234,9 @@ where $X = \braces{x \in \integers^n_+ : Ax = b}$. Recall that the optimal solut
 	A = [B ~|~ N] \text{ and } x = (x_B, x_N),	
 \end{equation*}
 %
-where $x_B$ are the basic components of the solution and $x_N = 0$ the onbasic components. The matrix $N$ if formed by columns of $A$ associated with the nonbasic variables $x_N$.
+where $x_B$ are the basic components of the solution and $x_N = 0$ the nonbasic components. The matrix $N$ if formed by columns of $A$ associated with the nonbasic variables $x_N$.
 
-As we have discussed in Chapters \ref{chapter_3}, the system of equation $Ax= b$ can be written as
+As we have discussed in Chapter \ref{chapter_3}, the system of equation $Ax= b$ can be written as
 %
 \begin{equation*}
 	Bx_B + Nx_N = b \text{ or } x_B + B^{-1}Nx_N = B^{-1}b,
@@ -249,9 +249,9 @@ which is equivalent to $B^{-1}Ax = B^{-1}b$. Now, let $\overline{a}_{ij}$ be the
 	&x_j \in \integers_+, \forall j \in J,
 \end{align*}
 %
-where $I = \braces{1, \dots, m}$, $J = \braces{i, \dots, n}$, $I_B \subset J$ are the indices of basic variables and $I_N = J \setminus I_B$ the indices of nonbasic variables. Notice that, at this point, we are simply recasting $P$ by performing permutations of columns, since basic feasible solutions for the LP relaxation do not necessarily translate into a feasible solution for $X$.
+where $I = \braces{1, \dots, m}$, $J = \braces{1, \dots, n}$, $I_B \subset J$ are the indices of basic variables and $I_N = J \setminus I_B$ the indices of nonbasic variables. Notice that, at this point, we are simply recasting $P$ by performing permutations of columns, since basic feasible solutions for the LP relaxation do not necessarily translate into a feasible solution for $X$.
 
-However, assume we solve The LP relaxation of the integer programming problem $P$ and obtain an optimal solution $x = (x_B, x_N)$ with associated optimal basis $B$. If $x$ is fractional, then it means that $\overline{a}_{i0}$ is fractional for some $i$.
+However, assume we solve the LP relaxation of the integer programming problem $P$ and obtain an optimal solution $x = (x_B, x_N)$ with associated optimal basis $B$. If $x$ is fractional, then it means that $\overline{a}_{i0}$ is fractional for some $i$.
 
 From any of the rows $i$ with fractional $\overline{a}_{i0}$, we can derive a valid inequality using the Chav\'atal-Gomory procedure. These inequalities, commonly referred to as \emph{CG cuts}, take the form
 %
@@ -273,7 +273,7 @@ which, by defining $f_{ij} = \overline{a}_{ij} - \floor{\overline{a}_{ij}}$, can
 %
 In the form of \eqref{p1c10:eq:gomorycut}, this inequality is referred to as the Gomory (fractional) cut. 
 
-Notice that the inequality \eqref{p1c10:eq:gomorycut} is not satisfied by the optimal solution of the LP relaxation, since $x_j = 0, \forall j \in I_N$ and $f_{i0} > 0$. Therefore, this indicates that a cutting-plane method using this idea benefits from the employment of dual simplex, in line with the discussion in Section\ref{section_612}. 
+Notice that the inequality \eqref{p1c10:eq:gomorycut} is not satisfied by the optimal solution of the LP relaxation, since $x_j = 0, \forall j \in I_N$ and $f_{i0} > 0$. Therefore, this indicates that a cutting-plane method using this idea benefits from the employment of dual simplex, in line with the discussion in Section \ref{section_612}. 
 
 Let us present an numerical example illustrating the employment of Gomory's fractional cutting plane algorithm for solving the following integer programming problem
 %
@@ -289,7 +289,7 @@ Figure \ref{p1c10:fig:LP_1} illustrates the feasible region of the problem and i
 
 \begin{center}
 	\begin{tabular}{ccccc|c} 
-		$x_1$ & $x_2$ & $x_3$ & $x_4$ & $x_5$ & $z_{LP}$ \\ \hline
+		$x_1$ & $x_2$ & $x_3$ & $x_4$ & $x_5$ & RHS \\ \hline
 		0 & 0 & -4/7 & -1/7 & 0 & 59/7 \\ \hline 
 		1 & 0 & 1/7 & 2/7 & 0 & 20/7 \\
 		0 & 1 &  0  &  1  & 0 & 3 \\
@@ -307,7 +307,7 @@ We can proceed to add this new constraint onto the problem, effectively adding a
 
 \begin{center}
 	\begin{tabular}{cccccc|c}
-		$x_1$ & $x_2$ & $x_3$ & $x_4$ & $x_5$ & $s$ & $z_{LP}$ \\ \hline
+		$x_1$ & $x_2$ & $x_3$ & $x_4$ & $x_5$ & $s$ & RHS \\ \hline
 		0 & 0 & -4/7 & -1/7 &  0 & 0 & 59/7 \\ \hline
 		1 & 0 & 1/7 & 2/7   &  0 & 0 & 20/7 \\
 		0 & 1 &  0  &  1    &  0 & 0 & 3    \\
@@ -320,13 +320,13 @@ We can proceed to add this new constraint onto the problem, effectively adding a
 Notice that the solution remains dual feasible, which indicates the suitability of the dual simplex method. Applying the dual simplex method leads to the optimal tableau 
 
 \begin{center}
-	\begin{tabular}{c|cccccc}
-		$z_{LP}$ & $x_1$ & $x_2$ & $x_3$ & $x_4$ & $x_5$ & s\\ \hline
-		15/2 & 0 & 0 & 0 &  0  & -1/2 & -3 \\ \hline
-		2   & 1 & 0 & 0 &  0  &  0   &  1 \\
-		1/2  & 0 & 1 & 0 &  0  & -1/2 &  1 \\
-		1    & 0 & 0 & 1 &  0  & -1   & -5 \\ 
-		5/2  & 0 & 0 & 0 &  1  &  1/2 & -1
+	\begin{tabular}{cccccc|c}
+		 $x_1$ & $x_2$ & $x_3$ & $x_4$ & $x_5$ & s & RHS\\ \hline
+		 0 & 0 & 0 &  0  & -1/2 & -3 & 15/2 \\ \hline
+		 1 & 0 & 0 &  0  &  0   &  1  & 2    \\
+		 0 & 1 & 0 &  0  & -1/2 &  1 & 1/2  \\
+		 0 & 0 & 1 &  0  & -1   & -5 & 1    \\ 
+		 0 & 0 & 0 &  1  &  1/2 & -1 & 5/2
 	\end{tabular}	
 \end{center}
 
@@ -340,7 +340,7 @@ Then, adding it to the previous tableau and employing the dual simplex again, le
 
 \begin{center}
 	\begin{tabular}{ccccccc|c}
-	$x_1$ & $x_2$ & $x_3$ & $x_4$ & $x_5$ & $s$ & $t$ & $z_{LP}$ \\ \hline
+	$x_1$ & $x_2$ & $x_3$ & $x_4$ & $x_5$ & $s$ & $t$ & RHS \\ \hline
 	0  &  0  &  0  &  0  &  0  & -4  & -1  &  7  \\ \hline 
 	1  &  0  &  0  &  0  &  0  &  1  & 0   &  2  \\ 
 	0  &  1  &  0  &  0  &  0  &  0  & -1  &  1  \\
@@ -352,11 +352,11 @@ Then, adding it to the previous tableau and employing the dual simplex again, le
 
 Notice that now all variables are integer, and thus, an optimal for solution for the original integer programming problem was found. 
 
-Some points are worth noticing. First, notice that, at the optimum, all variables, including the slacks, are integer. This is a consequence of having the Gomory cuts active at the optimal solution since \eqref{p1c10:eq:CG_cut}, and consequently \eqref{p1c10:eq:gomorycut}, have both the left and righthand sides integer. Also, notice tat at each iteration the problem increases in size, due to the new constraint being added, which implies that the basis also increase in size. Thought this is an issue also in branch-and-bound method, it can be a more prominent computational issue in the context of cutting-plane methods. 
+Some points are worth noticing. First, notice that, at the optimum, all variables, including the slacks, are integer. This is a consequence of having the Gomory cuts active at the optimal solution since \eqref{p1c10:eq:CG_cut}, and consequently \eqref{p1c10:eq:gomorycut}, have both the left and righthand sides integer. Also, notice that at each iteration the problem increases in size, due to the new constraint being added, which implies that the basis also increases in size. Thought this is an issue also in branch-and-bound method, it can be a more prominent computational issue in the context of cutting-plane methods. 
 
-We can also interpret the progresso of the algorithm in graphical terms. First of all, notice that we can express the cuts in terms of the original variables $(x_1,x_2)$ by noticing that the original formulation gives $x_3 = 14 - 7x_1 + x_2$ and $x_4 = 3-x_2$. Substituting $x_3$ and $x_4$ in the cut $\frac{1}{7}x_3 + \frac{2}{7}x_4 - s = \frac{6}{7}$ gives $x_1 \leq 2$. More generally, we have that 
+We can also interpret the progress of the algorithm in graphical terms. First of all, notice that we can express the cuts in terms of the original variables $(x_1,x_2)$ by noticing that the original formulation gives $x_3 = 14 - 7x_1 + x_2$ and $x_4 = 3-x_2$. Substituting $x_3$ and $x_4$ in the cut $\frac{1}{7}x_3 + \frac{2}{7}x_4 - s = \frac{6}{7}$ gives $x_1 \leq 2$. More generally, we have that cuts can be expressed using the original problem variables, as stated in Proposition \ref{p1c10:prop:cuts_original}.
 
-\begin{proposition}
+\begin{proposition} \label{p1c10:prop:cuts_original}
      Let $\beta$ be the row $l$ of $B^{-1}$ selected to generate the cut, and let $q_i = \beta_i - \floor{\beta_i}$, $i \in \braces{1,\dots, m}$. Then the cut $\sum_{j \in I_N}f_{lj}x_j \geq f_{l0}$, written in terms of the original variables, is the Chv\'atal-Gomory inequality 
  $$ \sum_{j=1}^n \floor{qA_j}x_j \leq \floor{qb}. $$
  \end{proposition}
@@ -393,7 +393,8 @@ We can also interpret the progresso of the algorithm in graphical terms. First o
 			  \foreach \y in {1,...,3}{        
 			      \node[feas point] at (\x,\y){};
 			}}     
-		\end{tikzpicture}	
+		\end{tikzpicture}
+		\caption{}	
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}{0.32\textwidth}
@@ -428,7 +429,8 @@ We can also interpret the progresso of the algorithm in graphical terms. First o
               \foreach \y in {1,...,3}{        
                   \node[feas point] at (\x,\y){};
           }}
-      \end{tikzpicture}	
+      \end{tikzpicture}
+      \caption{}		
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}{0.32\textwidth}
@@ -466,7 +468,8 @@ We can also interpret the progresso of the algorithm in graphical terms. First o
               \foreach \y in {1,...,3}{        
                   \node[feas point] at (\x,\y){};
           }}         
-      \end{tikzpicture}	
+      \end{tikzpicture}
+      \caption{}		
 	\end{subfigure}
 
       \caption{Feasible region of the LP relaxation (polyhedral set) and of the integer programming problem (blue dots) at each of three iterations taken to solve the integer programming problem. The inequalities in orange represent the Gomory cut added at each iteration} \label{p1c10:fig:LP_1}	
@@ -487,7 +490,7 @@ However, in this context we are interested in comparing two alternative inequali
 Consider two valid inequalities $\pi x \leq \pi_0$ and $\mu x \leq \mu_0$ that are valid for a polyhedral set $P = \braces{x \in \reals^n_+ : Ax \leq b}$. Definition \ref{p1c10:def:dominance} formalises the notion of dominance.
 
 \begin{definition}[Dominance] \label{p1c10:def:dominance}
-    $\pi x \leq \pi_0$ \emph{dominates} $\mu x \leq \mu_0$ if these exists $u > 0$ such that $\pi \geq u\mu$, $\pi_0 \leq u\mu_0$, and $(\pi, \pi_0) \neq (u\mu, u\mu_0)$.
+    The inequality $\pi x \leq \pi_0$ \emph{dominates} $\mu x \leq \mu_0$ if these exists $u > 0$ such that $\pi \geq u\mu$, $\pi_0 \leq u\mu_0$, and $(\pi, \pi_0) \neq (u\mu, u\mu_0)$.
 \end{definition}
 
 Let us illustrate the concept of dominance with a numerical example. Consider the inequalities $2x_1 + 4x_2 \leq 9$ and $x_1 + 3x_2 \leq 4$, which are valid for $P = \conv(X)$, where 
@@ -527,10 +530,12 @@ Notice that, if we consider $u = 1/2$, we have that, for any $x=(x_1,x_2)$, that
 	\caption{Illustration of dominance between constraints. Notice that $x_1 + 3x_2 \le 4$ dominates $2x_1 + 4x_2 \le 9$ and is thus stronger}	\label{p1c10:fig:dominance}
 \end{figure}
 
-Another related concept is the notion of redundancy. Clearly, the presence of two constraints in which one dominates the other, the dominated constraint is also redundant and can be safely removed from the formulation of a polyhedral set $P$. However, in some cases one might not be able to identify redundant constraints simply because no constraint is clearly dominated by another. Even then, there might be a way to identify weak (or redundant) constraints by combining two or more constraints that then form a dominating constraint. This is formalised in Definition \ref{p1c10:def:redundancy}.
+Another related concept is the notion of redundancy. Clearly, the presence of two constraints in which one dominates the other, the dominated constraint is also redundant and can be safely removed from the formulation of a polyhedral set $P$. However, in some cases one might not be able to identify redundant constraints simply because no constraint is clearly dominated by another. 
+
+Even then, there might be a way to identify weak (or redundant) constraints by combining two or more constraints that then form a dominating constraint. This is formalised in Definition \ref{p1c10:def:redundancy}.
 
 \begin{definition}[Redundancy] \label{p1c10:def:redundancy}
-	$\pi x \leq \pi_0$ is \emph{redundant} for $P$ if there exists $k \geq 1$ valid inequalities $\pi^i x \leq \pi_0^i$ and $k\geq 1$ vectors $u_i > 0$, for $i \in \braces{1,\dots, k}$, such that $\left( \sum_{i=1}^k u_i\pi^i\right)x \leq \sum_{i=1}^ku_i\pi_0^i$ dominates $\pi x \leq \pi_0$.
+	The inequality $\pi x \leq \pi_0$ is \emph{redundant} for $P$ if there exists $k \geq 1$ valid inequalities $\pi^i x \leq \pi_0^i$ and $k\geq 1$ vectors $u_i > 0$, for $i \in \braces{1,\dots, k}$, such that $\left( \sum_{i=1}^k u_i\pi^i\right)x \leq \sum_{i=1}^ku_i\pi_0^i$ dominates $\pi x \leq \pi_0$.
 \end{definition}
 
 Once again, let us illustrate the concept with a numerical example. Consider we generate the inequality $5x_1 - 2x_2 \leq 6$, which is valid for the polyhedral set 
@@ -539,7 +544,29 @@ Once again, let us illustrate the concept with a numerical example. Consider we 
 	P = \braces{x \in \reals^2_+ : 6x_1 - x_2 \le 9, 9x_1 - 5x_2 \le 6}.
 \end{equation*}
 %
-The inequality $5x_1 - 2x_2 \leq 6$ is not dominated by any of the inequalities forming $P$. However, if we set $u_i= (\frac{1}{3}, \frac{1}{3})$, we obtain $5x_1 - 2x_2 \leq 5$, which in turn dominates $5x_1 - 2x_2 \leq 6$. Thus, we can conclude that the generated inequality is redundant and does not improve the formulation of $P$.
+The inequality $5x_1 - 2x_2 \leq 6$ is not dominated by any of the inequalities forming $P$. However, if we set $u_i= (\frac{1}{3}, \frac{1}{3})$, we obtain $5x_1 - 2x_2 \leq 5$, which in turn dominates $5x_1 - 2x_2 \leq 6$. Thus, we can conclude that the generated inequality is redundant and does not improve the formulation of $P$. This is illustrated in Figure \ref{p1c10:fig:redundant}.
+
+\begin{figure}[h]
+	\begin{tikzpicture}[scale = 0.9,
+	point/.style={circle, fill=gray!40, inner sep=1pt},
+	feas point/.style={circle, fill=blue, inner sep=1pt}]
+		\foreach \x in {0,...,3}{
+		  \node[font=\small] at (\x,-0.4) {$\x$};
+		}
+		\foreach \y in {0,...,3}{
+		  \node[font=\small] at (-0.4,\y) {$\y$};
+		}                      
+		\draw[thick, <->] (3.5,0) node[below, font=\small]{$x_1$} -- (0,0) -- (0,3.5) node[left, font=\small]{$x_2$};    
+		\draw[domain=1.5:2, thick, variable=\x, blue] plot ({\x},{6*\x - 9});
+		\draw[domain=2/3:7/3, thick, variable=\x, blue] plot ({\x},{9*\x/5 - 6/5});
+		\draw[domain=6/5:12/5, thick, variable=\x, orange] plot ({\x},{2.5*\x - 3});       
+		\node [above right,font=\footnotesize] at (1.5,0) {{\color{blue}$6x_1-x_2 \leq 9$}};
+		\node [right,font=\footnotesize] at (2.3,3) {{\color{blue}$9x_1-5x_2 \leq 6$}};
+		\node [right,font=\footnotesize] at (1.8,1.5) {{\color{orange}$5x_1-2x_2 \leq 6$}};
+	\end{tikzpicture}
+	\caption{Illustration of a redundant inequality. Notice how the inequality $5x_1 - 2x_2 \le 6$ (in orange) does not dominate any of the other inequalities} \label{p1c10:fig:redundant}
+\end{figure}
+
 
 As one might realise, checking whether a newly generated inequality improves the current formulation is a demanding task, as it requires finding the correct set of coefficients $u$ for all constraints currently forming the polyhedral set $P$. Nonetheless, the notions of redundancy and dominance can be used to guide procedures that generate or improve existing inequalities. Let us discuss one of such procedures, in the context of 0-1 knapsack inequalities.
 
@@ -552,15 +579,14 @@ Let us consider the family of constraints known as knapsack constraints and see 
 	X = \braces{x \in \braces{0,1}^n : \sum_{j=1}^n a_jx_j \leq b}.	
 \end{equation*}
 %
-We assume that $a_j \geq 0$, $j \in N = \braces{1, \dots, n}$, and $b > 0$.
-
-Let us start by defining the notion of a \emph{minimal cover}.
+We assume that $a_j \geq 0$, $j \in N = \braces{1, \dots, n}$, and $b > 0$. Let us start by defining the notion of a \emph{minimal cover}.
 
 \begin{definition} [minimal cover] \label{p1c10:def:minimal_cover}
 	A set $C \subseteq N$ is a cover if $\sum_{j \in C} a_j > b$. A cover $C$ is minimal if $C \setminus \braces{j}$ for all $j \in C$ is not a cover.  
 \end{definition} 
 
-Notice that a cover $C$ refers to any selection of items that exceed the budget $b$ of the constraint and this selection is said to be a minimal over if, upon removing of any item of the selection, the constraint becomes satisfied. This logic allows us to design a way to generate valid inequalities using covers. This is the main result in Proposition \ref{p1c10:prop:cover_inequalities}
+Notice that a cover $C$ refers to any selection of items that exceed the budget $b$ of the constraint and this selection is said to be a minimal cover if, upon removing of any item of the selection, the constraint becomes satisfied. This logic allows us to design a way to generate valid inequalities using covers. This is the main result in Proposition \ref{p1c10:prop:cover_inequalities}.
+
 \begin{proposition} \label{p1c10:prop:cover_inequalities}
 	If $C \subseteq N$ is a cover for $X$, then a valid cover inequality for $X$ is
 	% 
@@ -573,7 +599,7 @@ Notice that a cover $C$ refers to any selection of items that exceed the budget 
 	Let $R = \braces{j \in N : x^R_j = 1}$, for $x^R \in X$. If $\sum_{j \in C}x_j^R > |C|-1$, then $|R \cap C| = |C|$ and $C \subseteq R$. Thus, $\sum_{j\in N}a_j x_j^R = \sum_{j\in R}a_j > b$, which violates the inequality and implies that $x^R \notin X$.  
 \end{proof}
 
-The usefulness of Proposition \ref{p1c10:prop:cover_inequalities} becomes evident if $C$ is a minimal cover. Let us consider a numerical example to illustrate this. c=Consider the knapsack set 
+The usefulness of Proposition \ref{p1c10:prop:cover_inequalities} becomes evident if $C$ is a minimal cover. Let us consider a numerical example to illustrate this. Consider the knapsack set 
 %
 \begin{equation*}
 	X = \braces{x \in \braces{0,1}^7 : 11x_1 + 6x_2 + 6x_3 + 5x_4 + 5x_5 + 4x_6 + x_7 \leq 19}.	
@@ -590,9 +616,9 @@ The following are minimal cover inequalities for $X$.
 
 Notice that we would obtain a non-minimal cover $C^\prime$ by adding an inequality $x_i \leq 1$, $i \in C^\prime\setminus C$, to a minimal cover inequality of $C$, which makes the cover inequality somewhat redundant. For example, adding $x_7 \leq 1$ to a minimal cover inequality $x_1 + x_2 + x_3 \leq 2$ of $C = \{1,2,3\}$ yields a non-minimal cover $C^\prime = \braces{1,2,3,7}$ with inequality $x_1 + x_2 + x_3 + x_7 \leq 3$.
 
-There is a simple way to strengthen cover inequalities, using the the notion of \emph{extended} cover inequalities. One can extend a cover inequality by expanding the set $C$ with elements that have a coefficient $a_j$, $j \in N \setminus C$ greater than all coefficients $a_i$, $i \in C$. this guarantees that a substitution between elements must happen, meaning that the righthand side of the constraint remains $|C| - 1$. This is summarised in Proposition X
+There is a simple way to strengthen cover inequalities, using the the notion of \emph{extended} cover inequalities. One can extend a cover inequality by expanding the set $C$ with elements that have a coefficient $a_j$, $j \in N \setminus C$ greater than all coefficients $a_i$, $i \in C$. This guarantees that a swap between elements must happen for the inequality to be feasible, meaning that the righthand side of the constraint remains $|C| - 1$. This is summarised in Proposition \ref{p1c10:prop:extended_cover}.
 
-\begin{proposition}
+\begin{proposition} \label{p1c10:prop:extended_cover}
 	If $C$ is a cover for $X$, the extended cover inequality
 	%
 	\begin{equation*}
@@ -609,5 +635,20 @@ We leave the proof as a thought exercise. Let us however illustrate this using t
 \end{equation*}
 %
 which is stronger than $x_3 + x_4 + x_5 + x_6 \leq 3$ as the former dominates the latter, cf. Definition \ref{p1c10:def:dominance}. 
+
+
+\section{Exercises}
+
+\subsection*{Exercies 10.1: Chv\'atal-Gomory (C-G) procedure}
+\input{part_1/chapter_10/exercises/E101-C-G_Procedure}
+
+\subsection*{Exercies 10.2: Chv\'atal-Gomory (C-G) procedure example}
+\input{part_1/chapter_10/exercises/E102-C-G_Example}
+
+\subsection*{Exercies 10.3: Cuts from the simplex tableau}
+\input{part_1/chapter_10/exercises/E103-Gomory}
+
+
+
 
 

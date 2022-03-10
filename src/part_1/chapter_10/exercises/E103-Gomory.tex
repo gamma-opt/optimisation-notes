@@ -1,0 +1,34 @@
+Consider the integer programming problem $IP$:
+\begin{align*}
+(IP) \quad \maxi_{x_1,x_2} \quad  & 2x_1+5x_2 \\
+\st   ~~ & 4x_1 + x_2 \leq 28 \\
+      & x_1 + 4x_2 \leq 27 \\
+      & x_1-x_2 \leq 1\\
+      & x_1,x_2 \in \integers_+.
+\end{align*}
+The LP relaxation of the problem $IP$ is obtained by relaxing the integrality constraints $x_1,x_2\in \integers_+$ to $x_1 \geq 0$ and $x_2 \geq 0$. The LP relaxation of $IP$ in standard form is the problem $LP$:
+\begin{align*}
+(LP) \quad \maxi_{x_1,x_2} \quad  & 2x_1+5x_2 \\
+\st   ~~ & 4x_1 + x_2 + x_3 = 28\\
+      & x_1 + 4x_2 + x_4 = 27\\
+      & x_1-x_2 + x_5  =  1\\
+      & x_1,x_2,x_3,x_4,x_5\geq 0
+\end{align*}
+The optimal Simplex tableau after solving the problem $LP$ with primal Simplex is
+\renewcommand*{\arraystretch}{1.2}
+\[
+\begin{tabular}{ccccc|c}
+       $x_1$& $x_2$ & $x_3$ & $x_4$ & $x_5$ & RHS  \\
+\hline
+      0 & 0 & -1/5  & -6/5 & 0   & -38 \\
+\hline
+      1 & 0 & 4/15  & -1/15 & 0 & 17/3 \\
+      0 & 1 & -1/15 & 4/15  & 0 & 16/3 \\
+      0 & 0 & -1/3  & 1/3   & 1 & 2/3
+\end{tabular}
+\]
+
+\begin{itemize}
+\item[(a)] Derive two fractional Gomory cuts from the rows of $x_1$ and $x_5$, and express them in terms of the original variables $x_1$ and $x_2$.
+\item[(b)] Derive the same cuts as in part (a) as Chv\'{a}tal-Gomory cuts. \emph{Hint:} Use Proposition 5 from \href{https://mycourses.aalto.fi/mod/folder/view.php?id=651663}{Lecture 9}. Recall that the bottom-right part of the tableau corresponds to $B^{-1}A$, where $B^{-1}$ is the inverse of the optimal basis matrix and $A$ is the original constraint matrix. You can thus obtain the matrix $B^{-1}$ from the optimal Simplex tableau, since the last three columns of $A$ form an identity matrix.
+\end{itemize}
