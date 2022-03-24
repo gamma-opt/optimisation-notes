@@ -1,0 +1,22 @@
+Consider a centralised depot, from which deliveries are supposed to be made from. The delivers have to be made to a number of clients, and each client has a specific demand to be received. Some assumptions we will consider:
+
+\begin{itemize}
+	\item The deliveries have to be made by vehicles that are of limited capacity; 
+	\item Multiple routes can be taken, but only a single vehicle is assigned to a route;
+	\item We assume that the number of vehicles is not a limitation
+\end{itemize}
+
+Our objective is to define optimal routes such that the total distance traveled is minimised. We assume that the total distance is a proxy for the operation cost in this case. The structural elements and parameters that define the problem are described below:
+
+\begin{itemize}
+	\item $n$ is the total number of clients
+	\item $N$ is the \textbf{set} of clients, with $N = \{2, \dots, n+1\}$
+	\item $V$ is the set of \textbf{nodes}, representing a depot (node 1) and the clients (nodes $i \in N$). Thus $V = \{1\} \cup N$
+	\item A is a set of \textbf{arcs}, with $A = \{(i,j) \in V \times V : i \neq j\}$
+	\item $C_{i,j}$ - cost of travelling via arc $(i,j) \in A$
+	\item $Q$ - vehicle capacity in units
+	\item $D_i$ - amount that has to be delivered to customer $i \in N$, in units
+\end{itemize}
+
+Formulate the LP to solve the problem and solve it using JuMP, use the instance found in the notebook for \href{https://mycourses.aalto.fi/mod/folder/view.php?id=651698}{session 11}. After solving, test different solver parameters and compare the time needed to solve the problem.
+	

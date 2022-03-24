@@ -1,0 +1,50 @@
+
+
+\begin{itemize}
+	\item [(a)] \textit{Tightening bounds and redundant constraints}\\
+	
+	Consider the LP below,
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{crcrcccc}
+			max         &  2$x_1$  & $+$ &   $x_2$  & $-$ &   $x_3$  \vspace{3pt}\\
+			s.t.        &  5$x_1$  & $-$ &  2$x_2$  & $+$ &  8$x_3$  & $\leq$ &  15  \vspace{3pt}\\
+			&  8$x_1$  & $+$ &  3$x_2$  & $-$ &   $x_3$  & $\leq$ &   9  \vspace{3pt}\\
+			&   $x_1$  & $+$ &   $x_2$  & $+$ &   $x_3$  & $\leq$ &   6  \vspace{3pt}\\
+			& \multicolumn{3}{c}{0 $\leq x_1 \leq 3$} \vspace{3pt}\\  
+			& \multicolumn{3}{c}{0 $\leq x_2 \leq 1$} \vspace{3pt}\\  
+			& \multicolumn{3}{c}{$x_3 \geq$ 1},   
+		\end{tabular}
+	\end{table}
+
+	derive tightened bounds for variables $x_1$ and $x_3$ from the first constraint and eliminate redundant constraints after that. \vspace{10pt}
+
+	\item [(b)] \textit{Primal heuristics (RINS)}\\
+	
+	Consider the formulation UFL-W:
+	\begin{align}
+	 \text{(UFL-W)} : \quad &\mini_{x,y} \sum_{j\in N} f_jy_j + \sum_{i\in M}\sum_{j\in N} c_{ij}x_{ij} \label{IP:1}\\
+	       &\st\nonumber \\
+	       &\quad \sum_{j\in N}x_{ij} = 1, &\forall i \in M,\label{IP:2}\\
+	       &\quad \sum_{i\in M}x_{ij} \leq my_j, &\forall  j \in N,\label{IP:3}\\
+	       &\quad x_{ij} \geq 0, &\forall i \in M, \forall j \in N,\label{IP:4}\\
+	       &\quad y_j \in \{0,1\}, &\forall j\in N,\label{IP:5},
+	\end{align}
+	
+	where $f_j$ is the cost of opening facility $j$, and $c_{ij}$ is the cost of satisfying client $i$'s demand from facility $j$. Consider an instance of the UFL with opening costs $f=(21,16,30,24,11)$ and client costs
+
+	\begin{align*}
+	 (c_{ij}) = \left(
+		\begin{array}{ccccc}
+			6  & 9  & 3 & 4  & 12 \\
+			1  & 2  & 4 & 9  & 2  \\
+			15 & 2  & 6 & 3  & 18 \\
+			9  & 23 & 4 & 8  & 1  \\
+			7  & 11 & 2 & 5  & 14 \\
+			4  & 3  & 10& 11 & 3
+		\end{array}
+	 \right)
+	\end{align*}
+
+	In the UFL problem, the facility production capacities are assumed to be large, and there is no budget constraint on how many facilities can be built. The problem thus has a feasible solution if at least one facility is opened. We choose an initial feasible solution $\bar{y} = (1,0,0,0,0)$. Try to improve the solution by using relaxation-induced neighbourhood search (RINS) and construct a feasible solution using relaxation-enforced neighbourhood search (RENS). 
+\end{itemize}
