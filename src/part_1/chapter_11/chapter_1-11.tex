@@ -69,19 +69,32 @@ Notice that the constraint activity is simply capturing what is the minimum and 
 
 Another important presolving method is bound tightening, which, as the name suggests, tries to tighten lower and upper bounds of variables, thus strengthening the LP relaxation formulation. There are alternative ways that this can be done, and they typically trade off how much tightening can be observed and how much computational effort they require. 
 
-One simple way of employing bound tightening is by noticing the following. Assume, for simplicity, that $a_j > 0$. Then, we have that
+One simple way of employing bound tightening is by noticing the following. Assume, for simplicity, that $a_j > 0$ $\forall j \in J$. Then, we have that
 %
 \begin{equation*}
-	\alpha_{\text{min}} \le a^\top x \le b.
+	\alpha_{\text{min}} = \sum_{j \in J}a_jl_j = a^\top l \le a^\top x \le b,
 \end{equation*}
 %
-From the first and second inequalities, we obtain, respectively,
+where $l \in \reals^{|J|}$.
+From the second inequality, we obtain 
+%
 \begin{align*}
-	& a_jl_j \le b - \alpha_{\text{min}} + a_jl_j \\
-	& a_jx_j \le b - a^\top x + a_jx_j.  
+    a_jx_j \le b - a^\top x + a_jx_j.
 \end{align*}
 %
-Since $\alpha_{\text{min}} + a_jl_j \le a^\top x + a_jx_j$, we have that
+Let $a^\top = (\overline{a}, a_j)^\top$, $x = (\overline{x}, x_j)$ and $l = (\overline{l}, l_j)$, then we have $\alpha_{\text{min}} = a^\top l = \overline{a}^\top \overline{l} + a_j l_j$ and $a^\top x = \overline{a}^\top \overline{x} + a_j x_j$. By the definition of \emph{minimum activity}, we know that $\overline{\alpha}_{\text{min}} = \overline{a}^\top \overline{l} \le \overline{a}^\top \overline{x}$, which is equivalent to 
+%
+\begin{align*}
+    \alpha_{\text{min}} - a_jl_j \le a^\top x - a_jx_j.
+\end{align*}
+%
+This can be reformulated as 
+%
+\begin{align*}
+    b - a^\top x + a_jx_j \le b - \alpha_{\text{min}} + a_jl_j.
+\end{align*}
+%
+Combining this result with what was obtained from the second inequality, we have that
 \begin{equation*}
 	 a_jx_j \le b - a^\top x + a_jx_j \le b - \alpha_{\text{min}} + a_jl_j,
 \end{equation*}
