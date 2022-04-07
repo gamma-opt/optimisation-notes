@@ -72,18 +72,27 @@ Another important presolving method is bound tightening, which, as the name sugg
 One simple way of employing bound tightening is by noticing the following. Assume, for simplicity, that $a_j > 0$. Then, we have that
 %
 \begin{equation*}
-	a^\top x \leq b \Rightarrow 
-	a^\top x - a_jx_j + a_jx_j \leq b \Rightarrow
-	x_j \leq \frac{b - (a^\top x - a_jx_j)}{a_j},	
+	\alpha_{\text{min}} \le a^\top x \le b.
 \end{equation*}
 %
-which must also hold for 
+From the first and second inequalities, we obtain, respectively,
+\begin{align*}
+	& a_jl_j \le b - \alpha_{\text{min}} + a_jl_j \\
+	& a_jx_j \le b - a^\top x + a_jx_j.  
+\end{align*}
+%
+Since $\alpha_{\text{min}} + a_jl_j \le a^\top x + a_jx_j$, we have that
+\begin{equation*}
+	 a_jx_j \le b - a^\top x + a_jx_j \le b - \alpha_{\text{min}} + a_jl_j,
+\end{equation*}
+%
+from which we can extract the bound
 %
 \begin{equation*}
 	x_j \leq \frac{b - \alpha_{\text{min}} + a_jl_j}{a_j},
 \end{equation*}
 %
-which, in turn, yield an upper bound for $x_j$. Clearly, the procedure can be analogously adapted to obtain a lower bound as well. Furthermore, rounding can be employed in the presence of integer variables. 
+that is, an upper bound for $x_j$. The procedure can be analogously adapted to obtain a lower bound as well. Furthermore, rounding can be employed in the presence of integer variables. 
 
 Another common bound tightening technique consists of solving a linear programming subproblem for each variable variable $x_j$, $j =1, \dots, n$. Let
 %

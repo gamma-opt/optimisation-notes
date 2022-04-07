@@ -616,7 +616,7 @@ The following are minimal cover inequalities for $X$.
 
 Notice that we would obtain a non-minimal cover $C^\prime$ by adding an inequality $x_i \leq 1$, $i \in C^\prime\setminus C$, to a minimal cover inequality of $C$, which makes the cover inequality somewhat redundant. For example, adding $x_7 \leq 1$ to a minimal cover inequality $x_1 + x_2 + x_3 \leq 2$ of $C = \{1,2,3\}$ yields a non-minimal cover $C^\prime = \braces{1,2,3,7}$ with inequality $x_1 + x_2 + x_3 + x_7 \leq 3$.
 
-There is a simple way to strengthen cover inequalities, using the the notion of \emph{extended} cover inequalities. One can extend a cover inequality by expanding the set $C$ with elements that have a coefficient $a_j$, $j \in N \setminus C$ greater than all coefficients $a_i$, $i \in C$. This guarantees that a swap between elements must happen for the inequality to be feasible, meaning that the righthand side of the constraint remains $|C| - 1$. This is summarised in Proposition \ref{p1c10:prop:extended_cover}.
+There is a simple way to strengthen cover inequalities, using the the notion of \emph{extended} cover inequalities. One can extend a cover inequality by expanding the set $C$ with elements that have a coefficient $a_j$, $j \in N \setminus C$ greater or equal than all coefficients $a_i$, $i \in C$. This guarantees that a swap between elements must happen for the inequality to be feasible, meaning that the righthand side of the constraint remains $|C| - 1$. This is summarised in Proposition \ref{p1c10:prop:extended_cover}.
 
 \begin{proposition} \label{p1c10:prop:extended_cover}
 	If $C$ is a cover for $X$, the extended cover inequality
