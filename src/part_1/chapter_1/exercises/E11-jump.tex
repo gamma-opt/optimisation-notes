@@ -1,0 +1,44 @@
+Use the Julia package JuMP.jl to implement the problems below and find the optimal solution. For the two-dimensional problems, use Plots.jl to illustrate the feasible region and the optimal solution.
+
+\begin{enumerate}
+	\item[(a)]
+		\begin{flalign*}
+			\maxi & x_1 + 2x_2 + 5x_3 &&\\
+			\st   & x_1 - x_2 - 3x_3 \geq 5 &&\\
+				  & x_1 + 3x_2 - 7x_3 \leq 10 &&\\
+				  & x_1 \leq 10 &&\\
+				  & x_1, x_2 \geq 0. &&
+		\end{flalign*}
+
+	\item[(b)]
+		\begin{flalign*}
+			\maxi & 2x_1 + 4x_2 &&\\
+			\st   & x_1 + x_2 \leq 5 &&\\
+			  	  & -x_1 + 3x_2 \leq 1 &&\\
+	  			  & x_1 \leq 5 &&\\
+				  & x_2 \leq 5 &&\\
+				  & x_1, x_2 \geq 0. &&
+		\end{flalign*}
+	
+	\item[(c)]
+		\begin{flalign*}			
+			\mini & -5x_1 + 10x_2 + x_3 + 2000x_4 &&\\
+			\st   &  x_1 - x_2 \leq 1500 &&\\
+				  & 4x_2 - x_3 \leq 5000x_4 &&\\
+				  & x_1 + 3x_2 \geq 1000 &&\\
+				  & x_1  \leq 10000 &&\\
+				  & x_1, x_2 \in \reals, x_3 \leq 0, x_4 \in \braces{0,1}. &&
+		\end{flalign*}
+
+	\item[(d)]
+		\begin{flalign*}	
+			\maxi & 5x_1 + 3x_2 &&\\
+			\st   & x_1 + 5x_2 \leq 3 &&\\
+				  & 3x_1 - x_2 \leq 5 &&\\
+				  & x_1 \leq 2 &&\\
+ 				  & x_2 \leq 30 &&\\
+				  & x_1, x_2 \geq 0. &&
+		\end{flalign*}
+\end{enumerate}
+
+

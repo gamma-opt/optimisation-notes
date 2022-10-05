@@ -44,7 +44,7 @@ annotate!(3.6, 4.5, text(L"$-x_1 + x_2 \leq 1$", 8, :left, green))
 plot!(x1, 0 .* x1 .+ 2 , color = :4, fill=(0,0.1))
 annotate!(5.1, 1.8, text(L"$x_2 \leq 2$", 8, :left, purple))
 
-savefig("figure3_c4.pdf")
+savefig("figure1-3a.pdf")
 
 
 #Clearing the fill of the constraints
@@ -72,7 +72,7 @@ annotate!(5.1, 2.2, text(L"$x_2 \leq 2$",8,:left, purple))
 # Polyhedral set
 plot!(Shape([0,0,1,2,3,4], [0,1,2,2,1.5,0]), opacity = 0.1, color = :6)
 
-savefig("figure3_c5.pdf")
+savefig("figure1-3b.pdf")
 
 
 # Adding level curves
@@ -90,7 +90,7 @@ annotate!(0, 3.7, text(L"$z=15$",7,:right, yellow))
 annotate!(3.2, 2.3, text(L"$\nabla z$", 8, :right, yellow))
 quiver!([2],[5/4], quiver=([5/5],[4/5]), color = :5)
 
-savefig("figure3_c6.pdf")
+savefig("figure1-4a.pdf")
 
 
 # optimal point 
@@ -100,7 +100,7 @@ scatter!([3],[1.5], color = :orange)
 annotate!(3.2, 1.5, text(L"$x^* = (3, 1.5)$", 8,:left))
 annotate!(3.2, 1.8, text(L"$z^* = 21$", 8, :left))
 
-savefig("figure3_complete.pdf")
+savefig("figure1-4b.pdf")
 
 
 # Animation
