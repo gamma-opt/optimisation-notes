@@ -6,28 +6,30 @@ As we have seen in the previous chapter, the feasible region of a linear program
 	Ax \leq b,	
 \end{equation}
 
-where $A$ is a $m \times n$ matrix, $x$ is a $n$-dimensional column vector (or more compactly, $x \in \reals^n$), and $b$ is an $m$-dimensional column vector ($b \in \reals^m$). Notice that $\leq$ is considered component-wise.
+where $A$ is a $m \times n$ matrix, $x$ is a $n$-dimensional column vector (or more compactly, $x \in \reals^n$), and $b$ is an $m$-dimensional column vector ($b \in \reals^m$). Notice that $\leq$ is considered component-wise. Also, let $\dim(x)$ denote the dimension of vector $x$.
 
 Before introducing the simplex method, let us first revisit a few key elements and operations that we will use in the process. The first of them is presented in Definition \ref{p1c2:def:matrix_inversion}.
 %
 \begin{definition}[Matrix inversion] \label{p1c2:def:matrix_inversion}
-	Let $A$ be a square $n \times n$ matrix. $A^{-1}$ is the \emph{inverse matrix} of $A$ if it exists and $AA^{-1} = I$, where $I$ is the identity matrix.
+	Let $A$ be a square $n \times n$ matrix. $A^{-1}$ is the inverse matrix of $A$ if it exists and $AA^{-1} = I$, where  $I$ is the ($n \times n$) identity matrix.
 \end{definition}
 %
-Matrix inversion is the ``kingpin'' of linear (and nonlinear) optimisation. As we will see later on, being able to perform efficient matrix inversion operations (in reality, operations that are equivalent to matrix inversion but that can exploit the matrix structure to be made faster) is of utmost importance for developing a linear optimisation solver. 
+Matrix inversion is the ``kingpin'' of linear (and nonlinear) optimisation. As we will see later on, performing efficient matrix inversion operations (in reality, operations that are equivalent to matrix inversion but that can exploit the matrix structure to be made faster) is of utmost importance for developing a linear optimisation solver. 
 
 Another important concept is the notion of \emph{linear independence}. We formally state when a collection of vectors is said to be linearly independent (or dependent) in Definition \ref{p1c2:def:linear_independence}. 
 
 %
-\begin{definition}[Linearly Independent vectors] \label{p1c2:def:linear_independence}
-	The vectors $\braces{x_i}_{i=1}^k \in \reals^n$  are \emph{linearly dependent} if there exist real numbers $\braces{a_i}_{i=1}^k$ with $a_i \neq 0$ for at least one $i \in \braces{1,\dots, k}$ such that
+\begin{definition}[Linearly independent vectors] \label{p1c2:def:linear_independence}
+	The vectors $\braces{x_i}_{i=1}^k \in \reals^n$  are linearly dependent if there exist real numbers $\braces{a_i}_{i=1}^k$ with $a_i \neq 0$ for at least one $i \in \braces{1,\dots, k}$ such that
 	$$
 		\sum_{i=1}^k a_i x_i= 0;
 	$$
 	otherwise, $\braces{x_i}_{i=1}^k$ are linearly independent.
 \end{definition}
 
-In essence, for a collection of vectors to be linearly independent it must be so that none of the vectors in the collection can be expressed as a combination (that is multiplying the vectors by nonzero scalars and adding them) of the others. This is simpler to see in $\reals^2$. Two vectors are linearly independent if one cannot obtain one by multiplying the other by a constant, which, effectively, means that they are not parallel. If the two vectors are not parallel, then one of them must have a component in a direction that the other cannot achieve. The same holds for any $n$-dimensional space. Also, that is why one can only have up to $n$ independent vectors in $\reals^n$. Figure \ref{p1c2:fig:linear_independence} illustrates this effect. 
+In essence, for a collection of vectors to be linearly independent, it must be so that none of the vectors in the collection can be expressed as a linear combination (that is, multiplying the vectors by nonzero scalars and adding them) of the others. Analogously, they are said to be linearly dependent if one vector in the collection can be expressed as a linear combination of the others. 
+
+This is simpler to see in $\reals^2$. Two vectors are linearly independent if one cannot obtain one by multiplying the other by a constant, which effectively means that they are not parallel. If the two vectors are not parallel, then one of them must have a component in a direction that the other cannot achieve. The same idea can be generalised to any $n$-dimensional space. Also, that also implies why one can only have up to $n$ independent vectors in $\reals^n$. Figure \ref{p1c2:fig:linear_independence} illustrates this idea. 
 
 \begin{figure}[h]
 	\centering
@@ -40,10 +42,10 @@ In essence, for a collection of vectors to be linearly independent it must be so
 		\node (x12) at (1, 0) {$x_2$};
 		\node (x3) at (2.1, -0.8) {$x_3$};
     \end{tikzpicture}
-	\caption{Linearly independent (top) and dependent (bottom) vectors in $\reals^2$}\label{p1c2:fig:linear_independence}
+	\caption{Linearly independent (top) and dependent (bottom) vectors in $\reals^2$. Notice how, in the bottom picture, any of the vectors can be obtained by appropriate scaling and adding the other two}\label{p1c2:fig:linear_independence}
 \end{figure}
 
-Theorem \ref{p1c2:thm:fundamental_linear_algebra} summarises results that we will utilise in the upcoming developments. These are classical results from linear algebra and are thus provided without a proof.
+Theorem \ref{p1c2:thm:fundamental_linear_algebra} summarises results that we will utilise in the upcoming developments. These are classical results from linear algebra and are thus provided without proof.
 %
 \begin{theorem}[Inverses, linear independence, and solving $Ax = b$] \label{p1c2:thm:fundamental_linear_algebra}
 	Let $A$ be a $m \times m$ matrix. Then, the following statements are equivalent:
@@ -58,7 +60,7 @@ Theorem \ref{p1c2:thm:fundamental_linear_algebra} summarises results that we wil
 	\end{enumerate}	
 \end{theorem}
 %
-Notice that Theorem \ref{p1c2:thm:fundamental_linear_algebra} establishes important relationships between the geometry of the matrix $A$ (its rows and columns) and consequences it has to our ability to calculate its inverse $A^{-1}$ and, consequently, solve the system $Ax = b$, to which the solution is obtained as $x = A^{-1}b$. This will turn out to be most important operation in the simplex method.
+Notice that Theorem \ref{p1c2:thm:fundamental_linear_algebra} establishes important relationships between the geometry of the matrix $A$ (its rows and columns) and consequences it has to our ability to calculate its inverse $A^{-1}$ and, consequently, solve the system $Ax = b$, to which the solution is obtained as $x = A^{-1}b$. Solving linear systems of equations will turn out to be the most important operation in the simplex method.
 
 
 \subsection{Subspaces and bases}
@@ -75,18 +77,18 @@ A related concept is the notion of a \emph{span}. A span of a collection of vect
 	\spans(x_1,\dots, x_k) = \braces{y = \sum_{i=1}^k a_ix_i : a_i \in \reals, i \in \braces{1,\dots, k}}. 
 \end{equation*}
 %
-Notice how the two concepts are related: subspaces can be characterised by a collection of vectors to which the span gives the said subspace. In other words, the span of a set of vectors is the subspace formed by all points we can represent by some linear combination of these vectors. 
+Notice how the two concepts are related: the span of a collection of vectors forms subspace. Therefore, a subspace can be characterised by the collection of vectors whose span forms it. In other words, the span of a set of vectors is the subspace formed by all points we can represent by some linear combination of these vectors. 
 
 The missing part in this is the notion of a \emph{basis}. A \emph{basis} of the subspace $S \subseteq \reals^n$ is a collection of vectors $\braces{x_i}_{i=1}^k \in \reals^n$ that are linearly independent such that $\spans(x_1,\dots, x_k) = S$. 
 
-Notice that a basis is a ``minimal'' set of vectors that form a subspace. You can think of it in light of the definition of linearly independent vectors; if a vector is linearly dependent to the others, it is not needed for characterising the subspace the vectors span, since it can be represented by a linear combination of the other vectors (and thus is in the subspace formed by the span of the other vectors).
+Notice that a basis is a ``minimal'' set of vectors that form a subspace. You can think of it in light of the definition of linearly independent vectors (Definition \ref{p1c2:def:linear_independence}); if a vector is linearly dependent to the others, it is not needed for characterising the subspace that the vectors span since it can be represented by a linear combination of the other vectors (and thus is in the subspace formed by the span of the other vectors).
 
 The above leads us to some important realisations:
 
 \begin{enumerate}
-	\item All bases of a given subspace $S$ have the same dimension. Any extra vector would be linearly dependent to those vectors that span $S$. In that case, we say that the subspace has size (or dimension) $k$, the number of linearly independent vectors forming the basis of the subspace.
-	\item If the subspace $S \subset \reals^n$ is formed by a basis of size $m < n$, we say that $S$ is a proper subspace, because it is not the whole $\reals^n$ itself, but a space contained within $\reals^n$. For example, two linearly independent vectors form (i.e., span) a hyperplane in $\reals^3$; this hyperplane is a proper subspace since $m=2 <3=n$.
-	\item If a proper subspace has dimension $m < n$, then it means that there are $n-m$ directions in $\reals^n$ that are perpendicular to the subspace and to each other. That is, there are nonzero vectors $a_i$ that are orthogonal to each other and to $S$. Or, equivalently, $a_i^\top x = 0$ for $i = n-m + 1, ..., n$. Referring to the $\reals^3$, if $m=2$, then there is a third direction that is perpendicular to (or not in) $S$. Figure \ref{p1c2:fig:proper_subpaces} illustrates this.
+	\item All bases of a given subspace $S$ have the same dimension. Any extra vector would be linearly dependent to those vectors that span $S$. In that case, we say that the subspace has size (or dimension) $k$, the number of linearly independent vectors forming the basis of the subspace. We can overload the notation $\dim(S)$ to represent the dimension of the subspace $S$.
+	\item If the subspace $S \subset \reals^n$ is formed by a basis of size $m < n$, we say that $S$ is a proper subspace with $\dim(S)=m$, because it is not the whole $\reals^n$ itself, but a space contained within $\reals^n$. For example, two linearly independent vectors form (i.e., span) a hyperplane in $\reals^3$; this hyperplane is a proper subspace since $\dim(S)m=2 < 3=n$.
+	\item If a proper subspace has dimension $m < n$, then it means that there are $n-m$ directions in $\reals^n$ that are perpendicular to the subspace and to each other. That is, there are nonzero vectors $a_i$ that are orthogonal to each other and to $S$. Or, equivalently, $a_i^\top x = 0$ for $i = n-m + 1, ..., n$. Referring to the $\reals^3$, if $m=2$, then there is a third direction that is perpendicular to (or not in) $S$. Figure \ref{p1c2:fig:proper_subpaces} can be used to illustrate this idea. Notice how one can find a vector, say $x_3$ that is perpendicular to $S$. This is because the whole space is $\reals^3$, but $S$ has dimension $m=2$ (or $\dim(S)=2$). 
 \end{enumerate}
 
 \begin{figure}
@@ -101,7 +103,7 @@ The above leads us to some important realisations:
 		\node (Sr) at (3.7, -0.3) {$S$};
 	\end{tikzpicture}
 	\vspace{-12pt}
-	\caption{One- (left) and two-dimensional subspaces (right) in $\reals^3$} \label{p1c2:fig:proper_subpaces}
+	\caption{One- (left) and two-dimensional subspaces (right) in $\reals^3$.} \label{p1c2:fig:proper_subpaces}
 \end{figure}
 
 Theorem \ref{p1c2:thm:LI_and_bases} builds upon the previous points to guarantee the existence of bases and propose a procedure to form them.
@@ -114,13 +116,16 @@ Theorem \ref{p1c2:thm:LI_and_bases} builds upon the previous points to guarantee
 	\end{enumerate}	
 \end{theorem}
 
-%TODO: Include proof.
+\begin{proof}
+	Notice that, if every vector $x_{k'+1}, \dots, x_{k}$ can be expressed as a linear combination of $x_{1},\dots x_{k'}$, then every vector in $S$ is also a linear combination of $x_{1}, \dots, x_{k'}$. Thus, $x_{1}, \dots, x_{k'}$ form a basis to $S$ with $m =k'$. Otherwise, at least one of the vectors in $x_{k'+1}, \dots, x_{k}$ is linearly independent from $x_{1}, \dots, x_{k'}$. By picking one such vector, we now have $k'+1$ of the vectors $x_{k'+1}, \dots, x_{k}$ that are linearly independent. If we repeat this process $m - k'$ times, we end up with a basis for $S$.
+\end{proof}
+
 
 Our interest in subspaces and bases spans from (pun intended!) their usefulness in explaining how the simplex method works under a purely algebraic (as opposed to geometric) perspective. For now, we can use the opportunity to define some ``famous'' subspaces which will often appear in our derivations. 
 
 Let $A$ be a $m \times n$ matrix as before. The \emph{column space} of $A$ consists of the subspace spanned by the $n$ columns of $A$ and has dimension $m$ (recall that each column has as many components as the number of rows and is thus a $m$-dimensional vector). Likewise, the \emph{row space} of $A$ is the subspace in $\reals^n$ spanned by the rows of $A$. Finally, the \emph{null space} of $A$, often denoted as $\nulls(A) = \braces{x \in \reals^n : Ax = 0}$, consist of the vectors that are perpendicular to the row space of $A$. 
 
-One important notion related to those subspaces is that of their size. Both the row and the column space have the same size, and that size is the \emph{rank} of $A$. If $A$ is \emph{full rank}, than it means that 
+One important notion related to those subspaces is their size. Both the row and the column space have the same size, which is the \emph{rank} of $A$. If $A$ is \emph{full rank}, than it means that 
 %
 \begin{equation*}
 	\rank(A) = \min \braces{m,n}. 		
@@ -137,15 +142,15 @@ A related concept is that of an \emph{affine subspace}. Differently from linear 
 	S = S_0 + x_0 = \braces{x + x_0 : x \in S_0}.
 \end{equation*}
 %
-Affine subspaces are not subspaces, because they do not contain the origin (recall that the definition of subspaces allows for $a$ and $b$ to be zero). Nevertheless, $S$ has the \emph{same dimension} as $S_0$.
+Affine subspaces differ from linear subspaces because they do not contain the origin (recall that the definition of subspaces allows for $a$ and $b$ to be zero). Nevertheless, $S$ has the \emph{same dimension} as $S_0$.
 
-Affine subspaces give a framework for representing linear programming problems algebraically. Specifically, let $A$ be a $m \times n$ matrix with $m < n$ (which will always be the case in linear programming models in this form as we will see) and $b$ a $m$-dimensional vector. Then, let 
+Affine subspaces give a framework for representing linear programming problems algebraically. Specifically, let $A$ be a $m \times n$ matrix with $m < n$ and $b$ a $m$-dimensional vector. Then, let 
 %
 \begin{equation} \label{p1c2:eq:equality_constraint_feasible_set}
 	S = \braces{x \in \reals^n : Ax = b}.		
 \end{equation}
 %
-As we will see, the feasible set of any linear programming problem can be represented as an equality-constrained equivalent of the form of \eqref{p1c2:eq:equality_constraint_feasible_set} by means of adding slack variables to the inequality constraints. Now, assume that $x_0 \in \reals^n$ is such that $Ax_0 = b$.  Then, we have that 
+As we will see, the feasible set of any linear programming problem can be represented as an equality-constrained equivalent of the form of \eqref{p1c2:eq:equality_constraint_feasible_set} by adding slack variables to the inequality constraints, meaning that we will always have that $m < n$.  Now, assume that $x_0 \in \reals^n$ is such that $Ax_0 = b$.  Then, we have that 
 %
 \begin{equation*}
 	Ax = Ax_0 = b \Rightarrow A(x - x_0) = 0.	
@@ -157,9 +162,7 @@ Thus, $x \in S$ if and only if the vector $(x - x_0)$ belongs to $\nulls(A)$, th
 	S = \braces{x + x_0 : x \in \nulls(A)},	
 \end{equation*}
 %
-being thus an affine subspace with dimension $n-m$, if $A$ has $m$ linearly independent rows (i.e., $\rank(A)=m$). This will have important implications in the way we can define multiple basis from the $n$ vectors in the column space by choosing $m$ to be removed and form a basis to $\nulls(A)$, and what this process means geometrically.
-
-Figure \ref{p1c2:fig:nill_space_a} illustrates this concept for a single-row matrix $a$. For multiple rows, one would see $S$ as being represented by the intersection of multiple hyperplanes.
+being thus an affine subspace with dimension $n-m$, if $A$ has $m$ linearly independent rows (i.e., $\rank(A)=m$). This will have important implications in the way we can define multiple bases for $S$ from the $n$ vectors in the column space by choosing $m$ to be removed and what this process means geometrically. Figure \ref{p1c2:fig:nill_space_a} illustrates this concept for a single-row matrix $a$. For multiple rows, one would see $S$ as being represented by the intersection of multiple hyperplanes.
 
 \begin{figure}
 	\begin{tikzpicture}
@@ -170,17 +173,17 @@ Figure \ref{p1c2:fig:nill_space_a} illustrates this concept for a single-row mat
 	    \node (a) at (-0.5,1.4) {$a$};
 	    \node (S) at (-1.7,0.2) {$S$}; 
 	\end{tikzpicture}
-	\caption{The affine subspace $S$ generated by $x_0$ and $\nulls(a)$} \label{p1c2:fig:nill_space_a}		
+	\caption{The affine subspace $S$ generated by $x_0$ and $\nulls(a)$} \label{p1c2:fig:nill_space_a}.		
 \end{figure}
 
 
 \section{Convex polyhedral set}
 
-The feasible region of any linear programming problem is a convex polyhedral set, which we will simply refer to as a polyhedral set. That is because we are interested in polyhedral sets that are formed by an intersection of a finite number of half-spaces, and can thus only be convex (as we will see in a moment), creating redundancy in our context, but maybe some confusion overall. 
+The feasible region of any linear programming problem is a convex polyhedral set, which we will simply refer to as a polyhedral set. That is because we are interested in polyhedral sets that are formed by an intersection of a finite number of half-spaces and can thus only be convex (as we will see in a moment), creating redundancy in our context but maybe some confusion overall. 
 
 \subsection{Hyperplanes, half-spaces and polyhedral sets}
 
-Definition \ref{p1c2:def:polyhedral_sets} formally states the structure we refer to as polyhedral sets.
+Definition \ref{p1c2:def:polyhedral_sets} formally states the structure that we refer to as polyhedral sets.
 %
 \begin{definition}[Polyhedral set] \label{p1c2:def:polyhedral_sets}
 	A polyhedral set is a set that can be described as
@@ -196,7 +199,7 @@ One important thing to notice is that polyhedral sets, as defined in Definition 
 	S = \braces{x \in \reals^n : a_i^\top x \geq b_i, i = 1,\dots, m}, 	
 \end{equation}
 %
-which represents exactly the intersection of the half-spaces $a_i^\top x \geq b_i$. Furthermore, notice that the hyperplanes $a_i^\top x = b_i$, $\forall i \in \braces{1,\dots, m}$, are the boundaries of each hyperplane, and thus describe one of the faces of the polyhedral set, which is generally given by $\braces{x \in S : a_i^\top x \geq b_i}$ for a given face $i \in \braces{1,\dots, m}$. Figure \ref{p1c2:fig:hyperplanes_and_polyhedral_set} illustrates a hyperplane forming two half-spaces (also polyhedral sets) and how the intersection of five half-spaces form a (bounded) polyhedral set.
+which represents exactly the intersection of the half-spaces $a_i^\top x \geq b_i$. Furthermore, notice that the hyperplanes $a_i^\top x = b_i$, $\forall i \in \braces{1,\dots, m}$, are the boundaries of each hyperplane, and thus describe one of the facets of the polyhedral set. Figure \ref{p1c2:fig:hyperplanes_and_polyhedral_set} illustrates a hyperplane forming two half-spaces (also polyhedral sets) and how the intersection of five half-spaces form a (bounded) polyhedral set.
 
 \begin{figure}[h]
 			\begin{tikzpicture}
@@ -220,14 +223,14 @@ which represents exactly the intersection of the half-spaces $a_i^\top x \geq b_
 		\caption{A hyperplane and its respective halfspaces (left) and the polyhedral set $\braces{x\in \reals^{2} : a_i^x \leq b_i, i =1,\dots, 5}$ (right).} \label{p1c2:fig:hyperplanes_and_polyhedral_set}		
 	\end{figure}
 
-You might finds authors referring to bounded polyhedral sets as polytopes, though this is not used consistently across references, sometimes with switched meanings (for example, using polytope to refer to a set defined as in Definition \ref{p1c2:def:polyhedral_sets} and using polyhedron to refer to a bounded version of $S$). In this text, we will only use the term polyhedral set to refer to sets defined as in Definition \ref{p1c2:def:polyhedral_sets} and use the term bounded whenever applicable.
+You might find authors referring to bounded polyhedral sets as polytopes. However, this is not used consistently across references, sometimes with switched meanings (for example, using polytope to refer to a set defined as in Definition \ref{p1c2:def:polyhedral_sets} and using polyhedron to refer to a bounded version of $S$). In this text, we will only use the term polyhedral set to refer to sets defined as in Definition \ref{p1c2:def:polyhedral_sets} and use the term bounded whenever applicable.
 
-% TODO: include a more rigorous presentation of face and facets. 
+Also, it may be useful to formally define some elements in polyhedral sets. For that, let us consider a hyperplane $H = \braces{x \in \reals{n} : a^\top x = b}$. Now consider the set $F = H \cap S$. This set is known as a \emph{face} of a polyhedral set. If the face $F$ has dimension zero, then $F$ is called a vertex. Analogously, if $\dim(F)=1$, then $F$ is called an edge. Finally, if $\dim(F) = dim(S)-1$, then $F$ is called a facet. Notice that in $\reals^3$, facets and faces are the same, whenever the face is not an edge or a vertex. 
 
 
 \subsection{Convexity of polyhedral sets}
 
-As will see in more details in Part 2 of this text, convexity plays a crucial role in optimisation, being the ``watershed'' between easy and hard optimisation problems. One of the main reasons why we can solve challenging linear programming problems is due to the inherent convexity of polyhedral sets.
+As will see in more detail in Part 2 of this book, convexity plays a crucial role in optimisation, being the ``watershed'' between easy and hard optimisation problems. One of the main reasons why we can solve challenging linear programming problems is due to the inherent convexity of polyhedral sets.
 
 Let us first define the notion of convexity for sets, which is stated in Definition \ref{p1c2:def:convex_set} 
 
@@ -307,9 +310,9 @@ $$
 \end{theorem}
 
 \begin{proof}
-	We provide proofs to each of the statements individually. 
+	We provide the proof for each of the statements individually. 
 	\begin{enumerate}
-	 \item Let 	$S_i$, for $i \in I$, be convex sets and suppose that $x, y \in \bigcap_{i \in I} S_i$. Let $\lambda \in [0,1]$. Since $S_i$ are convex and $x,y \in S_i$ for all $i \in I$, $\lambda x + (1-\lambda) y \in S_i$ for all $i \in I$ and, thus, $\lambda x + (1-\lambda) y \in \bigcap_{i \in I} S_i$.
+	 \item Let 	$S_i$, for $i \in I = \braces{1,\dots,n}$, be a collection of $n$ convex sets and suppose that $x, y \in \bigcap_{i \in I} S_i$. Let $\lambda \in [0,1]$. Since $S_i$ are convex and $x,y \in S_i$ for all $i \in I$, $\lambda x + (1-\lambda) y \in S_i$ for all $i \in I$ and, thus, $\lambda x + (1-\lambda) y \in \bigcap_{i \in I} S_i$.
 	
 	\item Let $a \in \reals^n$ and $b \in \reals$. Let $x,y \in \reals^n$, such that $a^\top x \geq b$ and $a^\top y \geq b$. Let $\lambda \in [0,1]$. Then $a^\top (\lambda x + (1-\lambda)y) \geq \lambda b + (1-\lambda)b = b$, showing that half-spaces are convex. The result follows from combining this with (1).    
 	
@@ -342,14 +345,14 @@ Figure \ref{p1c2:fig:convexity_theorem_examples} illustrates some of the stateme
 	\caption{Illustration of statement 1 (left), 2 (centre), and 3 and 4 (right)} \label{p1c2:fig:convexity_theorem_examples}
 \end{figure}	
 
-We will halt our discussion about convexity for now and return to it in deeper details in Part 2. As it will become clearer then, the presence of convexity (which is a given in the context of linear programming, as we have just seen) is what allows us to conclude that the solutions returned by our optimisation algorithms are indeed optimal for the problem at hand. 
+We will halt our discussion about convexity for now and return to it in deeper detail in Part 2. As it will become clearer then, the presence of convexity (which is a given in the context of linear programming, as we have just seen) is what allows us to conclude that the solutions returned by our optimisation algorithms are indeed optimal for the problem at hand. 
 
 
 \section{Extreme points, vertices, and basic feasible solutions}
 
-Now we focus on the algebraic representation of the most relevant geometric elements in the optimisation of linear programming problems. As we have seen in the graphical example in the previous chapter, the optimum of linear programming problems is generally located at the vertices of the feasible set. Furthermore, such vertices are formed by the intersection of $n$ constraints (in $n$-dimensional space, which comprises constraints that are active (or satisfied at the boundary of the half-space of said constraints).
+Now we focus on the algebraic representation of the most relevant geometric elements in the optimisation of linear programming problems. As we have seen in the graphical example in the previous chapter, the optimum of linear programming problems is generally located at the vertices of the feasible set. Furthermore, such vertices are formed by the intersection of $n$ constraints (in a $n$-dimensional space, which comprises constraints that are active (or satisfied at the boundary of the half-space of said constraints).
 
-First, let us formally define the notions of vertex and extreme point. Though in general these can refer to different objects, we will see that in the case of linear programming problems, if a point is a vertex, then it is an extreme point as well, being the converse also true.
+First, let us formally define the notions of vertex and extreme point. Although in general these can refer to different objects, we will see that in the case of linear programming problems, if a point is a vertex, then it is an extreme point as well, being the converse also true.
 
 \begin{definition}[Vertex] \label{p1c2:def:vertex}
 	Let $P$ be a convex polyhedral set. The vector $x \in P$ is a vertex of $P$ if there exists some $c$ such that $c^\top x < c^\top y$ for all $y \in P$ with $y \neq x$.
@@ -359,7 +362,7 @@ First, let us formally define the notions of vertex and extreme point. Though in
 	Let $P$ be a convex polyhedral set. The vector $x \in P$ is an extreme point of $P$ if there are no two vectors $y,z \in P$ (different than $x$) such that $x = \lambda y + (1 - \lambda)z$, for any $\lambda \in [0,1]$.
 \end{definition}
 
-Figure \ref{p1c2:fig:vertex_and_extreme_point} provides an illustration of the Definitions \ref{p1c2:def:vertex} and \ref{p1c2:def:extreme_point}. Notice that, while the definition of a vertex involves an additional hyperplane that, once placed on a vertex point, strictly contains the whole polyhedral set in one of the half-spaces it defines, with the exception of the vertex itself. On the other hand, the definition of an extreme point only relies on convex combinations of elements in the set itself. 
+Figure \ref{p1c2:fig:vertex_and_extreme_point} provides an illustration of the Definitions \ref{p1c2:def:vertex} and \ref{p1c2:def:extreme_point}. Notice that the definition of a vertex involves an additional hyperplane that, once placed on a vertex point, strictly contains the whole polyhedral set in one of the half-spaces it defines, except for the vertex itself. On the other hand, the definition of an extreme point only relies on convex combinations of elements in the set itself. 
 
 \begin{figure}
 	\begin{tikzpicture}
@@ -382,7 +385,9 @@ Figure \ref{p1c2:fig:vertex_and_extreme_point} provides an illustration of the D
 	\caption{Representation of a vertex (left) and a extreme point (right)} \label{p1c2:fig:vertex_and_extreme_point}
 \end{figure}	
 
-Now we focus on the description of active constraints under an algebraic standpoint. For that, let us first generalise our setting by considering all possible types of linear constraints. That is, let us consider the convex polyhedral set $P \subset \reals^n$, formed by the set of inequalities and equalities:
+Definition \ref{p1c2:def:vertex} also hints an important consequence for linear programming problems. As we seen from Theorem \ref{p1c2:thm:convexity}, $P$ is convex, which guarantees that $P$ is contained in the half-space $c^\top y > c^\top x$. This  implies that $c^\top x \leq c^\top y, \forall y \in P$, which is precisely the condition that $x$ must satisfy to be the minimum for the problem $\mini_x\braces{c^\top x :x \in P}$.   
+
+Now we focus on the description of active constraints from an algebraic standpoint. For that, let us first generalise our setting by considering all possible types of linear constraints. That is, let us consider the convex polyhedral set $P \subset \reals^n$, formed by the set of inequalities and equalities:
 %
 \begin{align*}
 	& a_i^\top x \geq b, i \in M_1, \\ 
@@ -390,11 +395,11 @@ Now we focus on the description of active constraints under an algebraic standpo
 	& a_i^\top x = b, i \in M_3.
 \end{align*}
 
-Definition \ref{p1c2:fig:active_constraint} formalises the notion of active constraints. This is illustrated in Figure \ref{p1c2:fig:active_constraints}, where the polyhedral set $P = \braces{x \in \reals^3 : x_1 + x_2 + x_3 = 1, x_i \geq 0, i =1,2,3}$ is represented. Notice that, while points $A$, $B$, $C$ and $D$ have 3 active constraints, $E$ only has 2 active constraints ($x_2 = 0$ and $x_1 + x_2 + x_3 = 1$).
-
 \begin{definition}[Active (or binding) constraints] \label{p1c2:fig:active_constraint}
 	If a vector $\overline{x}$ satisfies $a_i^\top \overline{x} = b_i$ for some $i \in M_1, M_2$, or $M_3$, we say that the corresponding constraints are active (or binding).
 \end{definition}
+
+Definition \ref{p1c2:fig:active_constraint} formalises the notion of active constraints. This is illustrated in Figure \ref{p1c2:fig:active_constraints}, where the polyhedral set $P = \braces{x \in \reals^3 : x_1 + x_2 + x_3 = 1, x_i \geq 0, i =1,2,3}$ is represented. Notice that, while points $A$, $B$, $C$ and $D$ have 3 active constraints, $E$ only has 2 active constraints ($x_2 = 0$ and $x_1 + x_2 + x_3 = 1$).
 
 \begin{figure}[h]
 	\begin{tikzpicture}
@@ -411,7 +416,6 @@ Definition \ref{p1c2:fig:active_constraint} formalises the notion of active cons
 	\end{tikzpicture}
 	\caption{Representation of $P$ in $\reals^3$.} \label{p1c2:fig:active_constraints}
 \end{figure}	
-
 
 Theorem \ref{p1c2:thm:active_const} sows a thread between having a collection of active constraints forming a vertex and being able to describe it as a basis of a subspace that is formed by the vectors $a_i$ that form these constraints. This link is what will allow us to characterise vertices by their forming active constraints.
 
@@ -432,7 +436,7 @@ Theorem \ref{p1c2:thm:active_const} sows a thread between having a collection of
 	Conversely, if $\braces{a_i}_{i \in I}$ do not span $\reals^n$, choose $d \in \reals^n$ that is orthogonal to $\spans(\braces{a_i}_{i \in I})$. If $x$ satisfies $\braces{a_i ^\top x = b_i}_{i \in I}$, so does $\braces{a_i ^\top (x + d) = b_i}_{i \in I}$, thus yielding multiple solutions. This connects (2) and (3). \qedhere
 \end{proof}
 
-Notice that Theorem \ref{p1c2:thm:active_const} implies that there are (at least) \emph{$n$ active constraints ($a_i$)} that are \emph{linearly independent} at $\overline{x}$. This is the reason why we will refer to $\overline{x}$ and any vertex forming solution a \emph{basic solution}, of which we will be interested in those that are feasible, i.e., that satisfy all constraints $i \in M_1 \cup M_2 \cup M_3$. Definition \ref{p1c2:def:basic_feasible_solution} provides a formal definition of these concepts.
+Notice that Theorem \ref{p1c2:thm:active_const} implies that there are (at least) \emph{$n$ active constraints ($a_i$)} that are \emph{linearly independent} at $\overline{x}$. This is the reason why we will refer to $\overline{x}$, and any vertex-forming solution, as a \emph{basic solution}, of which we will be interested in those that are feasible, i.e., that satisfy all constraints $i \in M_1 \cup M_2 \cup M_3$. Definition \ref{p1c2:def:basic_feasible_solution} provides a formal definition of these concepts.
 
 \begin{definition}[Basic feasible solution (BFS)] \label{p1c2:def:basic_feasible_solution}
 	Consider a convex polyhedral set $P \subset \reals^n$ defined by linear equality and inequality constraints, and let $\overline{x} \in \reals^n$.
@@ -462,7 +466,7 @@ Figure \ref{p1c2:fig:BFS} provides an illustration of the notion of basic soluti
 	\caption{Points $A$ to $F$ are basic solutions; $B$,$C$,$D$, and $E$ are BFS.} \label{p1c2:fig:BFS}
 \end{figure}		
 
-We finalise stating the main result of this chapter, which formally confirms the intuition we developed so far. That is, for convex polyhedral sets, the notion of vertices and extreme points coincide and these points can be represented as basic feasible solutions. This is precisely the link that allows to treat the feasible region of linear programming problems under a purely algebraic characterisation of the candidates for optimal solutions, those described uniquely by a subset of constraints of the problem.
+We finalise stating the main result of this chapter, which formally confirms the intuition we have developed so far. That is, for convex polyhedral sets, the notion of vertices and extreme points coincide, and these points can be represented as basic feasible solutions. This is precisely the link that allows for considering the feasible region of linear programming problems under a purely algebraic characterisation of the candidates for optimal solutions, those described uniquely by a subset of constraints of the problem that is assumed to be active.
 
 \begin{theorem}[BFS, extreme points and vertices]\label{p1c2:thm:BFS_vertex_extreme_point}
 	Let $P \subset \reals^n$ be a convex polyhedral set and let $\overline{x} \in P$. Then, the following are equivalent
@@ -472,14 +476,14 @@ We finalise stating the main result of this chapter, which formally confirms the
 
 
 \begin{proof}
-	Let $P =\{ x \in \reals^n \mid a_i^\top x \geq b_i, i \in M_1, a_i^\top x = b_i, i \in M_2\}$, and $I = \braces{i \in M_1 \cup M_2 \mid a_i^\top x = b_i}$.
+	Let $P =\{ x \in \reals^n : a_i^\top x \geq b_i, i \in M_1, a_i^\top x = b_i, i \in M_2\}$, and $I = \braces{i \in M_1 \cup M_2 \mid a_i^\top x = b_i}$.
 	
 	\begin{enumerate}
 		\item (Vertex $\Rightarrow$ Extreme point) Suppose $\overline{x}$ is a vertex. Then, there exists some $c \in \reals^n$ such that $c^\top\overline{x} < c^\top x$, for every $x \in P$ with $x \neq \overline{x}$ (cf. Definition \ref{p1c2:def:vertex}). Take $y,z \in P$ with $y,z \neq \overline{x}$. Thus $c^\top\overline{x} < c^\top y$ and $c^\top\overline{x} < c^\top z$. For $\lambda \in [0,1]$, $c^\top \overline{x} < c^\top(\lambda y + (1-\lambda)z)$ implying that $\overline{x} \neq \lambda y + (1-\lambda)z$, and is thus an extreme point (cf. Definition \ref{p1c2:def:extreme_point}).
 		
 		\item (Extreme point $\Rightarrow$ BFS) suppose $\overline{x} \in P$ is not a BFS. Then, there are no $n$ linearly independent vectors within $\braces{a_i}_{i \in I}$. Thus $\braces{a_i}_{i \in I}$ lie in a proper subspace of $\reals^n$. Let the nonzero vector $d \in \reals^n$ be such that $a_i^\top d = 0$, for all $i \in I$.
 			
-			Let $\epsilon > 0$, $y = \overline{x} + \epsilon d$, and $z = \overline{x} - \epsilon d$. Notice that $a_i^\top y = a_i^\top z = b_i$, for all $i \in I$. Moreover, for $i \neq I$, $a_i^\top x > b$ and, provided that $\epsilon$ is sufficiently small (such that $\epsilon|a_i^\top d| < a_i ^\top \overline{x} - b_i $), we have that $a_i ^\top x \geq b_i$. Thus $y \in P$, and by a similar argument, $z \in P$. Now, by noticing that $\overline{x} = \frac{1}{2}y + \frac{1}{2}z$, we see that $\overline{x}$ is not an extreme point. 			 
+			Let $\epsilon > 0$, $y = \overline{x} + \epsilon d$, and $z = \overline{x} - \epsilon d$. Notice that $a_i^\top y = a_i^\top z = b_i$, for all $i \in I$. Moreover, for $i \neq I$, $a_i^\top x > b_i$ and, provided that $\epsilon$ is sufficiently small (such that $\epsilon|a_i^\top d| < a_i ^\top \overline{x} - b_i $), we have that $a_i ^\top x \geq b_i$ for all $i \in I$. Thus $y \in P$, and by a similar argument, $z \in P$. Now, by noticing that $\overline{x} = \frac{1}{2}y + \frac{1}{2}z$, we see that $\overline{x}$ is not an extreme point. 			 
 		\item (BFS $\Rightarrow$ Vertex) Let $\overline{x}$ be a BFS. Define $c = \sum_{i \in I} a_i$. Then
 			\begin{equation*}
 				c^\top \overline{x} = \linebreak \sum_{i \in I} a_i^\top \overline{x} = \sum_{i \in I} b_i.	 			 	
@@ -492,12 +496,13 @@ We finalise stating the main result of this chapter, which formally confirms the
 	\end{enumerate} 	
 \end{proof}
 
-Some interesting insights emerge from the proof of Theorem \ref{p1c2:thm:BFS_vertex_extreme_point}, upon which we will build our next developments. First, notice how the definition of vertex encodes a concept of optimality, since it implies that $\overline{x}$ is a unique minimiser (i.e., all other feasible points $y$ are such that $c^\top\overline{x} < c^\top y$). Also, once the relationship between being a vertex/ extreme point and a BFS is made, it means that $\overline{x}$ can be recovered as the unique solution of a system of linear equations, these equations being the active constraints at that vertex. This means that the list of all candidate points for optimal solution can be obtained by simply looking at all possible combinations of $n$ active constraints, discarding those that are infeasible. This means that the number of candidates for optimal solution is \emph{finite} and can be bounded by $\binom{m}{n}$, where $m=| M_1 \cup M_2 |$. 
+Some interesting insights emerge from the proof of Theorem \ref{p1c2:thm:BFS_vertex_extreme_point}, upon which we will build our next developments. Once the relationship between being a vertex/ extreme point and a BFS is made, it means that $\overline{x}$ can be recovered as the unique solution of a system of linear equations, these equations being the active constraints at that vertex. This means that the list of all optimal solution candidate points can be obtained by simply looking at all possible combinations of $n$ active constraints, discarding those that are infeasible. This means that the number of candidates for optimal solution is \emph{finite} and can be bounded by $\binom{m}{n}$, where $m=| M_1 \cup M_2 |$. 
 
-
+\vfill
+\pagebreak
 \section{Exercises}
 
-\subsection*{Exercise 2.1: Polyhedral sets}
+\subsection*{Exercise 2.1: Polyhedral sets \cite{bertsimas1997introduction}}
 \input{part_1/chapter_2/exercises/E21-polyhedra}
 
 \subsection*{Exercise 2.2: Convexity of polyhedral sets}
@@ -509,7 +514,7 @@ Some interesting insights emerge from the proof of Theorem \ref{p1c2:thm:BFS_ver
 \subsection*{Exercise 2.4: Vertex, extreme points, and BFSs}
 \input{part_1/chapter_2/exercises/E24-bfs}
 
-\subsection*{Exercise 2.5: Binding constraints applications} 
+\subsection*{Exercise 2.5: Binding constraints} 
 \input{part_1/chapter_2/exercises/E25-binding}
 
  

@@ -310,11 +310,11 @@ In order to create a geometric intuition, we will utilise a graphical representa
 
 \begin{figure}[h]
 	\begin{subfigure}{0.45\textwidth}
-		\includegraphics[scale=0.99]{part_1/chapter_1/figures/figure1-3a.pdf}	
+		\includegraphics[scale=0.97]{part_1/chapter_1/figures/figure1-3a.pdf}	
 		\caption{} \label{p1c1:fig:fig3a}
 	\end{subfigure}
 	\begin{subfigure}{0.45\textwidth}
-		\includegraphics[scale=0.99]{part_1/chapter_1/figures/figure1-3b.pdf}
+		\includegraphics[scale=0.97]{part_1/chapter_1/figures/figure1-3b.pdf}
 		\caption{} \label{p1c1:fig:fig3b}		
 	\end{subfigure}
 	\caption{The feasible region of the paint factory problem (in Figure \ref{p1c1:fig:fig3b}), represented as the intersection of the four closed-half spaces formed by each of the constraints (as shown in Figure \ref{p1c1:fig:fig3a}). Notice how the feasible region is a polyhedral set in $\reals^2$, as there are two decision variables ($x_1$ and $x_2$).} \label{p1c1:fig:feasible_region_plot}	
@@ -326,11 +326,11 @@ This observation provides us with a simple graphical method to find the optimal 
 
 \begin{figure}[h]
 	\begin{subfigure}{0.45\textwidth}
-		\includegraphics[scale=0.99]{part_1/chapter_1/figures/figure1-4a.pdf}  
+		\includegraphics[scale=0.97]{part_1/chapter_1/figures/figure1-4a.pdf}  
 		\caption{} \label{p1c1:fig:level_curves_a}	
 	\end{subfigure}
 	\begin{subfigure}{0.45\textwidth}
-		\includegraphics[scale=0.99]{part_1/chapter_1/figures/figure1-4b.pdf}
+		\includegraphics[scale=0.97]{part_1/chapter_1/figures/figure1-4b.pdf}
 		\caption{} \label{p1c1:fig:level_curves_b}	 
 	\end{subfigure}
 	\caption{Graphical representation of some of the level curves of the objective function $z = 5x_1 + 4x_2$. Notice that the constant gradient vector $\nabla z = (5,4)^\top$ points to the direction in which the level curves increase in value. The optimal point is represented by $x^*=(3, 1.5)^\top$ with the furthermost level curve being that associated with the value $z^* = 21$}	
@@ -345,7 +345,7 @@ Analogously, \emph{inactive constraint} are constraints that are satisfied as st
 
 One striking feature concerning the geometry of LPs that becomes evident when we analyse the graphical method is that the number of candidate solutions is not infinite, but yet, only \emph{a finite set} of points are potential candidates for optimal solution. This is because the process of sweeping in the direction of the gradient of the (linear) objective function will, in general, lead to a unique solution that must lie on a vertex of the polyhedral feasible set. The only exceptions are either when the gradient $\nabla z$ happens to be perpendicular to a facet of the polyhedral set (and in the direction of the sweeping) or in case the sweeping direction is not bounded by some of the facets of the polyhedral set. These exceptional cases will be discussed in more detail later on, but, as we will see, the observation still holds.
 
-In the graphical example (i.e., in $\reals^2$), notice how making $n = 2$ constraints active out of $m = 4$ constraints \emph{forms a vertex}. However, not all vertices are feasible. This allows us to devise a mechanism to describe vertices by activating $n$ of the $m$ constraints at a time, which we could exhaustively test and select the best (i.e., that with the largest objective function value). The issue, however, is that the number of candidates increases \emph{exponentially} with the number of constraints and variables of the problem, which indicates this would quickly become computationally infeasible. As we will see, it turns out that this search idea can be made surprisingly efficient and is, in fact, the underlying framework of the \emph{simplex method}. However, there are indeed artificially engineered worst-case settings where the method does need to consider every single vertex.
+In the graphical example (i.e., in $\reals^2$), notice how making $n = 2$ constraints active out of $m = 4$ constraints \emph{forms a vertex}. However, not all vertices are feasible. This allows us to devise a mechanism to describe vertices by activating $n$ of the $m$ constraints at a time, in which we could exhaustively test and select the best (i.e., that with the largest objective function value). The issue, however, is that the number of candidates increases \emph{exponentially} with the number of constraints and variables of the problem, which indicates this would quickly become computationally infeasible. As we will see, it turns out that this search idea can be made surprisingly efficient and is, in fact, the underlying framework of the \emph{simplex method}. However, there are indeed artificially engineered worst-case settings where the method does need to consider every single vertex.
 
 The simplex method exploits the above idea to \emph{heuristically} search for solutions by selecting $n$ constraints to be active from the $m$ constraints available. Starting from an initial selection of constraints to be active, it selects one inactive constraint to activate and one to deactivate in a way that improvement in the objective function can be observed while feasibility is maintained. This process repeats until no improvement can be observed. When such is the case, the \emph{geometry} of the problem guarantees \emph{(global) optimality}. In the following chapters, we will concentrate on defining algebraic objects that we will use to develop the simplex method.
 
@@ -358,18 +358,18 @@ The simplex method exploits the above idea to \emph{heuristically} search for so
 \subsection*{Exercise 1.1: Introduction to JuMP}
 \input{part_1/chapter_1/exercises/E11-jump}
 
-\subsection*{Exercise 1.2: Transportation problem}
+\subsection*{Exercise 1.2: Transportation problem \cite{kwon2019julia}}
 \input{part_1/chapter_1/exercises/E12-transp1}
 
 \subsection*{Exercise 1.3: Capacitated transportation}
 \input{part_1/chapter_1/exercises/E13-transp2}
 
-\subsection*{Exercise 1.4: The farmer's problem}
+\subsection*{Exercise 1.4: The farmer's problem \cite{birge2011introduction}}
 \input{part_1/chapter_1/exercises/E14-farmer}
 
 \vfill
 \pagebreak
-\subsection*{Exercise 1.5: Factory planning}
+\subsection*{Exercise 1.5: Factory planning \cite{williams2013model}}
 \input{part_1/chapter_1/exercises/E15-factoryplanning}
 
 

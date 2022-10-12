@@ -1,0 +1,46 @@
+This is BibTeX, Version 0.99d (TeX Live 2022)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: /Users/pinheif2/Dropbox (Aalto)/Aalto/Courses/optimisation-notes/src/.texpadtmp/optimisation-notes.aux
+The style file: plain.bst
+Database file #1: ../optimization-notes-bib.bib
+You've used 4 entries,
+            2118 wiz_defined-function locations,
+            518 strings with 4647 characters,
+and the built_in function-call counts, 963 in all, are:
+= -- 83
+> -- 40
+< -- 1
++ -- 16
+- -- 12
+* -- 45
+:= -- 174
+add.period$ -- 12
+call.type$ -- 4
+change.case$ -- 14
+chr.to.int$ -- 0
+cite$ -- 4
+duplicate$ -- 48
+empty$ -- 89
+format.name$ -- 12
+if$ -- 201
+int.to.chr$ -- 0
+int.to.str$ -- 4
+missing$ -- 8
+newline$ -- 23
+num.names$ -- 8
+pop$ -- 33
+preamble$ -- 1
+purify$ -- 14
+quote$ -- 0
+skip$ -- 27
+stack$ -- 0
+substring$ -- 20
+swap$ -- 5
+text.length$ -- 1
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 8
+warning$ -- 0
+while$ -- 8
+width$ -- 5
+write$ -- 43
