@@ -1,4 +1,4 @@
-Recall Exercise 1.4 in which we solved a capacitated transportation problem, answer the following questions based on the dual prices interpretation. The tables with the arc capacities and supply/demand settings are once more presented in Tables \ref{table:c5_supdem} and \ref{table:c5_arcs}.
+Recall Exercise 1.4 in which we solved a capacitated transportation problem. Answer the following questions based on the interpretation of the dual price. The tables with the arc capacities and supply/demand settings are once again presented in Tables \ref{table:c5_supdem} and \ref{table:c5_arcs}.
 
 \begin{table}[h!]
 	\begin{subtable}[h]{0.4\textwidth}
@@ -8,10 +8,10 @@ Recall Exercise 1.4 in which we solved a capacitated transportation problem, ans
 			\hline
 			\textbf{s1 / d1} & 80 / 60 & 400 / 300 \\
 			\textbf{s2 / d2} & 200 / 100 & 1500 / 1000 \\
-			\textbf{s3 / d3} & 200 / 200 & 300 / 500 \\
+			\textbf{s3 / d3} & 200 / 200 & 300 / 500 \\  \hline
 		\end{tabular}
 		\end{center}
-		\caption{Supplies availability and demand per oil type [in L]}
+		\caption{Supply availability and demand per oil type [in L]}
 		\label{table:c5_supdem}
 	\end{subtable}
 	\hfill
@@ -21,12 +21,12 @@ Recall Exercise 1.4 in which we solved a capacitated transportation problem, ans
 				 & \textbf{d1} & \textbf{d2} & \textbf{d3}\\
 				 & \textbf{p1/p2 (cap)} & \textbf{p1/p2 (cap)} & \textbf{p1/p2 (cap)}\\
 				\hline
-				\textbf{s1} & 5/- ($\infty$) & 5/18 (300) & -/- (0)\\
-				\textbf{s2} & 8/15 (300) & 9/12 (700) & 7/14 (600)\\
-				\textbf{s3} & -/- (0) & 10/20 ($\infty$) & 8/- ($\infty$)\\
+				\textbf{s1} & 5/- ($\infty$) & 5/18 (300) & -/- (0) \\
+				\textbf{s2} & 8/15 (300) & 9/12 (700) & 7/14 (600) \\
+				\textbf{s3} & -/- (0) & 10/20 ($\infty$) & 8/- ($\infty$) \\ \hline
 			\end{tabular}
 		\end{center}
-		\caption{Arcs costs per oil type [in \euro \ per L] and arcs` capacities [in L]}
+		\caption{Arc costs per oil type [in \euro per L] and arc capacity [in L]}
 		\label{table:c5_arcs}
 	\end{subtable}
 	\caption{Supply chain data}
@@ -34,7 +34,6 @@ Recall Exercise 1.4 in which we solved a capacitated transportation problem, ans
 \end{table}
 %
 \begin{itemize}
-	\item [(a)] What would be the price the company would be willing to pay for raising in one unit any of the supplies availability?
-
-	\item [(b)] What would be the price the company would be willing to pay for raising in one unit any of the arcs capacity?	
+	\item [(a)] What would be the price the company would be willing to pay for increasing in one unit any of the supplies' availability?
+	\item [(b)] What would be the price the company would be willing to pay for increasing in one unit any of the arcs' capacity?	
 \end{itemize}

@@ -1,6 +1,6 @@
 \section{Sensitivity analysis}
 
-We consider now further developments arising from the notion of duality in linear programming problems. We begin by focusing on the employment of the dual simplex method and the interpretation of the dual multipliers, as discussed in Chapter \ref{chapter_5}. 
+We now consider further developments arising from the notion of duality in linear programming problems. We begin by focusing on the employment of the dual simplex method and the interpretation of the dual multipliers, as discussed in Chapter \ref{chapter_5}. 
 
 Specifically, assume that we have solved to optimality the problem $P$ given as
 %
@@ -12,11 +12,11 @@ Specifically, assume that we have solved to optimality the problem $P$ given as
 %
 As we have seen in Chapter \ref{chapter_4}, the optimal solution $\overline{x}$ with associated basis $B$ satisfies the following optimality conditions: it is a \emph{basic feasible solution} and, therefore (i) $B^{-1}b \geq 0$; and (ii) all reduced costs are nonnegative, that is $c^\top - c_B^\top B^{-1}b \geq 0$.
 
-We are interested in analysing aspects associated with the \emph{stability} of the optimal solution $\overline{x}$, in terms of how it changes in face of the inclusion of new decision variables and constraints, or in face of changes in the input data. Both cases are somewhat motivated by the realisation that problems typically emerge from dynamic settings and thus one must assess how \emph{stable} a given plan (represented by $\overline{x}$) is, or how it can be adapted, in face of changes in the original problem setting. This kind of analysis is generally referred to as \emph{sensitivity analysis} in the context of linear programming.
+We are interested in analysing aspects associated with the \emph{stability} of the optimal solution $\overline{x}$ in terms of how it changes with the inclusion of new decision variables and constraints or in with changes in the input data. Both cases are somewhat motivated by the realisation that problems typically emerge from dynamic settings. Thus, one must assess how \emph{stable} a given plan (represented by $\overline{x}$) is or how it can be adapted in face of changes in the original problem setting. This kind of analysis is generally referred to as \emph{sensitivity analysis} in the context of linear programming.
 
-First, we will consider the inclusion of new variables or new constraints \emph{after} the optimal solution $\overline{x}$ is obtained. This setting represents, for example, the inclusion of a new product or a new production plant (referring to the context of resource allocation and transportation problems, as discussed in Chapter \ref{chapter_1}) or the consideration of additional constraints imposing new (or previously disregarded) requirements or conditions. The techniques we will consider here will also be relevant in the next chapters, when we discuss specialised methods for large-scale problems and solution techniques for integer programming problems, both topics that heavily rely on the idea of iteratively incrementing linear programming problems with additional constraints (or variables).
+First, we will consider the inclusion of new variables or new constraints \emph{after} the optimal solution $\overline{x}$ is obtained. This setting represents, for example, the inclusion of a new product or a new production plant (referring to the context of resource allocation and transportation problems, as discussed in Chapter \ref{chapter_1}) or the consideration of additional constraints imposing new (or previously disregarded) requirements or conditions. The techniques we will consider here will also be relevant in the following chapters. We will then discuss specialised methods for large-scale problems and solution techniques for integer programming problems, both topics that heavily rely on the idea of iteratively incrementing linear programming problems with additional constraints (or variables).
 
-The second group of cases relate to changes in the input data. When utilising linear programming models to optimise systems performance, one must bear in mind that there is inherent uncertainty associated with the input data. Be it due to measurement errors, or due to lack of complete knowledge about the future, one must accept that the input data of these models will, by definition, embed some measure of error. One way of taking this into account is to try to understand what would be the consequences to the optimality of $\overline{x}$ in terms of eventual changes in the input data, represented by the matrix $A$, and the vectors $c$ and $b$. We will achieve this by studying the ranges within which variations in this terms do not compromise the optimality of $\overline{x}$. 
+The second group of cases relates to changes in the input data. When utilising linear programming models to optimise systems performance, one must bear in mind that there is inherent uncertainty associated with the input data. Be it due to measurement errors or a lack of complete knowledge about the future, one must accept that the input data of these models will, by definition, embed some measure of error. One way of taking this into account is to try to understand the consequences to the optimality of $\overline{x}$ in case of eventual changes in the input data, represented by the matrix $A$, and the vectors $c$ and $b$. We will achieve this by studying the ranges within which variations in these terms do not compromise the optimality of $\overline{x}$. 
 
 
 \subsection{Adding a new variable} \label{section_611}
@@ -29,16 +29,18 @@ Let us consider that a new variable $x_{n+1}$ with associated column (that is, r
 	& x \geq 0, x_{n+1} \geq 0. 	
 \end{align*}
 %
-We need to determine if, after the inclusion of this new variable, the current basis $B$ is still optimal. Clearly, making the newly added variable nonbasic yields the basic feasible solution (BFS) $x = (\overline{x}, 0)$. Moreover, we know that the optimality condition $c^\top - c_B^\top B^{-1}b \geq 0$ held before the inclusion of the variable, so we know that all the other reduced costs associated with the nonbasic variables $j \in I_N$ were nonnegative. 
+We need to determine if, after the inclusion of this new variable, the current basis $B$ is still optimal. If we make the newly added variable nonbasic yields the basic feasible solution (BFS) $x = (\overline{x}, 0)$. Moreover, we know that the optimality condition $c^\top - c_B^\top B^{-1}b \geq 0$ held before the inclusion of the variable, so we know that all the other reduced costs associated with the nonbasic variables $j \in I_N$ were nonnegative. 
 
-Therefore, the only check that needs to be done is whether the reduced cost associated with $x_{n+1}$ also satisfy the optimality condition, i.e., if
+Therefore, the only check that needs to be done is whether the reduced cost associated with $x_{n+1}$ also satisfies the optimality condition, i.e., if
 %
 \begin{equation*}
 	\overline{c}_{n+1} = c_{n+1} - c_B^\top B^{-1}A_{n+1} \geq 0.	
 \end{equation*}
 %
-If the optimality condition is satisfied, this means that the new variable does not change the optimal basis and the solution $x = (\overline{x}, 0)$ is optimal. Otherwise, one must perform a new simplex iteration, using $B$ as a starting BFS. Notice that in this case primal feasibility is trivially satisfied, while dual feasibility is not observed (that is, $\overline{c}_{n+1} < 0$). Therefore, primal simplex can be employed, \emph{warm started} by $B$. This is often a far more efficient strategy than resolving $P'$ from scratch.
+If the optimality condition is satisfied, the new variable does not change the optimal basis, and the solution $x = (\overline{x}, 0)$ is optimal. Otherwise, one must perform a new simplex iteration, using $B$ as a starting BFS. Notice that in this case, primal feasibility is trivially satisfied, while dual feasibility is not observed (that is, $\overline{c}_{n+1} < 0$). Therefore, primal simplex can be employed, \emph{warm started} by $B$. This is often a far more efficient strategy than resolving $P'$ from scratch.
 
+
+%TODO: Change this to the paint example
 Let us consider a numerical example. Consider the problem
 %
 \begin{align*}
@@ -48,7 +50,7 @@ Let us consider a numerical example. Consider the problem
 	& x_1, \dots, x_4 \geq 0.
 \end{align*}
 %
-The tableaus associated with its optimal solution is given by
+The tableau associated with its optimal solution is given by
 
 \begin{center}
 	\begin{tabular}{r|cccc|c} 
@@ -133,14 +135,15 @@ To build an initial solution in terms of the tableau representation of the simpl
 \end{equation*}
 %		
 
-Let us consider again a numerical example. Consider the same problem as the previous example, but that we instead include the additional constraint $x_1 + x_2 \geq 5$, which is violated by the optimal solution $(2,2,0,0)$. In this case, we have that $a_{m+1} = (1,1,0,0)$ and $a^\top B^{-1} A - a^\top_{m+1} = [0, 0, 2, -1]$. This modified problem then looks like
+Let us consider a numerical example again. Consider the same problem as the previous example, but that we instead include the additional constraint $x_1 + x_2 \geq 5$, which is violated by the optimal solution $(2,2,0,0)$. In this case, we have that $a_{m+1} = (1,1,0,0)$ and $a^\top B^{-1} A - a^\top_{m+1} = [0, 0, 2, -1]$. This modified problem then looks like
 %
+%TODO: Change this to the paint example
 \begin{align*}
 	\mini & -5x_1 -x_2 + 12 x_3 \\
 	\st   & 3x_1 + 2x_2 + x_3  = 10 \\
 	& 5x_1 + 3x_2 + x_4 = 16 \\
 	& -x_1 - x_2 + x_5 = -5  \\
-	& x_1, \dots, x_4 \geq 0
+	& x_1, \dots, x_5 \geq 0
 \end{align*}
 %
 with associated tableau
@@ -155,7 +158,7 @@ with associated tableau
 	\end{tabular}
 \end{center}
 
-Notice that this tableau indicate that we have a dual feasible solution that is not primal feasible, and thus suitable to be solved using dual simplex.
+Notice that this tableau indicates that we have a dual feasible solution that is not primal feasible and thus suitable to be solved using dual simplex.
 	
 A final point to note is that these operations are related to each other in terms of equivalent primal-dual formulations. That is, consider dual of $P$, which is given by
 %
@@ -177,13 +180,13 @@ We now consider how changes in the input data can influence the optimality of a 
 
 Suppose that some component $b_i$ changes and becomes $b_i + \delta$, with $\delta \in \reals$. We are interested in the range for $\delta$ within which the basis $B$ remains optimal.
 
-First, we must notice that optimality conditions $\overline{c} = c^\top - c^\top_B B^{-1}A \geq 0$ are not directly affected by variation in the vector $b$. That means that the choice of variable indices $j \in I_B$ to form the basis $B$ will in principle be stable, unless the change in $b_i$ is such that $B$ is rendered \emph{infeasible}. Thus, we need to study the conditions in which  feasibility is retained, or, more specifically, if 
+First, we must notice that optimality conditions $\overline{c} = c^\top - c^\top_B B^{-1}A \geq 0$ are not directly affected by variation in the vector $b$. This means that the choice of variable indices $j \in I_B$ to form the basis $B$ will, in principle, be \emph{stable} unless the change in $b_i$ is such that $B$ is rendered \emph{infeasible}. Thus, we need to study the conditions in which  feasibility is retained, or, more specifically, if (recall the $e_i$ is the vector of zeros except for the $i\nth$ component being 1)
 %
 \begin{equation*}
 	B^{-1}(b + \delta e_i) \geq 0.	
 \end{equation*}
 
-Let $g = (g_{1i}, \dots, g_{mi})$ be the $i^\text{th}$ column of $B^{-1}$. Thus
+Let $g = (g_{1i}, \dots, g_{mi})$ be the $i\nth$ column of $B^{-1}$. Thus
 %
 \begin{equation*}
 	B^{-1}(b + \delta e_i) \geq 0 \Rightarrow x_B + \delta g \geq 0 \Rightarrow x_{B(j)} + \delta g_{ji} \geq 0, j = 1,\dots, m.  
@@ -195,9 +198,10 @@ Notice that this is equivalent to having $\delta$ within the range
 	\max_{j : g_{ji} > 0}\left(-\frac{x_{B(j)}}{g_{ji}}\right) \leq \delta \leq \min_{j : g_{ji} < 0}\left(-\frac{x_{B(j)}}{g_{ji}}\right).	
 \end{equation*}
 
-In other words, changing $b_i$ will incurr changes in the value of the basic variables and, thus, we are analysing what is the range within which all basic variables remain nonnegative (i.e., feasible).
+In other words, changing $b_i$ will incur changes in the value of the basic variables, and thus, we must determine the range within which all basic variables remain nonnegative (i.e., feasible).
 
 Let us consider a numerical example. Once again, consider the problem from Section \ref{section_611}. The optimal tableau was given by
+%TODO: Change this to the paint example
 
 \begin{center}
 	\begin{tabular}{c|cccc|c} 
@@ -208,35 +212,35 @@ Let us consider a numerical example. Once again, consider the problem from Secti
 	\end{tabular}	
 \end{center}
 
-Suppose that $b_1$ will change by $\delta$ in the constraint $3x_1 + 2x_2 + x_3  = 10$. Notice that the first column of $B^{-1}$ can be directly extracted from the optimal tableau, and is given by $(-3,5)$. The optimal basis will remain feasible if $2 - 3\delta \geq 0$ and $2 + 5\delta \geq 0$, and thus $-2/5 \leq \delta \leq 2/3$.
+Suppose that $b_1$ will change by $\delta$ in the constraint $3x_1 + 2x_2 + x_3  = 10$. Notice that the first column of $B^{-1}$ can be directly extracted from the optimal tableau and is given by $(-3,5)$. The optimal basis will remain feasible if $2 - 3\delta \geq 0$ and $2 + 5\delta \geq 0$, and thus $-2/5 \leq \delta \leq 2/3$.
 
-Notice that this means that we can calculate what would be the change in the objective function value as a function of $\delta \in [-2/5, 2/3]$. Within this range, the optimal cost changes as 
+Notice that this means that we can calculate the change in the objective function value as a function of $\delta \in [-2/5, 2/3]$. Within this range, the optimal cost changes as 
 %
 \begin{equation*}
 	c_B^\top (b + \delta e_i) = p^\top b + \delta p_i,	
 \end{equation*}
 %
-where $p^\top = c_B ^\top B^{-1}$ is the optimal dual solution. In case the variation falls outside that range, this means that some of the basic variables will become negative. However, since the dual feasibility conditions are not affected by changes in $b_i$, one can still reutilise the basis $B$ using dual simplex.
+where $p^\top = c_B ^\top B^{-1}$ is the optimal dual solution. In case the variation falls outside that range, this means that some of the basic variables will become negative. However, since the dual feasibility conditions are not affected by changes in $b_i$, one can still reutilise the basis $B$ using dual simplex to find a new optimal solution.
 
 
 \subsubsection{Changes in the vector $c$}
 
-We now consider the case where variations are expected in the  objective function coefficients. Suppose that some component $c_j$ becomes $c_j + \delta$. In this case, optimality conditions become a concern. Two scenarios can occur. First, it might be that the changing coefficient is associated with a variable $j \in J$ that happens to be nonbasic ($j \in I_N$) in the optimal solution. In this case, we have that optimality will be retained as long as the nonbasic variable remains ``not attractive'', i.e., the reduced cost associated with $j$ remains nonnegative. More precisely put, the basis $B$ will remain optimal if
+We now consider the case where variations are expected in the objective function coefficients. Suppose that some component $c_j$ becomes $c_j + \delta$. In this case, optimality conditions become a concern. Two scenarios can occur. First, it might be that the changing coefficient is associated with a variable $j \in J$ that happens to be nonbasic ($j \in I_N$) in the optimal solution. In this case, we have that optimality will be retained as long as the nonbasic variable remains ``not attractive'', i.e., the reduced cost associated with $j$ remains nonnegative. More precisely put, the basis $B$ will remain optimal if
 %
 \begin{equation*}
 	(c_j + \delta) - c_BB^{-1}A_j \geq 0 \Rightarrow \delta \geq -\overline{c}_j.
 \end{equation*}
 %
 
-The second scenario concern changes in variables that are basic in the optimal solution, i.e., $j \in I_B$. In that case, the optimality conditions are directly affected, meaning that we have to analyse the range of variation for $\delta$ within which the optimality conditions are maintained, i.e., the reduced costs remain nonnegative.
+The second scenario concerns changes in variables that are basic in the optimal solution, i.e., $j \in I_B$. In that case, the optimality conditions are directly affected, meaning that we have to analyse the range of variation for $\delta$ within which the optimality conditions are maintained, i.e., the reduced costs remain nonnegative.
 
-Let $c_j$ is the coefficient of the $l^{\text{th}}$ basic variable, that is $j = B(l)$. In this case, $c_B$ becomes $c_B + \delta e_l$, meaning that all of the optimality conditions are simultaneously affected. Thus, we have to define a range for $\delta$ in which the condition
+Let $c_j$ is the coefficient of the $l^{\text{th}}$ basic variable, that is $j = B(l)$. In this case, $c_B$ becomes $c_B + \delta e_l$, meaning that all optimality conditions are simultaneously affected. Thus, we have to define a range for $\delta$ in which the condition
 %
 \begin{equation*}
 	(c_B + \delta e_i)^\top B^{-1}A_i \leq c_i, \, \forall i \neq j 
 \end{equation*}
 %
-holds. Notice that we do not need to consider $j$, since $x_j$ is a basic variable and thus, its reduced costs is assumed to stay at zero.
+holds. Notice that we do not need to consider $j$ since $x_j$ is a basic variable, and thus, its reduced costs are assumed to remain zero.
 
 Considering the tableau representation, we can use the $l^{\text{th}}$ row and examine the conditions for which $\delta q_{li} \leq \overline{c}_i, \forall i \neq j$, where $q_{li}$ is the $l^{\text{th}}$ entry of $B^{-1}A_i$.
 
@@ -251,7 +255,7 @@ Let us once again consider the previous example, with optimal tableau
 	\end{tabular}	
 \end{center}
 
-First, let us consider variations in the the objective function coefficients of variables $x_3$ and $x_4$. Since both variables are nonbasic in the optimal basis, the allowed variation for them is given by
+First, let us consider variations in the objective function coefficients of variables $x_3$ and $x_4$. Since both variables are nonbasic in the optimal basis, the allowed variation for them is given by
 %
 \begin{equation*}
 	\delta_3 \geq -\overline{c}_3 = -2 \text{ and } 
@@ -273,16 +277,16 @@ implying that $-2/3 \leq \delta_1 \leq 7/2$. Like before, for a change outside t
 
 \section{Cones and extreme rays}
 
-We now change the course of our discussion towards some results that will be useful in identifying two non-ordinary situations when employing the simplex method: unboundedness and infeasibility. Typically, these are consequences of issues related with the data and/or with modelling assumptions and are challenging, in that they prevent us from obtaining a solution from the model. As we will see, they also rely on duality in their derivations, and are all connected by the notion of cones, which we formally give in Definition \ref{p1c6:def:cone}.
+We now change the course of our discussion towards some results that will be useful in identifying two non-ordinary situations when employing the simplex method: unboundedness and infeasibility. Typically, these are consequences of issues related to the data and/or with modelling assumptions and are challenging in that they prevent us from obtaining a solution from the model. As we will see, they also rely on duality in their derivations and are all connected by the notion of cones, which we formally give in Definition \ref{p1c6:def:cone}.
 
 \begin{definition}[Cones]\label{p1c6:def:cone}
-	A set $C \subset \reals$ is a cone if $\lambda x \in C$ for all $\lambda \geq 0$ and all $x \in C$.	
+	A set $C \subset \reals^n$ is a cone if $\lambda x \in C$ for all $\lambda \geq 0$ and all $x \in C$.	
 \end{definition}
 
 A cone $C$ can be understood as a set formed by the nonnegative scaling  of a collection of vectors $x \in C$. Notice that it implies that $ 0 \in C$. Often, it will be the case that $ 0 \in C$ is an extreme point of $C$ and in that case, we say that $C$ is \emph{pointed}. As one might suspect, in the context of linear programming, we will be mostly interested in a specific type of cone, those known are \emph{polyhedral cones}. Polyhedral cones are sets of the form 
 %
 \begin{equation*}
-	P = \braces{x \in \reals^n : Ax \geq 0}
+	P = \braces{x \in \reals^n : Ax \geq 0}.
 \end{equation*}
 %
 Figure \ref{p1c6:fig:poly_cone} illustrates a polyhedral cone in $\reals^3$ formed by the intersection of three half-spaces. 
@@ -300,7 +304,7 @@ Figure \ref{p1c6:fig:poly_cone} illustrates a polyhedral cone in $\reals^3$ form
 \end{figure}
 %
 
-Some interesting properties can be immediately concluded regarding polyhedral cones. First, they are convex sets, since they are polyhedral sets (cf. Theorem \ref{p1c2:thm:convexity}). Also, the origin is an extreme point and thus, polyhedral cones are always pointed. Furthermore, just like general polyhedral sets, a cone $C \in \reals^n$ will always be associated with a collection of $n$ linearly independent vectors. Corollary \ref{p1c6:cor:polyhedral_cones} summarises these points. Notice we pose it as a Corollary, because these are immediate consequences of Theorem \ref{p1c3:thm:exist_extreme_point}.
+Some interesting properties can be immediately concluded regarding polyhedral cones. First, they are convex sets, since they are polyhedral sets (cf. Theorem \ref{p1c2:thm:convexity}). Also, the origin is an extreme point, and thus, polyhedral cones are always pointed. Furthermore, just like general polyhedral sets, a cone $C \in \reals^n$ will always be associated with a collection of $n$ linearly independent vectors. Corollary \ref{p1c6:cor:polyhedral_cones} summarises these points. Notice we pose it as a Corollary because these are immediate consequences of Theorem \ref{p1c3:thm:exist_extreme_point}. 
 
 \begin{corollary}\label{p1c6:cor:polyhedral_cones} 
 	Let $C \subset \reals^n$ be a polyhedral cone defined by constraints $\braces{a_i^\top x \geq 0}_{i =1,\dots,m}$. Then the following are equivalent
@@ -311,12 +315,16 @@ Some interesting properties can be immediately concluded regarding polyhedral co
 	\end{enumerate}
 \end{corollary}
 
+\begin{proof}
+	Theorem \ref{p1c3:thm:exist_extreme_point} proof verbatim, with $P = C$.	
+\end{proof}
+
 Notice that $0 \in C$ is the unique extreme point of the polyhedra cone $C$. To see that, let $0 \neq x \in C$, $x_1 = (1/2) x$ and $x_2 = (3/2)x$. Note that $x_1, x_2 \in C$, and $x \neq x_1 \neq x_2$. Setting $\lambda_1 = \lambda_2 = 1/2$, we have that $\lambda_1x_1  + \lambda_2x_2 = x$ and thus, $x$ is not an extreme point (cf. Definition \ref{p1c2:def:extreme_point}). 
 
 
 \subsection{Recession cones and extreme rays}
 
-We now focus on a specific type of cone, called \emph{recession cones}. In the context of linear optimisation, recession cones are useful for helping us identifying directions of unboundedness. Let us first formally define the concept.
+We now focus on a specific type of cone, called \emph{recession cones}. In the context of linear optimisation, recession cones are useful for identifying directions of unboundedness. Let us first formally define the concept.
 
 \begin{definition}[Recession cone] \label{c1_p6:def:recession_cone}
 	Consider the polyhedral set $P = \braces{x \in \reals^n : Ax \geq b}$. The recession cone at $\overline{x} \in P$, denoted ${\bf recc}(P)$, is defined as
@@ -327,7 +335,7 @@ We now focus on a specific type of cone, called \emph{recession cones}. In the c
 
 Notice that the definition states that a recession cone comprises all directions $d$ along which one can move from $\overline{x} \in P$ without ever leaving $P$. However, notice that the definition do not depend on $\overline{x}$, meaning that the recession cone is unique for the polyhedral set $P$, regardless of its ``origin''. Furthermore, notice that Definition \ref{c1_p6:def:recession_cone} implies that recession cones of polyhedral sets are polyhedral cones. 
 
-We say that any directions $d \in {\bf recc}(P)$ is a \emph{ray}. Thus, another way of thinking of bounded polyhedra is to think of polyhedral sets that do not contain rays. 
+We say that any directions $d \in {\bf recc}(P)$ is a \emph{ray}. Thus, bounded polyhedra can be alternatively defined as polyhedral sets that do not contain rays. 
 
 \begin{figure}[h]
 	\begin{tikzpicture}
@@ -347,7 +355,7 @@ Finally, the recession cone for a standard form polyhedral set $P = \braces{x \i
 
 \subsection{Unbounded problems}
 
-To identify unboundedness in linear programming problems, we must check for the existence of \emph{extreme rays}. Extreme rays are the analogous of an extreme point, but defined with a ``loose'' degree of freedom. Definition \ref{p1c6:def:extreme_ray} provide a technical definition of extreme rays.
+To identify unboundedness in linear programming problems, we must check for the existence of \emph{extreme rays}. Extreme rays are analogous to extreme points, but defined with a ``loose'' degree of freedom. Definition \ref{p1c6:def:extreme_ray} provides a technical definition of extreme rays.
 
 \begin{definition}[Extreme ray] \label{p1c6:def:extreme_ray}
 	Let $C \subset \reals^n$ be a nonempty polyhedral cone. A nonzero $x \in C$ is an extreme ray if there are $n-1$ linearly independent active constraints at $x$.
@@ -370,37 +378,37 @@ Notice that we are interested in extreme rays of the recession cone ${\bf recc} 
 	\caption{A polyhedral cone formed by the intersection of three half-spaces (the normal vector $a_3$ is perpendicular to the plane of the picture and cannot be seen). Directions $d_1$, $d_2$, and $d_3$ represent extreme rays.} \label{p1c6:fig:extreme_rays}	
 \end{figure}
 
-Notice that, just like extreme points, the number of extreme rays is finite, by definition. In fact, we say that two extreme rays are equivalent if they are positive multiples corresponding to the same $n-1$ linearly independent active constraints.
+Notice that, just like extreme points, the number of extreme rays is finite by definition. In fact, we say that two extreme rays are equivalent if they are positive multiples corresponding to the same $n-1$ linearly independent active constraints.
 
 
-The existence of extreme rays can be used to verify for unboundedness in linear programming problems. The mere existence of extreme rays does not suffice, since unboundedness is a consequence of the extreme ray being a direction of improvement for the objective function. To demonstrate this, let us first describe unboundedness in polyhedral cones, which we can then use to show the unboundedness in polyhedral sets.
+The existence of extreme rays can be used to verify unboundedness in linear programming problems. The mere existence of extreme rays does not suffice since unboundedness is a consequence of the extreme ray being a direction of improvement for the objective function. To demonstrate this, let us first describe unboundedness in polyhedral cones, which we can then use to show the unboundedness in polyhedral sets.
 
 \begin{theorem}[Unboundedness in polyhedral cones]\label{p1c6:thm:unb_cones}
-	Let $(P) : \mini\braces{c^\top x : x \in C}$, with $C = \braces{a_i^\top x \geq 0, i = 1,\dots,m}$. The optimal value is equal to $-\infty$ if and only if some extreme ray $d \in C$ satisfies $c^\top d < 0$.
+	Let $P : \mini\braces{c^\top x : x \in C}$, with $C = \braces{a_i^\top x \geq 0, i = 1,\dots,m}$. The optimal value is equal to $-\infty$ if and only if some extreme ray $d \in C$ satisfies $c^\top d < 0$.
 \end{theorem}
 
 \begin{proof}
-	If $c^\top d < 0$, then $P$ is unbounded, since $c^\top x \rightarrow -\infty$ along $d$. Also, there exists some $x \in C$ for which $c^\top x < 0$ that can be scaled to -1.
+	If $c^\top d < 0$, then $P$ is unbounded, since $c^\top x \rightarrow -\infty$ along $d$. Also, there exists some $x \in C$ for which $c^\top x < 0$ can be scaled to -1.
 	
-	Let $P = \braces{x \in \reals^n : a_i^\top x \geq 0, i =1,\dots,m , c^\top x = -1}$. Since $0 \in C$, $\braces{a_i}_{i=1}^m$ span $\reals^n$ and thus $P$ has at least one extreme point (cf. Theorem \ref{p1c3:thm:exist_extreme_point}). Let $d$ be one of those. As we have $n$ linearly-independent active constraints at $d$, $n-1$ of the constraints $\braces{a_i^\top x \geq 0}_{i =1}^m$ must be active (plus $c^\top x = -1$), and thus $d$ is an extreme ray.
+	Let $P = \braces{x \in \reals^n : a_i^\top x \geq 0, i =1,\dots,m , c^\top x = -1}$. Since $0 \in C$, $P$ has at least one extreme point $\braces{a_i}_{i=1}^m$ and thus span $\reals^n$ (cf. Theorem \ref{p1c3:thm:exist_extreme_point}). Let $d$ be one of those. As we have $n$ linearly-independent active constraints at $d$, $n-1$ of the constraints $\braces{a_i^\top x \geq 0}_{i =1}^m$ must be active (plus $c^\top x = -1$), and thus $d$ is an extreme ray.
 \end{proof}
 
 We can now expand the result to general polyhedral sets.
 
 \begin{theorem}[Unboundedness in polyhedral sets]\label{p1c6:thm:unb_polyhedra} 
-	Let $(P) : \mini\braces{c^\top x : x \in X}$ with $X = \braces{x \in \reals^n : Ax \geq b}$ and assume that the feasible set has at least one extreme point. Then, the optimal value is $-\infty$ if and only if $c^\top d < 0$.  	
+	Let $P : \mini\braces{c^\top x : x \in X}$ with $X = \braces{x \in \reals^n : Ax \geq b}$ and assume that the feasible set has at least one extreme point. Then, the optimal value is $-\infty$ if and only if $c^\top d < 0$.  	
 \end{theorem}
 
 \begin{proof}
 	As before, if $c^\top d < 0$, then $P$ is unbounded, since $c^\top x \rightarrow -\infty$ along $d$. Now, let 
-	$(D) : \maxi \braces{p^\top b : p^\top A = c^\top, p \ge 0}$. Recall that, if $P$ is unbounded, then $D$ is infeasible, and so must be $(D^0) : \maxi \braces{p^\top 0 : p^\top A = c^\top, p \ge 0}$. This implies that the primal $(P^0) : \mini \braces{c^\top x : Ax \geq 0}$ is unbounded (as 0 is feasible).
+	$D : \maxi \braces{p^\top b : p^\top A = c^\top, p \ge 0}$ be the dual of $P$. Recall that, if $P$ is unbounded, then $D$ is infeasible, and so must be $D^0 : \maxi \braces{p^\top 0 : p^\top A = c^\top, p \ge 0}$. This implies that the primal $P^0 : \mini \braces{c^\top x : Ax \geq 0}$ is unbounded (as 0 is feasible).
 			
 	The existence of at least one extreme point for $P$ implies that the rows $\braces{a_i}_{i=1,\dots,m}$ of $A$ span $\reals^n$ and  ${\bf recc}(X) \hspace{-3pt} =  \hspace{-3pt}\braces{x \in \reals^n : Ax \geq 0}$ is pointed. Thus, by Theorem \ref{p1c6:thm:unb_cones} there exists $d$ such that $c^\top d < 0$. \qedhere
 \end{proof}
 
-We now focus on the question of how this can be utilised in the context of the simplex method. It turns out that, once unboundedness is identified in the simplex method, one can extract the extreme ray causing the said unboundedness. In fact, most professional-grade solvers are capable of returning extreme (or unbounded) rays, which is helpful in the process of understanding  the causes for unboundedness in the model. We will also see in the next chapter that this extreme rays are also used in the context of specialised solution methods.
+We now focus on how this can be utilised in the context of the simplex method. It turns out that once unboundedness is identified in the simplex method, one can extract the extreme ray causing the said unboundedness. In fact, most professional-grade solvers are capable of returning extreme (or unbounded) rays, which is helpful in the process of understanding the causes for unboundedness in the model. We will also see in the next chapter that these extreme rays are also used in the context of specialised solution methods.
 
-To see that is possible, let $(P) : \mini\braces{c^\top x : x \in X}$ with $X = \braces{x \in \reals^n : Ax = b, x \geq 0}$ and assume that, for a given basis $B$, we conclude that the optimal value is $-\infty$, that is, the problem is unbounded. In the context of the simplex method, this implies that we found a nonbasic variable $x_j$ for which the reduced cost $\overline{c}_j < 0$ and the $j^\text{th}$ column of $B^{-1}A_j$ has no positive coefficient. Nevertheless, we can still form the feasible direction $d= [d_B ~ d_N]$ as before, with
+To see that is possible, let $P : \mini\braces{c^\top x : x \in X}$ with $X = \braces{x \in \reals^n : Ax = b, x \geq 0}$ and assume that, for a given basis $B$, we conclude that the optimal value is $-\infty$, that is, the problem is unbounded. In the context of the simplex method, this implies that we found a nonbasic variable $x_j$ for which the reduced cost $\overline{c}_j < 0$ and the $j^\text{th}$ column of $B^{-1}A_j$ has no positive coefficient. Nevertheless, we can still form the feasible direction $d= [d_B ~ d_N]$ as before, with
 %
 \begin{equation*}
 	d_B = -B^{-1}A_j \text{ and } 
@@ -410,13 +418,13 @@ To see that is possible, let $(P) : \mini\braces{c^\top x : x \in X}$ with $X = 
  	\end{cases}
 \end{equation*}
 %
-This direction $d$ is precisely an extreme ray for $P$. To see that, first, notice that $Ad = 0$ and $d \geq 0$, thus	$d \in {\bf recc}(X)$. Moreover, there are $n-1$ active constraints at $d$: $m$ in $Ad = 0$ and $n-m-1$ in $d_i = 0$ for $i \in I_N \setminus \braces{j}$. The last thing to notice is that $\overline{c}_j = c^\top d < 0$, which attests the unboundedness in the direction $d$. 
+This direction $d$ is precisely an extreme ray for $P$. To see that, first, notice that $Ad = 0$ and $d \geq 0$, thus	$d \in {\bf recc}(X)$. Moreover, there are $n-1$ active constraints at $d$: $m$ in $Ad = 0$ and $n-m-1$ in $d_i = 0$ for $i \in I_N \setminus \braces{j}$. The last thing to notice is that $\overline{c}_j = c^\top d < 0$, which shows the unboundedness in the direction $d$. 
 
  
 
 \subsection{Farkas' lemma}
 
-We now focus on the idea of generating certificates of infeasibility for linear programming problems. That is, we show that if a problem $P$ is infeasible, then there is a structure that can be identified to attest the infeasibility. To see how this works, consider the the two polyhedral sets
+We now focus on the idea of generating certificates of infeasibility for linear programming problems. That is, we show that if a problem $P$ is infeasible, then there is a structure that can be identified to certify the infeasibility. To see how this works, consider the two polyhedral sets
 %
 \begin{align*}
 	&X = \braces{x \in \reals^n : Ax = b,  x \geq 0} \text{ and } \\ 
@@ -425,23 +433,23 @@ We now focus on the idea of generating certificates of infeasibility for linear 
 %
 If there exists any $p \in Y$, then there is no $x \in X$ for which $p^\top Ax = p^\top b$, (and in turn $Ax = b$), holds. Thus, $X$ must be empty. Notice that this can be used to infer that a problem $P$ with a feasibility set represented by $X$ prior to solving $P$ itself, by means of solving the \emph{feasibility problem} of finding a vector $p \in Y$. 
 
-We now pose this relationship more formally, via a result that is generally known as the Farkas' lemma.
+We now pose this relationship more formally via a result generally known as the Farkas' lemma.
 
 \begin{theorem}[Farkas' lemma] \label{p1c6:thm:farkas}
 	Let $A$ be a $m \times n$ matrix and $b \in \reals^m$. Then, exactly one of the following statements hold
 	\begin{enumerate}
-		\item There exists some $x \geq 0$ such that $Ax = b$;
-		\item there exists some vector $p$ such that $p^\top A \geq 0$, $p^\top b < 0$. 
+		\item[(1)] There exists some $x \geq 0$ such that $Ax = b$;
+		\item[(2)] there exists some vector $p$ such that $p^\top A \geq 0$, $p^\top b < 0$. 
 	\end{enumerate}
 \end{theorem}
 
 \begin{proof}
 	Assume that (1) is satisfied. If $p^\top A \geq 0$, then $p^\top b =$ $p^\top Ax \geq 0$, which violates (2).
 	
-	Now, consider the primal-dual pair $(P) : \mini\braces{0^\top x : Ax = b, x \geq 0}$ and $(D) : \maxi\hspace{-2pt}\braces{p^\top b : p^\top A \geq 0}$. Being $P$ infeasible, $D$ must be unbounded (instead of infeasible), since $p = 0$ is feasible for $D$. Thus, $p^\top b < 0$ for some $p \neq 0$. 	
+	Now, consider the primal-dual pair $P : \mini\braces{0^\top x : Ax = b, x \geq 0}$ and $D : \maxi\hspace{-2pt}\braces{p^\top b : p^\top A \geq 0}$. Being $P$ infeasible, $D$ must be unbounded (instead of infeasible) since $p = 0$ is feasible for $D$. Thus, $p^\top b < 0$ for some $p \neq 0$. 	
 \end{proof}
 
-The Farkas' lemma has a nice geometrical interpretation that represents the mutually exclusive relationship between the two sets. For that, notice that we can think of $b$ as being a conic combination of the columns $A_j$ of $A$, for some $x \ge 0$. If that cannot be the case, then there exists a hyperplane that separates $b$ and the cone formed by the columns of $A$, $C=\braces{y \in \reals^m \mid y = Ax}$. This is illustrated in Figure \ref{p1c6:fig:farkas}. Notice that the separation caused by such a hyperplane with normal vector $p$ implies that $p^\top Ax \geq 0$ and $p^\top b < 0$, i.e., $Ax$ and $b$ are in the opposite sides of the hyperplane. 
+The Farkas' lemma has a nice geometrical interpretation that represents the mutually exclusive relationship between the two sets. For that, notice that we can think of $b$ as being a conic combination of the columns $A_j$ of $A$, for some $x \ge 0$. If that cannot be the case, then there exists a hyperplane that separates $b$ and the cone formed by the columns of $A$, $C=\braces{y \in \reals^m : y = Ax}$. This is illustrated in Figure \ref{p1c6:fig:farkas}. Notice that the separation caused by such a hyperplane with normal vector $p$ implies that $p^\top Ax \geq 0$ and $p^\top b < 0$, i.e., $Ax$ and $b$ are on the opposite sides of the hyperplane. 
 
 \begin{figure}[h]
 	\begin{tikzpicture}
@@ -456,18 +464,16 @@ The Farkas' lemma has a nice geometrical interpretation that represents the mutu
 \end{figure}
 
 
-\section{Resolution theorem}
+\section{Resolution theorem*}
 
-We finalise with a result that will be the foundation for what we will discuss in the next chapter. Specifically, we will see how we can use a presentation of the polyhedral set $P$ purely based on extreme points and extreme rays to devise solution strategies that can be more efficient for large scale linear programming problems. 
+Lastly, we present a result that will be the foundation for our discussion in the next chapter. Specifically, we will see how we can use a presentation of the polyhedral set $P$ purely based on extreme points and extreme rays to devise solution strategies that can be more efficient for large-scale linear programming problems. 
 
 For now, let us concentrate on this alternative representation. Basically, polyhedral sets in standard form can be represented in two manners: either by (i) a finite set of linear constraints; or (ii) by combinations of its extreme points and extreme rays.
 
-Clearly, the first representation is far more practical than the second. That is, the second representation is an \emph{explicit} representation that would require knowing beforehand each extreme point and extreme ray forming the polyhedral set. Notice that the first representation, which we have relied on so far, have extreme points and extreme rays only implicitly represented. However, we will see that this explicit representation has an important application in the devising of alternative solution method for large-scale linear programming problems.
-
-This fundamental result is stated in Theorem \ref{p1c6:thm:resolution_theorem}. 
+Clearly, the first representation is far more practical than the second. That is, the second representation is an \emph{explicit} representation that would require knowing beforehand each extreme point and extreme ray forming the polyhedral set. Notice that the first representation, which we have relied on so far, has extreme points and extreme rays only implicitly represented. However, we will see that this explicit representation has an important application in the devising of alternative solution methods for large-scale linear programming problems. This fundamental result is stated in Theorem \ref{p1c6:thm:resolution_theorem}. 
 
 \begin{theorem}[Resolution theorem]\label{p1c6:thm:resolution_theorem}
-	Let $P = \braces{x \in \reals^n : Ax \geq b}$ be a nonempty polyhedral set with at least one extreme point. Let $\braces{x_i}_{i=1}^k$ be the extreme points and $\braces{w}_{j=1}^r$ be a complete set of extreme rays. Then $P = Q$, where 
+	Let $P = \braces{x \in \reals^n : Ax \geq b}$ be a nonempty polyhedral set with at least one extreme point. Let $\braces{x_i}_{i=1}^k$ be the set with all extreme points, and $\braces{w}_{j=1}^r$ be the set of all extreme rays of $P$. Then $P = Q$, where 
 	\begin{equation*}
 		Q = \braces{\sum_{i=1}^k \lambda_i x^i + \sum_{j=1}^r \theta_jw^j : \lambda_i \geq 0, \ \theta_j \geq 0, \ \sum_{i=1}^k \lambda_i =1}.
 	\end{equation*}

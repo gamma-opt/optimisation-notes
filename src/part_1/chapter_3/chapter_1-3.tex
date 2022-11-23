@@ -323,7 +323,9 @@ Theorem \ref{p1c3:thm:opt_extreme} is posed in a somewhat general way, which mig
 
 In a more general case (with $n > 2$) it might be so that a whole facet of optimal solutions is obtained. That is precisely the polyhedral set of all optimal solutions $Q$ in the proof. Clearly, this polyhedral set will not contain a line and, therefore (cf. Theorem \ref{p1c3:thm:exist_extreme_point}), have at least one extreme point. 
 
-This is important because we intend to design an algorithm that only inspect extreme points. This discussion guarantees that, even for the cases in which a whole set of optimal solution exists, some elements in that set will be extreme points anyway, and thus identifiable by our method.
+Perhaps another important point is to notice that the result is posed assuming a minimisation problem, but it naturally holds for maximisation problems as well. In fact, maximising a function $f(x)$ is the same as minimising $-f(x)$, with the caveat that, although the optimal value $x^*$ is the same in both cases, the optimal values are symmetric in sign (because of the additional minus we included in the problem being originally maximised).
+
+This is important because we intend to design an algorithm that only inspects extreme points. This discussion guarantees that, even for the cases in which a whole set of optimal solution exists, some elements in that set will be extreme points anyway and thus identifiable by our method.
 
 
 \subsection{Finding optimal solutions}
@@ -344,7 +346,7 @@ Starting from a point $x \in P$, we would like to move in a direction $d$ that y
 	Let $x \in P$, where $P \subset \reals^n$ is a polyhedral set. A vector $d \in \reals^n$ is a feasible direction at $x$ if there exists $\theta > 0$ for which $x + \theta d \in P$.
 \end{definition}
 
-Figure \ref{p1c3:fig:feasible_directions} provides an illustration of the concept. Notice that at extreme points, the relevant feasible directions are those along the edges of the polyhedral set since those are the directions that can lead to other extreme points.
+Figure \ref{p1c3:fig:feasible_directions} illustrates the concept. Notice that at extreme points, the relevant feasible directions are those along the edges of the polyhedral set since those are the directions that can lead to other extreme points.
   
 \begin{figure}[h]
 	\begin{tikzpicture}
@@ -368,9 +370,9 @@ Let $x$ be a basic feasible solution (BFS) with basis $B = [A_{B(1)}, \dots, A_{
 %
 and that the remaining nonbasic variables $x_N$ are such that $x_N = (x_j)_{j \in I_N} = 0$, with $I_N = J \setminus I_B$.
 
-Moving to a neighbouring solution can be achieved by simply moving between adjacent basis, which can be accomplished without significant computational burden. This entails first selecting a nonbasic variable $x_j$, $j \in I_N$, and increase it to a positive value $\theta$. 
+Moving to a neighbouring solution can be achieved by simply moving between adjacent basis, which can be accomplished without significant computational burden. This entails selecting a nonbasic variable $x_j$, $j \in I_N$, and increasing it to a positive value $\theta$. 
 
-Equivalently, we can define a \emph{feasible direction} $d = [d_N, d_B]$, where $d_N$ represent the components associated with nonbasic variables and $d_B$ those associated with basic variables, and move from the point $x$ to the point $x + \theta d$. The components $d_N$ associated with the nonbasic variables are thus defined as 
+Equivalently, we can define a \emph{feasible direction} $d = [d_N, d_B]$, where $d_N$ represent the components associated with nonbasic variables and $d_B$ those associated with basic variables and move from the point $x$ to the point $x + \theta d$. The components $d_N$ associated with the nonbasic variables are thus defined as 
 %
 \begin{equation*}
 d = \begin{cases} d_j = 1 \\ 

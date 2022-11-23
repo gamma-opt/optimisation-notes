@@ -371,7 +371,7 @@ The full tableau representation is given by
 \end{center}
 %
 
-In this representation, we say that the $j^\text{th}$ column associated with the nonbasic variable to become basic is the \emph{pivot column} $u$. Notice that, since the tableau exposes the reduced costs $\overline{c}_j$, $j \in I_N$, it allows for trivially applying the greedy pricing strategy (by simply choosing the variables with a negative reduced cost wit the largest module). 
+In this representation, we say that the $j^\text{th}$ column associated with the nonbasic variable to become basic is the \emph{pivot column} $u$. Notice that, since the tableau exposes the reduced costs $\overline{c}_j$, $j \in I_N$, it allows for trivially applying the greedy pricing strategy (by simply choosing the variables with a negative reduced cost with the largest module). 
 
 The $l\nth$ row associated with the basic variable selected to leave the basis is the \emph{pivot row}. Again, the tableau representation facilitates the calculation of the ratios used in choosing the basic variable $l$ to leave the basis since it amounts to simply calculating the ratios between the elements on the rightmost column and those in the pivot column, disregarding those that present entries less or equal than zero and the zeroth row. The row with the minimal ratio will be the row associated with the current basic variable leaving the basis. 
 
@@ -379,7 +379,49 @@ Once a pivot column and a pivot row have been defined, it is a matter of perform
 
 Notice that, as we have seen before, performing elementary row operations to convert the pivot column $u$ into $e_l$ converts $B^{-1}[A ~|~ b]$ into $\overline{B}^{-1}[A ~|~ b]$. Analogously, turning the entry associated with the pivot column $u$ in the zeroth row to zero converts $[c^\top - c_B^\top B^{-1}A \mid -c_B^\top B^{-1}b]$ into $[c^\top - c_{\overline{B}}^\top \overline{B}^{-1}A \mid -c_{\overline{B}}^\top \overline{B}^{-1}b]$.
 
-% TODO: Add a numerical example
+Let s return to the paint factory example from section \label{section_121}, which in its standard form can be written as
+%
+\begin{flalign}
+	\maxi z = \ & 5x_1 + 4x_2 \label{p1c1:eq:constM1}\\
+	\st & 6x_1 + 4x_2  + x_3 = 24 \label{p1c1:eq:constM2}\\
+	& x_1 + 2x_2 + x_4 = 6 \\
+	& x_2 - x_1 + x_5 =  1 \\
+	& x_2 + x_6 = 2 \\
+	& x_1, \dots, x_6 \geq 0.
+\end{flalign}
+
+The sequence of tableaus for this problem is given by 
+
+\begin{center}
+	\begin{tabular}{c|cccccc|c}
+		 & $x_1$ & $x_2$ & $x_3$ & $x_4$ & $x_5$ & $x_6$ & RHS \\ \hline 
+		$z$  & -5 & -4 & 0 & 0 & 0 & 0 & 0   \\ \hline
+	   $x_3$ &  \bf{6} & 4 & 1 & 0 & 0 & 0 & 24 \\
+	   $x_4$ &  1 & 2 & 0 & 1 & 0 & 0 & 6  \\
+	   $x_5$ & -1 & 1 & 0 & 0 & 1 & 0 & 1  \\
+	   $x_6$ &  0 & 1 & 0 & 0 & 0 & 1 & 2  \\ \hline \hline
+	\end{tabular}
+	
+	\begin{tabular}{c|cccccc|c}
+		 & $x_1$ & $x_2$ & $x_3$ & $x_4$ & $x_5$ & $x_6$ & RHS \\ \hline 
+		$z$  & 0  & -2/3& 5/6 & 0 & 0 & 0 & 20   \\ \hline
+	   $x_1$ & 1  & 2/3 & 1/6 & 0 & 0 & 0 & 4 \\
+	   $x_4$ & 0  & \bf{4/3} &-1/6 & 1 & 0 & 0 & 2  \\
+	   $x_5$ & 0  & 5/3 & 1/6 & 0 & 1 & 0 & 5  \\
+	   $x_6$ & 0  & 1 & 0 & 0 & 0 & 1 & 2  \\ \hline \hline
+	\end{tabular}
+	
+	\begin{tabular}{c|cccccc|c}
+		     & $x_1$ & $x_2$ & $x_3$ & $x_4$ & $x_5$ & $x_6$ & RHS \\ \hline 
+		$z$  & 0  & 0 & 3/4 & 1/2 & 0 & 0 & 21   \\ \hline
+	   $x_1$ & 1  & 0 & 1/4 & -1/2 & 0 & 0 & 3 \\
+	   $x_2$ & 0  & 1 &-1/8 & 3/4 & 0 & 0 & 3/2  \\
+	   $x_5$ & 0  & 0 & 3/8 &-5/4 & 1 & 0 & 5/2  \\
+	   $x_6$ & 0  & 0 & 1/8 &-3/4 & 0 & 1 & 1/2  \\ \hline \hline
+	\end{tabular}
+\end{center}
+
+The bold terms in the tableau represent the pivot elements at each iteration, i.e., the intersection of the pivot column and row. From the last tableau, we see that the optimal solution is $x^* = (3, 3/2)$. Notice that we applied a change in signs in the objective function coefficients, turning it into a minimisation problem; also notice that this makes the values of the objective function in the RHS column appear as positive, although it should be negative as we are in fact minimising $-5x_1 - 4x_2$, for which $x^* = (3,3/2)$ evaluates as $-21$. As we have seen, the tableau shows $-c_B x_B$, hence why the optimal tableau displays $21$ in the first row of the RHS column.
 
 
 \subsection{Generating initial feasible solutions} 
@@ -550,8 +592,6 @@ Now we are ready to provide an insight into why the simplex method is often so e
 
 \subsection*{Exercise 4.3: Solving a tableau}
 \input{part_1/chapter_4/exercises/E43-tableau}
-
-\pagebreak
 
 \subsection*{Exercise 4.4: Two-phase simplex method}
 \input{part_1/chapter_4/exercises/E44-twophasesimplex}
