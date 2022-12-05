@@ -1,0 +1,16 @@
+Recall the MTZ formulation for the Travelling Salesperson Problem (TSP) presented in Exercise 8.2. 
+
+(a) Show that the inequalities \eqref{eq:31} - \eqref{eq:34} are valid for the TSP problem, assuming that $n > 2$:
+
+\begin{align}
+&x_{ij} + x_{ji} \leq 1, &\forall i,j \in N : i\neq j\qquad\label{eq:31}\\[5pt]
+&u_i - u_j + (n-1)x_{ij} + (n-3)x_{ji} \leq n-2,   &\forall i,j \in N\setminus\{1\} : i \neq j\qquad\label{eq:32}\\[5pt]
+&u_j - 1 + (n-2)x_{1j} \leq n - 1 &\forall j \in N\setminus\{1\}\qquad\\[5pt]
+&1 - u_i + (n-1)x_{i1} \leq 0 &\forall i \in N\setminus\{1\}\qquad\label{eq:34}
+\end{align}
+
+\emph{Hint:} You can assume that the variables $u_2,\dots,u_n$ take unique integer values from the set $\{2,\dots,n\}$. That is, we have $u_i\in \{2,\dots,n\}$ for all $i = 2,\dots,n$ with $u_i \neq u_j$ for all $i,j\in 2,\dots,n$. This holds for any TSP solution of problem MTZ as we showed in Exercise 8.2. If we fix city 1 as the starting city, then the value of each $u_i$ represents the position of city $i$ in the TSP tour, i.e., $u_i = t$ for $t = 2,\dots,n$ if city $i\neq1$ is the $t$:th city in the tour. You have to check that each of the inequalities \eqref{eq:31} - \eqref{eq:34} hold (individually) for any arc $(i,j)\in A$ and city $i\in N$ that are part of the inequality, by checking that the following two cases are satisfied: either $x_{ij} = 0$ or $x_{ij} = 1$.
+
+
+(b) Add all four sets of inequalities \eqref{eq:31} - \eqref{eq:34} to the MTZ formulation and compare the computational performance against the model with no extra inequalities.
+%\emph{Hint:} The inequalities \eqref{eq:32} \emph{dominate} the original subtour elimination constraints \eqref{eq:MTZ}, so you can also try to solve the problem by commenting over the original constraints \eqref{eq:MTZ} after adding the valid inequalities \eqref{eq:32}. 
