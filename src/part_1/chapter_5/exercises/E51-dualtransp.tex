@@ -1,39 +1,33 @@
-Recall Exercise 1.4 in which we solved a capacitated transportation problem. Answer the following questions based on the interpretation of the dual price. The tables with the arc capacities and supply/demand settings are once again presented in Tables \ref{table:c5_supdem} and \ref{table:c5_arcs}.
+Recall the transportation problem from Chapter 1. Answer the following questions based on the interpretation of the dual price. 
 
-\begin{table}[h!]
-	\begin{subtable}[h]{0.4\textwidth}
-		\begin{center}
-		\begin{tabular}{c|cc}
-			\textbf{node} & \textbf{p1} & \textbf{p2} \\
-			\hline
-			\textbf{s1 / d1} & 80 / 60 & 400 / 300 \\
-			\textbf{s2 / d2} & 200 / 100 & 1500 / 1000 \\
-			\textbf{s3 / d3} & 200 / 200 & 300 / 500 \\  \hline
-		\end{tabular}
-		\end{center}
-		\caption{Supply availability and demand per oil type [in L]}
-		\label{table:c5_supdem}
-	\end{subtable}
-	\hfill
-	\begin{subtable}[h]{0.55\textwidth}
-		\begin{center}
-			\begin{tabular}{c|ccc}
-				 & \textbf{d1} & \textbf{d2} & \textbf{d3}\\
-				 & \textbf{p1/p2 (cap)} & \textbf{p1/p2 (cap)} & \textbf{p1/p2 (cap)}\\
-				\hline
-				\textbf{s1} & 5/- ($\infty$) & 5/18 (300) & -/- (0) \\
-				\textbf{s2} & 8/15 (300) & 9/12 (700) & 7/14 (600) \\
-				\textbf{s3} & -/- (0) & 10/20 ($\infty$) & 8/- ($\infty$) \\ \hline
-			\end{tabular}
-		\end{center}
-		\caption{Arc costs per oil type [in \euro per L] and arc capacity [in L]}
-		\label{table:c5_arcs}
-	\end{subtable}
-	\caption{Supply chain data}
-	\label{table:c5_sc}
+
+We would like to plan the production and distribution of a certain product, taking into account that the transportation cost is known (e.g., proportional to the distance travelled), the factories (or source nodes) have a supply capacity limit, and the clients (or demand nodes) have known demands. Table \ref{p1c5:tab:E51_transport_problem_data} presents the data related to the problem. 
+
+%
+\begin{table}[h]
+	\begin{tabular}{r|ccc|c}
+    	& & {\it Clients} &\\\hline
+    	{\it Factory} & NY & Chicago & Miami & Capacity \\\hline
+    	Seattle & 2.5      & 1.7    & 1.8   & 350 \\
+    	San Diego & 3.5 & 1.8 & 1.4 & 600 \\\hline
+    	Demands & 325 & 300 & 275 & - \\\hline
+	\end{tabular}
+	\caption{Problem data: unit transportation costs, demands and capacities} \label{p1c5:tab:E51_transport_problem_data}
 \end{table}
 %
+Additionally, we consider that the arcs (routes) from factories to clients have a maximum transportation capacity, assumed to be 250 units for each arc. The problem formulation is then 
+%
+\begin{align*}
+	\mini z = \ &\sum_{i \in I}\sum_{j \in J}c_{ij}x_{ij} \\
+	\st & \sum_{j \in J} x_{ij} \leq C_i, ~\forall i \in I \\
+	& \sum_{i \in I} x_{ij} \geq D_j, ~\forall j \in J \\
+	& x_{ij} \leq A_{ij}, ~\forall i \in I, j \in J \\
+	& x_{ij} \geq 0, \forall i \in I, j \in J,
+\end{align*}
+%
+where $C_i$ is the supply capacity of factory $i$, $D_j$ is the demand of client $j$ and $A_{ij}$ is the transportation capacity of the arc between $i$ and $j$.
+
 \begin{itemize}
-	\item [(a)] What would be the price the company would be willing to pay for increasing in one unit any of the supplies' availability?
-	\item [(b)] What would be the price the company would be willing to pay for increasing in one unit any of the arcs' capacity?	
+	\item[(a)] What price would the company be willing to pay for increasing the supply capacity of a given factory?
+	\item[(b)] What price would the company be willing to pay for increasing the transportation capacity of a given arc?
 \end{itemize}
