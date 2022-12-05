@@ -297,7 +297,7 @@ We are now ready to pose the result that utilises Definition \ref{p1c3:def:line_
 	\end{enumerate}	
 \end{theorem}	 
 
-% TODO: add a proof.
+% TODO: Chp3: add a proof.
 
 It turns out that linear programming problems in the standard form do not contain a line, meaning that they will always provide at least one extreme point (or a basic feasible solution). More generally, bounded polyhedral sets do not contain a line, and neither does the positive orthant.
 
@@ -390,7 +390,7 @@ Now, feasibility might become an issue if we are not careful to retain feasibili
 %
 and thus $d_B = -B^{-1} A_j$ is the \emph{basic direction} implied by the choice of the nonbasic variable $x_j$, $j \in I_N$, to become basic. The vector $d_B$ can be thought of as the adjustments that must be made in the value of the other basic variables to accommodate the new variable becoming basic to retain feasibility. 
 
-% TODO: this is a complicated concept using a complicated figure.  Rethink this showing a simple example (x_1 + x_2 + x_3 = 1, x_j >= 0) with the "normal feasible region" and the schematic 2d representation. by its side, showing that making 2 out of 3 variables nonbasic yields each of the corners of the triangle. 
+% TODO: Chp3: this is a complicated concept using a complicated figure.  Rethink this showing a simple example (x_1 + x_2 + x_3 = 1, x_j >= 0) with the "normal feasible region" and the schematic 2d representation. by its side, showing that making 2 out of 3 variables nonbasic yields each of the corners of the triangle. 
 
 Figure \ref{p1c3:fig:adjacent_vertices} provides a schematic representation of this process, showing how the change between adjacent basis can be seen as a movement between adjacent extreme points. Notice that it conveys a schematic representation of a $n=5$ dimensional problem, in which we ignore all the $m$ dimensions and concentrate on the $n-m$ dimensional projection of the feasibility set. This implies that the only constraints left are those associated with the nonnegativity of the variables $x \ge 0$, each associated with an edge of this alternative representation. Thus, when we set $n-m$ (nonbasic variables) to zero, we identify an associated extreme point. As $n-m = 2$, we can plot this alternative representation on $\reals^2$.
 
@@ -515,7 +515,7 @@ One interesting thing to notice is what is the reduced cost associated with basi
 
 Now that we have seen how to identify promising directions for improvement, we have incidentally developed a framework for identifying the optimality of a given basic feasible solution (BFS). That is, a BFS from which no direction of improvement can be found must be locally optimal. And, since local optimality implies global optimality in the presence of convexity (the convexity of linear programming problems was attested in Chapter \ref{chapter_2}; the global optimality in the presence of convexity is a result discussed in detail in Part \ref{part_2}), we can declare this BFS as an optimal solution. 
 
-%TODO: connect this with the new result of convexity removed from HW2 
+%TODO: Chp3: connect this with the new result of convexity removed from HW2 
 
 Theorem \ref{p1c3:thm:opt_conditions} establishes the optimality of a BFS from which no improving feasible direction can be found without explicitly relying on the notion of convexity.
 

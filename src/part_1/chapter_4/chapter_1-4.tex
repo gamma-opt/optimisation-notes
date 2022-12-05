@@ -197,7 +197,7 @@ Another important aspect related to implementations of the simplex method is how
 
 The rules utilised for making choices regarding entering and leaving variables are generally referred to as \emph{pivoting rules}. However, the term most commonly used to refer to the selection of nonbasic variables to enter the basis is \emph{(simplex) pricing rules}.
 
-% TODO: add a bit more about these methods. Separate Devex and Steepest edge and give more details on both.
+% TODO: Chp4: add a bit more about these methods. Separate Devex and Steepest edge and give more details on both.
 \begin{itemize}
 	\item \emph{Greedy selection} (or Dantzig's rule): choose $x_j$, $j \in I_N$, with largest $|\overline{c}_j|$. Prone to cycling.
 	\item \emph{Index-based order} (or Bland's rule): choose $x_j$,  $j \in I_N$, with smallest $j$. It prevents cycling but is computationally inefficient. 
@@ -337,7 +337,7 @@ Three main issues arise when considering the efficiency of implementations of th
 	\item \emph{Decomposition:} Decomposed (e.g., LU decomposition) forms of $B$ are used to improve efficiency in storage and the solution of the linear systems to exploit the typical sparsity of linear programming problems.  	
 \end{itemize}
 
-% TODO: Improve this part, expanding on the points above.
+% TODO: Chp4: Improve this part, expanding on the points above.
 
 
 \subsection{Tableau representation}
@@ -578,7 +578,7 @@ Notice that in Figure \ref{p1c4:fig:column_geometry_3d}, although each facet is 
  
 Now we are ready to provide an insight into why the simplex method is often so efficient. The main reason is associated with the ability that the method possesses of skipping bases in favour of those with most promising improvement. To see that, consider Figure \ref{p1c4:fig:column_geometry_projection}, which is a 2-dimensional schematic projection of Figure \ref{p1c4:fig:column_geometry_3d}. By using the reduced costs to guide the choice of the next basis, we tend to choose the steepest of the simplexes that can provide reductions in the objective function value, which has the side effect of allowing for skipping several basis that would have to be otherwise considered. This creates a ``sweeping effect'', in which allows the method to find optimal solutions in fewer pivots than vertices. Clearly, this can be engineered to be prevented, as there are examples purposely constructed to force the method to consider every single vertex, but the situation illustrated in Figure \ref{p1c4:fig:column_geometry_projection} is by far the most common in practice.  
 
-% TODO: include a discussion on dual plane, to make more concrete the relationship between the z axis and reduced costs.
+% TODO: Chp4: include a discussion on dual plane, to make more concrete the relationship between the z axis and reduced costs.
 
  \vfill
 \pagebreak

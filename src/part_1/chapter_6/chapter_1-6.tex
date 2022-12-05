@@ -40,7 +40,7 @@ Therefore, the only check that needs to be done is whether the reduced cost asso
 If the optimality condition is satisfied, the new variable does not change the optimal basis, and the solution $x = (\overline{x}, 0)$ is optimal. Otherwise, one must perform a new simplex iteration, using $B$ as a starting BFS. Notice that in this case, primal feasibility is trivially satisfied, while dual feasibility is not observed (that is, $\overline{c}_{n+1} < 0$). Therefore, primal simplex can be employed, \emph{warm started} by $B$. This is often a far more efficient strategy than resolving $P'$ from scratch.
 
 
-%TODO: Change this to the paint example
+%TODO: Chp6: Change this to the paint example
 Let us consider a numerical example. Consider the problem
 %
 \begin{align*}
@@ -137,7 +137,7 @@ To build an initial solution in terms of the tableau representation of the simpl
 
 Let us consider a numerical example again. Consider the same problem as the previous example, but that we instead include the additional constraint $x_1 + x_2 \geq 5$, which is violated by the optimal solution $(2,2,0,0)$. In this case, we have that $a_{m+1} = (1,1,0,0)$ and $a^\top B^{-1} A - a^\top_{m+1} = [0, 0, 2, -1]$. This modified problem then looks like
 %
-%TODO: Change this to the paint example
+%TODO: Chp6: Change this to the paint example
 \begin{align*}
 	\mini & -5x_1 -x_2 + 12 x_3 \\
 	\st   & 3x_1 + 2x_2 + x_3  = 10 \\
@@ -174,7 +174,7 @@ Then, adding a constraint of the form $p^\top A_{n+1} \leq c_{n+1}$ is equivalen
 
 We now consider how changes in the input data can influence the optimality of a given basis. Specifically, we consider how to predict whether changes in the vector of independent terms $b$ and objective coefficients $c$ will affect the optimality of the problem. Notice that variations in the coefficient matrix $A$ are left aside.
 
-%TODO: include a discussion on variations on the coefficients of A.
+%TODO: Chp6: include a discussion on variations on the coefficients of A.
 
 \subsubsection{Changes in the vector $b$}
 
@@ -201,7 +201,7 @@ Notice that this is equivalent to having $\delta$ within the range
 In other words, changing $b_i$ will incur changes in the value of the basic variables, and thus, we must determine the range within which all basic variables remain nonnegative (i.e., feasible).
 
 Let us consider a numerical example. Once again, consider the problem from Section \ref{section_611}. The optimal tableau was given by
-%TODO: Change this to the paint example
+%TODO: Chp6: Change this to the paint example
 
 \begin{center}
 	\begin{tabular}{c|cccc|c} 
@@ -479,7 +479,7 @@ Clearly, the first representation is far more practical than the second. That is
 	\end{equation*}
 \end{theorem}
 
-%TODO: Include proof for the resolution theorem
+%TODO: Chp6: Include proof for the resolution theorem
 
 Theorem \ref{p1c6:thm:resolution_theorem} has an important consequence, as it states that bounded polyhedra, i.e., polyhedral sets that have no extreme rays, can be represented by the convex hull of its extreme points. For now, let us look at an example that illustrates the concept.
 

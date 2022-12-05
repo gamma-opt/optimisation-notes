@@ -124,7 +124,9 @@ Notice that, since $\nabla f(x_{k+1}) - \nabla f(x_k) = H(x_{k+1} - x_k) = \lamb
 	&= \frac{\nabla f(x_{k+1})^\top (\nabla f(x_{k+1}) - \nabla f(x_k))}{(- \nabla f(x_k) + \alpha_{k-1}d_{k-1})^\top (\nabla f(x_{k+1}) - \nabla f(x_k))} \\
 	&= \frac{||\nabla f(x_{k+1})||^2}{||\nabla f(x_k)||^2},
 \end{align*}
-where the last relation follows from Theorem \ref{thm:conj_prop}. Algorithm \ref{Alg2} summarises the conjugate gradient method. % TODO: Figure out how to explain that \nabla f(x_{k+1})\dot \nabla f(x_k) = 0.
+where the last relation follows from Theorem \ref{thm:conj_prop}. Algorithm \ref{Alg2} summarises the conjugate gradient method. 
+
+% TODO: Chp17: Figure out how to explain that \nabla f(x_{k+1})\dot \nabla f(x_k) = 0.
 
 \begin{algorithm}[H]
 \caption{Conjugate gradient method} \label{Alg2}
@@ -144,7 +146,9 @@ where the last relation follows from Theorem \ref{thm:conj_prop}. Algorithm \ref
 \end{algorithmic}
 \end{algorithm}
 
-The conjugate gradient method using $\alpha_k = \frac{||\nabla f(x_{k+1})||^2}{||\nabla f(x_k)||^2}$ is due to Fletcher and Reeves. %TODO: citation
+The conjugate gradient method using $\alpha_k = \frac{||\nabla f(x_{k+1})||^2}{||\nabla f(x_k)||^2}$ is due to Fletcher and Reeves. 
+
+%TODO: Chp17: citation
 	An alternative version of the method uses
 	%
 	\begin{align*}
