@@ -42,7 +42,7 @@ This is simpler to see in $\reals^2$. Two vectors are linearly independent if on
 		\node (x12) at (1, 0) {$x_2$};
 		\node (x3) at (2.1, -0.8) {$x_3$};
     \end{tikzpicture}
-	\caption{Linearly independent (top) and dependent (bottom) vectors in $\reals^2$. Notice how, in the bottom picture, any of the vectors can be obtained by appropriate scaling and adding the other two}\label{p1c2:fig:linear_independence}
+	\caption{Linearly independent (top) and dependent (bottom) vectors in $\reals^2$. Notice how, in the bottom picture, any of the vectors can be obtained by appropriately scaling and adding the other two}\label{p1c2:fig:linear_independence}
 \end{figure}
 
 Theorem \ref{p1c2:thm:fundamental_linear_algebra} summarises results that we will utilise in the upcoming developments. These are classical results from linear algebra and the proof is left as an exercise.
@@ -77,7 +77,7 @@ A related concept is the notion of a \emph{span}. A span of a collection of vect
 	\spans(x_1,\dots, x_k) = \braces{y = \sum_{i=1}^k a_ix_i : a_i \in \reals, i \in \braces{1,\dots, k}}. 
 \end{equation*}
 %
-Notice how the two concepts are related: the span of a collection of vectors forms subspace. Therefore, a subspace can be characterised by the collection of vectors whose span forms it. In other words, the span of a set of vectors is the subspace formed by all points we can represent by some linear combination of these vectors. 
+Notice how the two concepts are related: the span of a collection of vectors forms a subspace. Therefore, a subspace can be characterised by the collection of vectors whose span forms it. In other words, the span of a set of vectors is the subspace formed by all points we can represent by some linear combination of these vectors. 
 
 The missing part in this is the notion of a \emph{basis}. A \emph{basis} of the subspace $S \subseteq \reals^n$ is a collection of vectors $\braces{x_i}_{i=1}^k \in \reals^n$ that are linearly independent such that $\spans(x_1,\dots, x_k) = S$. 
 
@@ -87,7 +87,7 @@ The above leads us to some important realisations:
 
 \begin{enumerate}
 	\item All bases of a given subspace $S$ have the same dimension. Any extra vector would be linearly dependent to those vectors that span $S$. In that case, we say that the subspace has size (or dimension) $k$, the number of linearly independent vectors forming the basis of the subspace. We can overload the notation $\dim(S)$ to represent the dimension of the subspace $S$.
-	\item If the subspace $S \subset \reals^n$ is formed by a basis of size $m < n$, we say that $S$ is a proper subspace with $\dim(S)=m$, because it is not the whole $\reals^n$ itself, but a space contained within $\reals^n$. For example, two linearly independent vectors form (i.e., span) a hyperplane in $\reals^3$; this hyperplane is a proper subspace since $\dim(S)m=2 < 3=n$.
+	\item If the subspace $S \subset \reals^n$ is formed by a basis of size $m < n$, we say that $S$ is a proper subspace with $\dim(S)=m$, because it is not the whole $\reals^n$ itself, but a space contained within $\reals^n$. For example, two linearly independent vectors form (i.e., span) a hyperplane in $\reals^3$; this hyperplane is a proper subspace since $\dim(S)=m=2 < 3=n$.
 	\item If a proper subspace has dimension $m < n$, then it means that there are $n-m$ directions in $\reals^n$ that are perpendicular to the subspace and to each other. That is, there are nonzero vectors $a_i$ that are orthogonal to each other and to $S$. Or, equivalently, $a_i^\top x = 0$ for $i = n-m + 1, ..., n$. Referring to the $\reals^3$, if $m=2$, then there is a third direction that is perpendicular to (or not in) $S$. Figure \ref{p1c2:fig:proper_subpaces} can be used to illustrate this idea. Notice how one can find a vector, say $x_3$ that is perpendicular to $S$. This is because the whole space is $\reals^3$, but $S$ has dimension $m=2$ (or $\dim(S)=2$). 
 \end{enumerate}
 
@@ -225,7 +225,7 @@ which represents exactly the intersection of the half-spaces $a_i^\top x \geq b_
 
 You might find authors referring to bounded polyhedral sets as polytopes. However, this is not used consistently across references, sometimes with switched meanings (for example, using polytope to refer to a set defined as in Definition \ref{p1c2:def:polyhedral_sets} and using polyhedron to refer to a bounded version of $S$). In this text, we will only use the term polyhedral set to refer to sets defined as in Definition \ref{p1c2:def:polyhedral_sets} and use the term bounded whenever applicable.
 
-Also, it may be useful to formally define some elements in polyhedral sets. For that, let us consider a hyperplane $H = \braces{x \in \reals{n} : a^\top x = b}$. Now consider the set $F = H \cap S$. This set is known as a \emph{face} of a polyhedral set. If the face $F$ has dimension zero, then $F$ is called a vertex. Analogously, if $\dim(F)=1$, then $F$ is called an edge. Finally, if $\dim(F) = dim(S)-1$, then $F$ is called a facet. Notice that in $\reals^3$, facets and faces are the same, whenever the face is not an edge or a vertex. 
+Also, it may be useful to formally define some elements in polyhedral sets. For that, let us consider a hyperplane $H = \braces{x \in \reals^{n} : a^\top x = b}$. Now consider the set $F = H \cap S$. This set is known as a \emph{face} of a polyhedral set. If the face $F$ has dimension zero, then $F$ is called a vertex. Analogously, if $\dim(F)=1$, then $F$ is called an edge. Finally, if $\dim(F) = dim(S)-1$, then $F$ is called a facet. Notice that in $\reals^3$, facets and faces are the same, whenever the face is not an edge or a vertex. 
 
 
 \subsection{Convexity of polyhedral sets}
@@ -352,7 +352,7 @@ We will halt our discussion about convexity for now and return to it in deeper d
 
 Now we focus on the algebraic representation of the most relevant geometric elements in the optimisation of linear programming problems. As we have seen in the graphical example in the previous chapter, the optimum of linear programming problems is generally located at the vertices of the feasible set. Furthermore, such vertices are formed by the intersection of $n$ constraints (in a $n$-dimensional space, which comprises constraints that are active (or satisfied at the boundary of the half-space of said constraints).
 
-First, let us formally define the notions of vertex and extreme point. Although in general these can refer to different objects, we will see that in the case of linear programming problems, if a point is a vertex, then it is an extreme point as well, being the converse also true.
+First, let us formally define the notions of vertex and extreme point. Although in general these can refer to different objects, we will see that in the case of linear programming problems, if a point is a vertex, then it is an extreme point as well, the converse also being true.
 
 \begin{definition}[Vertex] \label{p1c2:def:vertex}
 	Let $P$ be a convex polyhedral set. The vector $x \in P$ is a vertex of $P$ if there exists some $c$ such that $c^\top x < c^\top y$ for all $y \in P$ with $y \neq x$.
