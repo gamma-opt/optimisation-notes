@@ -43,7 +43,7 @@ We will proceed in this chapter developing the analytical framework that allows 
 	g(\overline{p}) = c^\top \overline{x}.	
 \end{equation*}
 %
-That is, we will next develop the results that guarantee the equivalence between primal and dual representations. This will be useful for interpreting properties associated with the optimal primal solution $\overline{x}$ from the associated optimal prices $\overline{p}$. Furthermore, we will see in later chapters that linear programming duality can be used as a framework for replacing constraints with equivalent representations, which is a useful procedure in many settings, including for developing alternative solution strategies also based in linear programming. 
+That is, we will next develop the results that guarantee the equivalence between primal and dual representations. This will be useful for interpreting properties associated with the optimal primal solution $\overline{x}$ from the associated optimal prices $\overline{p}$. Furthermore, we will see in later chapters that linear programming duality can be used as a framework for replacing constraints with equivalent representations, which is a useful procedure in many settings, including developing alternative solution strategies also based in linear programming. 
 
 
 \subsection{General form of duals}
@@ -422,7 +422,7 @@ The optimal dual variable values associated with an optimal BFS have an importan
 
 Now, assume that we cause a marginal perturbation on the vector $b$, represented by a vector $d$. That is, assume that we have $B^{-1}(b + d) > 0$, noticing that nondegenerate feasibility holds.
 
-Recall that the optimality condition $\overline{c} = c^\top - c_B ^\top B^{-1}A \geq 0$ is not influenced by such a marginal perturbation. That is, for a small change $d$, the optimal basis (i.e., the selection of basic variables) is not disturbed. On the other hand, the optimal value of the basic variables is, and consequently, so is the optimal value, which becomes
+Recall that the optimality condition $\overline{c} = c^\top - c_B ^\top B^{-1}A \geq 0$ is not influenced by such a marginal perturbation. That is, for a small change $d$, the optimal basis (i.e., the selection of basic variables) is not disturbed. On the other hand, the optimal value of the basic variables, and consequently, the optimal value, becomes
 %
 \begin{equation*}
 	c_B^\top B^{-1}(b + d) = p^\top(b + d). 
@@ -472,7 +472,7 @@ B^{-1} = \begin{bmatrix}
  		 	-3/4 \\ -1/2 \\ 0 \\ 0
  		 \end{bmatrix}
 $$
-Notice that these are values of the entries in the $z$-row below the slack variables $x_3, \dots, x_6$, except the minus sign. This is because the $z$-rows contain the entries for $c - p^\top B^{-1}$ and for all slack variables we have that $c_j = 0$, for $j = 3,\dots,6$. Also, recall that the paint factory problem is a maximisation problem, so $p$ represents the decrease in the objective function value. In this, we see that removing one unit of M1 would decrease the objective function by 3/4 and by 1/2 if one unit of M2 is removed. Analogous, increasing M1 or M2 availability by one unit would increase the objective function value by 3/4 and 1/2, respectively. 
+Notice that these are values of the entries in the $z$-row below the slack variables $x_3, \dots, x_6$, except the minus sign. This is because the $z$-rows contain the entries for $c - p^\top B^{-1}$ and for all slack variables we have that $c_j = 0$, for $j = 3,\dots,6$. Also, recall that the paint factory problem is a maximisation problem, so $p$ represents the decrease in the objective function value. In this, we see that removing one unit of M1 would decrease the objective function by 3/4 and removing one unit of M2 would similarly decrease the objective value by 1/2. Analogous, increasing M1 or M2 availability by one unit would increase the objective function value by 3/4 and 1/2, respectively. 
 
 
 \subsection{The dual simplex method}
