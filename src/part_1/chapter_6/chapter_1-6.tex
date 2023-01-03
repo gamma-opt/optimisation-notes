@@ -29,7 +29,7 @@ Let us consider that a new variable $x_{n+1}$ with associated column (that is, r
 	& x \geq 0, x_{n+1} \geq 0. 	
 \end{align*}
 %
-We need to determine if, after the inclusion of this new variable, the current basis $B$ is still optimal. If we make the newly added variable nonbasic yields the basic feasible solution (BFS) $x = (\overline{x}, 0)$. Moreover, we know that the optimality condition $c^\top - c_B^\top B^{-1}b \geq 0$ held before the inclusion of the variable, so we know that all the other reduced costs associated with the nonbasic variables $j \in I_N$ were nonnegative. 
+We need to determine if, after the inclusion of this new variable, the current basis $B$ is still optimal. Making the newly added variable nonbasic yields the basic feasible solution (BFS) $x = (\overline{x}, 0)$. Moreover, we know that the optimality condition $c^\top - c_B^\top B^{-1}b \geq 0$ held before the inclusion of the variable, so we know that all the other reduced costs associated with the nonbasic variables $j \in I_N$ were nonnegative. 
 
 Therefore, the only check that needs to be done is whether the reduced cost associated with $x_{n+1}$ also satisfies the optimality condition, i.e., if
 %
@@ -120,13 +120,13 @@ where $a$ are the respective components of $a_{m+1}$ associated with the columns
 %
 Notice however, that the basic solution $(\overline{x}, {a_{m+1}}^\top \overline{x} -  b_{m+1})$ associated with $\overline{B}$ is not feasible, since we assumed that $\overline{x}$ did not satisfy the newly added constraint, i.e., ${a_{m+1}}^\top \overline{x} < b_{m+1}$.
 
-The reduced costs considering the new basis $\overline{B}$ then becomes
+The reduced costs considering the new basis $\overline{B}$ then become
 %
 \begin{equation*}
 	[c^\top ~~ 0] - [c_B^\top ~~ 0]\begin{bmatrix} B^{-1} & 0 \\ a^\top B^{-1} & -1 \end{bmatrix}\begin{bmatrix} A & 0 \\ a_{m+1}^\top & -1 \end{bmatrix} = [c^\top - c^\top_B B^{-1}A ~~ 0].
 \end{equation*}
   	
-Notice that the new slack variable has a null component as a reduced cost, meaning that it does not violated dual feasibility conditions. Thus, after adding a constraint that makes $\overline{x}$ infeasible, we still have a dual feasible solution that can be immediately used by the dual simplex method, again allowing for warm starting the solution of the new problem.
+Notice that the new slack variable has a null component as a reduced cost, meaning that it does not violate dual feasibility conditions. Thus, after adding a constraint that makes $\overline{x}$ infeasible, we still have a dual feasible solution that can be immediately used by the dual simplex method, again allowing for warm starting the solution of the new problem.
 
 To build an initial solution in terms of the tableau representation of the simplex method, we must simply add an additional row, which leads to a new tableau with the following structure
 %
@@ -319,7 +319,7 @@ Some interesting properties can be immediately concluded regarding polyhedral co
 	Theorem \ref{p1c3:thm:exist_extreme_point} proof verbatim, with $P = C$.	
 \end{proof}
 
-Notice that $0 \in C$ is the unique extreme point of the polyhedra cone $C$. To see that, let $0 \neq x \in C$, $x_1 = (1/2) x$ and $x_2 = (3/2)x$. Note that $x_1, x_2 \in C$, and $x \neq x_1 \neq x_2$. Setting $\lambda_1 = \lambda_2 = 1/2$, we have that $\lambda_1x_1  + \lambda_2x_2 = x$ and thus, $x$ is not an extreme point (cf. Definition \ref{p1c2:def:extreme_point}). 
+Notice that $0 \in C$ is the unique extreme point of the polyhedral cone $C$. To see that, let $0 \neq x \in C$, $x_1 = (1/2) x$ and $x_2 = (3/2)x$. Note that $x_1, x_2 \in C$, and $x \neq x_1 \neq x_2$. Setting $\lambda_1 = \lambda_2 = 1/2$, we have that $\lambda_1x_1  + \lambda_2x_2 = x$ and thus, $x$ is not an extreme point (cf. Definition \ref{p1c2:def:extreme_point}). 
 
 
 \subsection{Recession cones and extreme rays}
@@ -333,7 +333,7 @@ We now focus on a specific type of cone, called \emph{recession cones}. In the c
 	\end{equation*}
 \end{definition}
 
-Notice that the definition states that a recession cone comprises all directions $d$ along which one can move from $\overline{x} \in P$ without ever leaving $P$. However, notice that the definition do not depend on $\overline{x}$, meaning that the recession cone is unique for the polyhedral set $P$, regardless of its ``origin''. Furthermore, notice that Definition \ref{c1_p6:def:recession_cone} implies that recession cones of polyhedral sets are polyhedral cones. 
+Notice that the definition states that a recession cone comprises all directions $d$ along which one can move from $\overline{x} \in P$ without ever leaving $P$. However, notice that the definition does not depend on $\overline{x}$, meaning that the recession cone is unique for the polyhedral set $P$, regardless of its ``origin''. Furthermore, notice that Definition \ref{c1_p6:def:recession_cone} implies that recession cones of polyhedral sets are polyhedral cones. 
 
 We say that any directions $d \in {\bf recc}(P)$ is a \emph{ray}. Thus, bounded polyhedra can be alternatively defined as polyhedral sets that do not contain rays. 
 
@@ -344,7 +344,7 @@ We say that any directions $d \in {\bf recc}(P)$ is a \emph{ray}. Thus, bounded 
 	\caption{Representation of the recession cone of a polyhedral set} \label{p1c6:fig:recession_cone}	
 \end{figure}
 
-Figure \ref{p1c6:fig:recession_cone} illustrates the concept of recession cones. Notice that it is purposely placed in several places to illustrate the independence of the point $\overline{x} \in P$.
+Figure \ref{p1c6:fig:recession_cone} illustrates the concept of recession cones. Notice that the cone is purposely placed in several places to illustrate the independence of the point $\overline{x} \in P$.
 
 Finally, the recession cone for a standard form polyhedral set $P = \braces{x \in \reals^n : Ax = b, x \geq 0}$ is given by 
 %
@@ -517,7 +517,7 @@ that is, $y = x^2 + w^1 + w^2$. Notice however, that $y$ could also be represent
 		\end{bmatrix}, 	
 \end{equation*}
 %
-with then $y = = \frac{1}{2}x^2 + \frac{1}{2}x^3 + \frac{3}{2}w^1$. Notice that this imply that the representation of each point is not unique.
+with then $y = \frac{1}{2}x^2 + \frac{1}{2}x^3 + \frac{3}{2}w^1$. Notice that this imply that the representation of each point is not unique.
 
 \begin{figure}[h]
 	\includegraphics{part_1/chapter_6/figures/Figure5.pdf}

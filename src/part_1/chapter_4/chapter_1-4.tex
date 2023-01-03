@@ -18,7 +18,7 @@ Building upon the elements we defined in Chapter \ref{chapter_3}, employing the 
 	\item Move along the feasible direction $d = (d_B, d_N)$, where $d_j = 1$, $d_{N \setminus \braces{j}} = 0$ and $d_B = -B^{-1}A_j$.
 \end{enumerate}
 %
-Moving along the feasible direction $d$ towards $x + \theta d$ (with scalar $\theta > 0$) makes $x_j >0$ (i.e., $j \in I_N$ enter the basis) while reducing the objective value at a rate of $\overline{c}_j$. Thus, one should move as furthest as possible (say, take a step of length $\overline{\theta}$) along the direction $d$, which incurs on an objective value change of $\overline{\theta} (c^\top d) = \overline{\theta} \overline{c}_j$.
+Moving along the feasible direction $d$ towards $x + \theta d$ (with scalar $\theta > 0$) makes $x_j >0$ (i.e., $j \in I_N$ enter the basis) while reducing the objective value at a rate of $\overline{c}_j$. Thus, one should move as far as possible (say, take a step of length $\overline{\theta}$) along the direction $d$, which incurs on an objective value change of $\overline{\theta} (c^\top d) = \overline{\theta} \overline{c}_j$.
 
 Moving as far along the feasible direction $d$ as possible while observing that feasibility is retained is equivalent to setting $\overline{\theta}$ as 	
 %
@@ -97,7 +97,7 @@ Notice that the new basis $\overline{B}$ only has one pair of variables swapped 
 %
 where the middle column representing that the column $A_{B(l)}$ has been replaced with $A_j$. 
 
-Theorem \ref{p1c4:thm:adjacent_basis} provide the technical result that formalises our developments so far.
+Theorem \ref{p1c4:thm:adjacent_basis} provides the technical result that formalises our developments so far.
 
 \begin{theorem}[Adjacent bases] \label{p1c4:thm:adjacent_basis}
 	Let $A_j$ be the column of the matrix $A$ associated with the selected nonbasic variable index $j \in I_N$. And let $l$ be defined as \eqref{p1c4:eq:selected_basic_variable}, with $A_{B(i)}$ being its respective column in $A$. Then	 
@@ -121,7 +121,7 @@ Theorem \ref{p1c4:thm:adjacent_basis} provide the technical result that formalis
 	Now we focus on proving (2). We have that $\overline{x} \geq 0$, $A\overline{x} = b$ and $\overline{x}_j = 0$ for $j \in I_{\overline{N}} = J \setminus I_{\overline{B}}$. This, combined with $\braces{\overline{B}(i)}_{i \in I_{\overline{B}}}$ being linearly independent (cf. 1), completes the proof.	
 \end{proof}
 
-We have finally compiled all the elements we need to state the simplex method pseudocode, which is presented in Algorithm \ref{p1c4:alg:simplex}. One minor detail in the presentation of the algorithm is the use of the auxiliary vector $u$. This allows for the precalculation of the components of $d_B = -B^{-1}A_j$ (notice the changed signed) to test for unboundedness, that is, the lack of a constraint (and associated basic variable) that can limit the increase of the chosen nonbasic variable. 
+We have finally compiled all the elements we need to state the simplex method pseudocode, which is presented in Algorithm \ref{p1c4:alg:simplex}. One minor detail in the presentation of the algorithm is the use of the auxiliary vector $u$. This allows for the precalculation of the components of $d_B = -B^{-1}A_j$ (notice the changed sign) to test for unboundedness, that is, the lack of a constraint (and associated basic variable) that can limit the increase of the chosen nonbasic variable. 
 
 The last missing element is proving that Algorithm \ref{p1c4:alg:simplex} eventually converges to an optimal solution, should one exists. This is formally stated in Theorem \ref{p1c4:thm:convergece_simplex}.
 
@@ -160,7 +160,7 @@ The last missing element is proving that Algorithm \ref{p1c4:alg:simplex} eventu
 
 \subsection{A remark on degeneracy}
 
-We now return to the issue related to degeneracy. As we discussed earlier, degeneracy is an important pitfall for the simplex method. To recognise that the method arrived at a degenerate BFS, one must observe how the values of the basic variables are changing. If, for $\overline{\theta}$, more than one basic variable become zero at $\overline{x} = x +\overline{\theta}d$, then $\overline{B}$ degenerate.
+We now return to the issue related to degeneracy. As we discussed earlier, degeneracy is an important pitfall for the simplex method. To recognise that the method arrived at a degenerate BFS, one must observe how the values of the basic variables are changing. If, for $\overline{\theta}$, more than one basic variable becomes zero at $\overline{x} = x +\overline{\theta}d$, then $\overline{B}$ is degenerate.
 
 Basically, if the current BFS is degenerate, $\overline{\theta} = 0$ can happen when $x_{B(l)} = 0$ and the component $d_{B(l)} < 0$. Notice that a step size of $\overline{\theta} = 0$ is the only option to prevent infeasibility in this case. Nevertheless, a new basis can still be defined by replacing $A_{B(l)}$ with $A_j$ in $B$. However, $\overline{x} = x + \overline{\theta}d = x$. Sometimes, even though the method is effectively staying at the same extreme point, changing the basis on a degenerate solution might eventually expose a direction of improvement, a phenomenon that is called \emph{stalling}. In an extreme case, it might be so that the selection of the next basic variable is such that the same extreme point is recovered over and over again, which is called \emph{cycling}. The latter can be prevented by a specific technique for carefully selecting the variable that will enter the basis. 
 
@@ -188,7 +188,7 @@ Figure \ref{p1c4:fig:degenerate_basis} illustrates an example of stalling. In th
 
 \section{Implementing the simplex method}
 
-We now focus on some specific details related to alternative simplex method implementations. In a general sense, implementations of the simplex method vary in terms of how the selection of the nonbasic variables with $\overline{c}_j < 0$ that enters the basis is made. They also differ in the way the basic variable $l = \argmin_{i \in B \mid d_i <0}\braces{-x_{B(i)}/d_{B(i)}}$ to leave the basis in case of ties might be of interest, especially in the attempt of preventing cycling.
+We now focus on some specific details related to alternative simplex method implementations. In a general sense, implementations of the simplex method vary in terms of how the selection of the nonbasic variables with $\overline{c}_j < 0$ that enter the basis is made. Different ways of selecting the basic variable $l = \argmin_{i \in B \mid d_i <0}\braces{-x_{B(i)}/d_{B(i)}}$ to leave the basis in case of ties might be of interest, especially in the attempt of preventing cycling.
 
 Another important aspect related to implementations of the simplex method is how matrices are represented, its consequences on memory utilisation, and how the operations related to matrix inversion are carried out. 
 
@@ -225,7 +225,7 @@ Once the column $A_j$ is selected, we can then solve a second linear system $Bu 
 
 The key observation that can yield computational savings is that we do not need to solve two linear systems. As one can notice, there is a common term between the two, the inverse of the basic matrix $B^{-1}$. If this matrix can be made available at the beginning of each iteration, then the terms $c_B^\top B^{-1}$ and $B^{-1}A_j$ can be easily and more cheaply (computationally) obtained.
 
-For that to be possible, we need an efficient manner to update the matrix $B^{-1}$ after each iteration. To see how that can be accomplished, recall that
+For that to be possible, we need an efficient method of updating the matrix $B^{-1}$ after each iteration. To see how that can be accomplished, recall that
 %
 \begin{align*}
 	& B = [A_{B(1)}, \dots, A_{B(m)}], \text{ and } \\ 
@@ -240,7 +240,7 @@ We can devise an efficient manner to update $B^{-1}$ into $\overline{B}^{-1}$ ut
 	Adding a constant multiple of one row to the same or another row is called an elementary row operation.
 \end{definition}
 
-Defining elementary row operations is the same of devising a matrix $Q = I + D_{ij}$ to premultiply $B$, where
+Defining elementary row operations is equivalent to devising a matrix $Q = I + D$ to premultiply $B$, where
 %
 \begin{equation*}
 	D = \begin{cases}
@@ -286,11 +286,11 @@ Going back to the purpose of updating $B^{-1}$ into $\overline{B}^{-1}$,  notice
 %
 where $u = B^{-1}A_j$. We want to define an elementary row operation matrix $Q$ such that $QB^{-1} = \overline{B}^{-1}$, or $QB^{-1}\overline{B} = I$. Therefore $Q$ will be such that the elementary row operations turn $B^{-1}\overline{B}$ into an identity matrix, i.e., that turn the vector $u$ into the unit vector $e_l$.
 
-The main trick is that we do not need matrix multiplication to achieve it, saving considerably in computational resources. Instead, we can simply apply the elementary row operations, focusing only on the column $u$ and the operations required to turn it into the unit vector $e_l$. This can be achieved by:
+The main trick is that we do not need matrix multiplication to achieve it, considerably decreasing the computational burden. Instead, we can simply apply the elementary row operations, focusing only on the column $u$ and the operations required to turn it into the unit vector $e_l$. This can be achieved by:
 
 \begin{enumerate}
-	\item for each $i \neq l$, multiply the $l\nth$ row by $-\frac{u_i}{u_l}$ and add to the $i\nth$ row. This replaces $u_i$ with zero for all $i \in I \setminus \braces{l}$.
-	\item Divide the $l\nth$ row by $u_l$. This replaces $u_l$ with one.
+	\item First, for each $i \neq l$, multiply the $l\nth$ row by $-\frac{u_i}{u_l}$ and add to the $i\nth$ row. This replaces $u_i$ with zero for all $i \in I \setminus \braces{l}$.
+	\item Then, divide the $l\nth$ row by $u_l$. This replaces $u_l$ with one.
 \end{enumerate}
 
 We can restate the simplex method in its revised form. This is presented in Algorithm \ref{p1c4:alg:revised_ximplex_method}.
@@ -300,9 +300,9 @@ We can restate the simplex method in its revised form. This is presented in Algo
 	\begin{algorithmic}[1] %line numbering frequency. 
 	\State {\bf initialise.} Initial basis $B$, associated BFS $x$, and $B^{-1}$ are available.
 	\State Calculate $p^\top = c_B^\top B^{-1}$ and $\overline{c}_j = c_j - p^\top A_j$ for $j \in N$.
-	\While {$\overline{c}_j < 0$ for some $j \in N$} \label{p1c4:alg:opt_condition} 
+	\While {$\overline{c}_j < 0$ for some $j \in N$} \label{p1c4:alg:opt_condition_rev} 
 	    \State Choose some $j$ for which $\overline{c_j} < 0$. Calculate $u = B^{-1}A_j$. 
-	    \If {$u \leq 0$} \label{p1c4:alg:unb_condition}
+	    \If {$u \leq 0$} \label{p1c4:alg:unb_condition_rev}
 			\State {\bf return} $z = -\infty$.		
 		\Else
 			\State $\overline{\theta} = \min_{i \in I_B : u_i > 0} \braces{\frac{x_{B(i)}}{u_i}}$ and $l = \argmin_{i \in B : u_i > 0} \braces{\frac{x_{B(i)}}{u_i}}$ 
@@ -318,7 +318,7 @@ We can restate the simplex method in its revised form. This is presented in Algo
 
 Notice that in Algorithm \ref{p1c4:alg:revised_ximplex_method}, apart from the initialisation step, no linear systems are directly solved. Instead, elementary row operations (ERO) are performed, leading to computational savings.
 
-The key feature of the revised simplex method is a matter of representation and, thus, memory allocation savings. Algorithm \ref{p1c4:alg:revised_ximplex_method} only require keeping in memory a matrix of the form 
+The key feature of the revised simplex method is a matter of representation and, thus, memory allocation savings. Algorithm \ref{p1c4:alg:revised_ximplex_method} only requires keeping in memory a matrix of the form 
 %
 \begin{equation*}
 	\begin{bmatrix}
@@ -327,13 +327,13 @@ The key feature of the revised simplex method is a matter of representation and,
 	\end{bmatrix}
 \end{equation*}
 %  
-which, after each series of elementary row operations, yield not only $\overline{B}^{-1}$ but also the updated simplex multipliers $\overline{p}$ and $\overline{p}^\top b = c_B^\top \overline{B}^{-1}b = c_B ^\top \overline{x}_B$, which represents the objective function value of the new basic feasible solution $\overline{x} = [\overline{x}_B, \overline{x}_N]$. This bookkeeping savings will become obvious once we discuss the tabular (or non-revised) version of the simplex method. 
+which, after each series of elementary row operations, yields not only $\overline{B}^{-1}$ but also the updated simplex multipliers $\overline{p}$ and $\overline{p}^\top b = c_B^\top \overline{B}^{-1}b = c_B ^\top \overline{x}_B$, which represents the objective function value of the new basic feasible solution $\overline{x} = [\overline{x}_B, \overline{x}_N]$. These savings will become obvious once we discuss the tabular (or non-revised) version of the simplex method. 
 
 Three main issues arise when considering the efficiency of implementations of the simplex method, namely, matrix (re)inversion, representation in memory, and the use of matrix decomposition strategies.
 %
 \begin{itemize}
-	\item \emph{Reinversion:} localised updates have the side effect of accumulating truncation and round-off error. To correct this, solvers typically rely on periodically recalculating $B^{-1}$, which, although costly, can avoid numerical issues.
-	\item \emph{Representation:} A sparse representation of $Q_n = Q_1Q_2 \dots Q_{k-1}$ can be kept instead of updating $B^{-1}$. Recall that $u = \overline{B}^{-1}A_j = QB^{-1}A_j$. For larger problems, that means that a trade-off between memory allocation and the number of matrix-matrix multiplications.
+	\item \emph{Reinversion:} localised updates such as EROs have the side effect of accumulating truncation and round-off error. To correct this, solvers typically rely on periodically recalculating $B^{-1}$, which, although costly, can avoid numerical issues.
+	\item \emph{Representation:} A sparse representation of $Q_n = Q_1Q_2 \dots Q_{k-1}$ can be kept instead of updating $B^{-1}$. Recall that $u = \overline{B}^{-1}A_j = QB^{-1}A_j$. For larger problems, this means a trade-off between memory allocation and the number of matrix-matrix multiplications.
 	\item \emph{Decomposition:} Decomposed (e.g., LU decomposition) forms of $B$ are used to improve efficiency in storage and the solution of the linear systems to exploit the typical sparsity of linear programming problems.  	
 \end{itemize}
 
@@ -350,7 +350,7 @@ In contrast to the revised simplex method, instead of updating only $B^{-1}$, we
 	B^{-1}[A ~|~ b] = \left[B^{-1}A_1, \dots, B^{-1}A_n ~|~  B^{-1}b\right].		
 \end{equation*}
 %
-Furthermore, we adjoint a row representing the reduced cost vector $\overline{c}^\top = c^\top - c_B^\top B^{-1}A$ and the negative of the objective function value for the current basis, $ -c_Bx_B = -c_B^\top B^{-1}b$, a row often referred to as the \emph{zeroth row}. The reason why we consider the negative sign is that it allows for a simple updating rule for the zeroth row, by performing elementary row operations to make zero the $j^\text{th}$ element associated with the nonbasic variable in $B$ that becomes basic in $\overline{B}$.
+Furthermore, we adjoint a row representing the reduced cost vector $\overline{c}^\top = c^\top - c_B^\top B^{-1}A$ and the negative of the objective function value for the current basis, $ -c_Bx_B = -c_B^\top B^{-1}b$, a row often referred to as the \emph{zeroth row}. The reason why we consider the negative sign is that it allows for a simple updating rule for the zeroth row, by performing elementary row operations to make the $j^\text{th}$ element, associated with the nonbasic variable in $B$ that becomes basic in $\overline{B}$, zero.
 
 The full tableau representation is given by
 
@@ -371,15 +371,15 @@ The full tableau representation is given by
 \end{center}
 %
 
-In this representation, we say that the $j^\text{th}$ column associated with the nonbasic variable to become basic is the \emph{pivot column} $u$. Notice that, since the tableau exposes the reduced costs $\overline{c}_j$, $j \in I_N$, it allows for trivially applying the greedy pricing strategy (by simply choosing the variables with a negative reduced cost with the largest module). 
+In this representation, we say that the $j^\text{th}$ column associated with the nonbasic variable to become basic is the \emph{pivot column} $u$. Notice that, since the tableau exposes the reduced costs $\overline{c}_j$, $j \in I_N$, it allows for trivially applying the greedy pricing strategy (by simply choosing the variables with a negative reduced cost with the largest absolute value). 
 
 The $l\nth$ row associated with the basic variable selected to leave the basis is the \emph{pivot row}. Again, the tableau representation facilitates the calculation of the ratios used in choosing the basic variable $l$ to leave the basis since it amounts to simply calculating the ratios between the elements on the rightmost column and those in the pivot column, disregarding those that present entries less or equal than zero and the zeroth row. The row with the minimal ratio will be the row associated with the current basic variable leaving the basis. 
 
-Once a pivot column and a pivot row have been defined, it is a matter of performing elemental row operations utilising the pivot row to turn the pivot column into the unit vector $e_l$ and turn to zero the respective zeroth element (recall that basic variables have zero reduced costs). This is the same as using elementary row operations using the pivot row to turn all elements in the pivot column zero, except for the \emph{pivot element} $u_l$, which is the intersection of the pivot row and the pivot column, that must be turned into one. The above highlights the main purpose of the tableau representation, which is to facilitate hand calculation.
+Once a pivot column and a pivot row have been defined, it is a matter of performing elemental row operations utilising the pivot row to turn the pivot column into the unit vector $e_l$ and turn to zero the respective zeroth element (recall that basic variables have zero reduced costs). This is the same as using elementary row operations using the pivot row to turn all elements in the pivot column zero, except for the \emph{pivot element} $u_l$, which is the intersection of the pivot row and the pivot column, that must be turned into one. The above highlights the main purpose of the tableau representation, which is to facilitate calculation by hand.
 
 Notice that, as we have seen before, performing elementary row operations to convert the pivot column $u$ into $e_l$ converts $B^{-1}[A ~|~ b]$ into $\overline{B}^{-1}[A ~|~ b]$. Analogously, turning the entry associated with the pivot column $u$ in the zeroth row to zero converts $[c^\top - c_B^\top B^{-1}A \mid -c_B^\top B^{-1}b]$ into $[c^\top - c_{\overline{B}}^\top \overline{B}^{-1}A \mid -c_{\overline{B}}^\top \overline{B}^{-1}b]$.
 
-Let s return to the paint factory example from section \label{section_121}, which in its standard form can be written as
+Let us return to the paint factory example from Section \ref{section_121}, which in its standard form can be written as
 %
 \begin{flalign}
 	\maxi z = \ & 5x_1 + 4x_2 \label{p1c1:eq:constM1}\\
@@ -424,9 +424,9 @@ The sequence of tableaus for this problem is given by
 The bold terms in the tableau represent the pivot elements at each iteration, i.e., the intersection of the pivot column and row. From the last tableau, we see that the optimal solution is $x^* = (3, 3/2)$. Notice that we applied a change in signs in the objective function coefficients, turning it into a minimisation problem; also notice that this makes the values of the objective function in the RHS column appear as positive, although it should be negative as we are in fact minimising $-5x_1 - 4x_2$, for which $x^* = (3,3/2)$ evaluates as $-21$. As we have seen, the tableau shows $-c_B x_B$, hence why the optimal tableau displays $21$ in the first row of the RHS column.
 
 
-\subsection{Generating initial feasible solutions} 
+\subsection{Generating initial feasible solutions (two-phase simplex)} 
 
-We now consider the issue of converting general linear programming problems into the standard form they are assumed to be for the simplex method. As we mentioned before, problems with constraints of the form $Ax \le b$ can be converted by simply adding nonnegative \emph{slack variables} $s \geq 0$. In addition, we can trivially obtain an initial basic feasible solution (BFS) with $(x,s) = (0,b)$, with $B = I$, as
+We now consider the issue of converting general linear programming problems into the standard form they are assumed to be for the simplex method. As we mentioned before, problems with constraints of the form $Ax \le b$ can be converted to standard form by simply adding nonnegative \emph{slack variables} $s \geq 0$. In addition, we can trivially obtain an initial basic feasible solution (BFS) with $(x,s) = (0,b)$, with $B = I$, as
 %
 \begin{equation*}
 		Ax \leq b \Rightarrow Ax + s = b.
@@ -459,7 +459,7 @@ Assuming that $P$ is feasible and $\overline{y}=0$, two scenarios can arise. The
 The second scenario is somewhat more complicated. Often, $AUX$ is a degenerate problem and the optimal basis $B$ may contain some of the artificial variables $y$. This then requires an additional preprocessing step, which consists of the following:
 %
 \begin{enumerate}
-	\item[(1)] Let $A_{B(1)}, \dots, A_{B(k)}$ be the columns $A$ in $B$, which are linearly independent. We know that from earlier (c.f. Theorem \ref{p1c2:thm:LI_and_bases}) that, being $A$ full-rank, we can choose additional columns $A_{B(k+1)}, \dots, A_{B(m)}$ that will span $\reals^{m}$.
+	\item[(1)] Let $A_{B(1)}, \dots, A_{B(k)}$ be the columns $A$ in $B$, which are linearly independent. We know from earlier (c.f. Theorem \ref{p1c2:thm:LI_and_bases}) that, being $A$ full-rank, we can choose additional columns $A_{B(k+1)}, \dots, A_{B(m)}$ that will span $\reals^{m}$.
 	\item[(2)] Select the $l\nth$ artificial variable $y_l = 0$ and select a component $j$ in the $l\nth$ row with nonzero $B^{-1}A_j$ and use elementary row operations to include $A_j$ in the basis. Repeat this $m-k$ times.
 \end{enumerate}
 
@@ -476,7 +476,7 @@ This process of generating initial BFS is often referred to as \emph{Phase I} of
 
 Let us try to develop a geometrical intuition on why it is so that the simplex method is remarkably efficient in practice. As we have seen in Theorem \ref{p1c4:thm:convergece_simplex}, although the simplex method is guaranteed to converge, the total number of steps the algorithm might need to take before convergence grows exponentially with the number of variables and constraints, since the number of steps depends on the number of vertices of the polyhedral set that represents the feasible region of the problem. 
 
-However, it turns out that, in practice, the simplex method typically requires $O(m)$ iterations (recall that $m$ is the number of rows in the matrix $A$), being one of the reasons why it has experienced tremendous success and is by far one of the most mature and reliable methods when it comes to optimisation. 
+However, it turns out that, in practice, the simplex method typically requires $O(m)$ iterations (recall that $m$ is the number of rows in the matrix $A$), being one of the reasons why it has experienced tremendous success and is one of the most mature and reliable methods when it comes to optimisation. 
 
 To develop a geometrical intuition on why this is the case, let us first consider an equivalently reformulated problem $P$:
 %
