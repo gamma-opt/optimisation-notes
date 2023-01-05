@@ -4,7 +4,7 @@ In this chapter, we consider the notion of \emph{decomposition}, which consists 
 
 In general, decomposition methods are based on the premise that it is more efficient, under a computational standpoint, to repeatedly resolve a (collection of) smaller instances of a problem than to solve the full-scale original problem. More recently, with the widespread adoption of multithreaded processors and computing clusters with multiple nodes, decomposition methods have become attractive as parallelisation strategies, which can yield considerable computational savings. 
 
-There a mainly two-classes of decomposition methods. The first class utilises the explicit representation of polyhedral sets, as stated in Theorem \ref{p1c6:thm:resolution_theorem}, to iteratively reconstruct the full-scale problem, with the hope that the structure containing the optimal vertex will be successfully reconstructed before all of the problem itself is reconstructed. It turns out that this is the case in many applications, which is precisely the feature that render these methods very efficient in some contexts. This is the class of methods we are going to analyse in this chapter, first the Dantzig-Wolfe decomposition and related column generation, and then its equivalent dual method, generally known as Benders' decomposition.
+There are mainly two classes of decomposition methods. The first class utilises the explicit representation of polyhedral sets, as stated in Theorem \ref{p1c6:thm:resolution_theorem}, to iteratively reconstruct the full-scale problem, with the hope that the structure containing the optimal vertex will be successfully reconstructed before all of the problem itself is reconstructed. It turns out that this is the case in many applications, which is precisely the feature that renders these methods very efficient in some contexts. This is the class of methods we are going to analyse in this chapter, first the Dantzig-Wolfe decomposition and related column generation, and then its equivalent dual method, generally known as Benders' decomposition.
 
 %TODO: Chp7: Add appropriate references.
 
@@ -73,17 +73,81 @@ The other type of complicating structure is the case in which the same set of de
 	\end{tabular}
 \end{center}
 %
-The challenging aspect is that, depending on the type of complicating structure, a specific method becomes more suitable. Therefore, being able to identify these structures is one of the key success factors in terms of the chosen method performance. As a general rule, problems with complicating constraints (as $P'$) are suitable to be solved by a delayed variable generation method such as column generation. Analogously, problem with complicating variables ($P''$) are better suited for employing delayed constraint generation methods such as Benders decomposition. 
+The challenging aspect is that a specific method becomes more suitable depending on the complicating structure. Therefore, being able to identify these structures is one of the key success factors in terms of the chosen method's performance. As a general rule, problems with complicating constraints (as $P'$) are suitable to be solved by a delayed variable generation method such as column generation. Analogously, problems with complicating variables ($P''$) are better suited for employing delayed constraint generation methods such as Benders decomposition. 
 
-The development of professional-grade code employing decomposition methods is a somewhat recent occurrence. The commercial solver CPLEX offers a Benders decomposition implementation that requires the user to specify the separable structure. On the other hand, although there are some available frameworks for implementing column generation-based methods, these tend to be more ad hoc occurrences, yet often reaping impressive results.  
+The development of professional-grade code employing decomposition methods is a somewhat recent occurrence. The commercial solver CPLEX offers a Benders decomposition implementation that requires the user to specify the separable structure. On the other hand, although there are some available frameworks for implementing column generation-based methods, these tend to be more ad hoc occurrences yet often reap impressive results.  
 
 
 \section{Dantzig-Wolfe decomposition and column generation*} \label{section_72}
 
-We start with the Dantzig-Wolfe decomposition, which consists of an alternative approach for reducing memory requirements when solving large-scale linear programming problems. Then, we show how this can be expanded further with the notion of delayed variable generation to yield a truly decomposed problem.
+Before we move forward, we need to discuss some technical results that will be useful for describing the Dantzig-Wolfe and Benders decomposition methods. Those are results mostly based on the notion of linear duality from Chapters \ref{chapter_5} and \ref{chapter_6}.
+
+\subsection{Resolution theorem*}
+
+%Lastly, we present a result that will be the foundation for our discussion in the next chapter. Specifically, we will see how we can use a presentation of the polyhedral set $P$ purely based on extreme points and extreme rays to devise solution strategies that can be more efficient for large-scale linear programming problems. 
+
+%For now, let us concentrate on this alternative representation. 
+%Basically, p
+A polyhedral set $P$ in standard form can be represented in two manners: either by (i) a finite set of linear constraints; or (ii) by combinations of its extreme points and extreme rays. Clearly, the first representation is far more practical than the second. That is, the second representation is an \emph{explicit} representation that would require knowing beforehand each extreme point and extreme ray forming the polyhedral set. 
+
+Notice that the first representation, which we have relied on so far, has extreme points and extreme rays only implicitly represented. However, we will see that this explicit representation has an important application in the devising of alternative solution methods for large-scale linear programming problems. This fundamental result is stated in Theorem \ref{p1c7:thm:resolution_theorem}. 
+
+\begin{theorem}[Resolution theorem]\label{p1c7:thm:resolution_theorem}
+	Let $P = \braces{x \in \reals^n : Ax \geq b}$ be a nonempty polyhedral set with at least one extreme point. Let $\braces{x_i}_{i=1}^k$ be the set with all extreme points, and $\braces{w}_{j=1}^r$ be the set of all extreme rays of $P$. Then $P = Q$, where 
+	\begin{equation*}
+		Q = \braces{\sum_{i=1}^k \lambda_i x^i + \sum_{j=1}^r \theta_jw^j : \lambda_i \geq 0, \ \theta_j \geq 0, \ \sum_{i=1}^k \lambda_i =1}.
+	\end{equation*}
+\end{theorem}
+
+%TODO: Chp7: Include proof for the resolution theorem
+
+Theorem \ref{p1c7:thm:resolution_theorem} has an important consequence, as it states that bounded polyhedra, i.e., a polyhedral set that has no extreme rays, can be represented by the convex hull of its extreme points. For now, let us look at an example that illustrates the concept.
+
+Consider the polyhedral set $P$ given by
+%
+\begin{equation*}
+	P = \braces{x_1 - x_2 \geq -2; x_1 + x_2 \geq 1, x_1,x_2 \geq 0}.
+\end{equation*}
+%
+The recession cone $C = {\bf recc}(P)$ is described by $d_1 - d_2 \geq 0$, $d_1 + d_2 \geq 0$ (from $Ad =0$), and $d_1, d_2 \geq 0$, which can be simplified as 
+%
+\begin{equation*}
+	C = \braces{(d_1, d_2) \in \reals^2 : 0 \leq d_2 \leq d_1}.
+\end{equation*}
+%
+We can then conclude that the two vectors $w^1 = (1,1)$ and $w_2 = (1,0)$ are extreme rays of $P$. Moreover, $P$ has three extreme points: $x_1 = (0,2)$, $x_2 = (0,1)$, and $x_3 = (1,0)$.
+
+Figure \ref{p1c6:fig:resolution_example} illustrates what is stated in Theorem \ref{p1c6:thm:resolution_theorem}. For example,  a representation for the point $y = (2,2) \in P$ is given by
+%
+\begin{equation*}
+	y = \begin{bmatrix} 2 \\ 2
+		\end{bmatrix}= \begin{bmatrix} 0 \\ 1
+		\end{bmatrix} + \begin{bmatrix} 1 \\ 1
+		\end{bmatrix} + \begin{bmatrix} 1 \\ 0
+		\end{bmatrix}, 	
+\end{equation*}
+%
+that is, $y = x^2 + w^1 + w^2$. Notice, however, that $y$ could also be represented as 
+%
+\begin{equation*}
+	y = \begin{bmatrix} 2 \\ 2
+		\end{bmatrix}= \frac{1}{2}\begin{bmatrix} 0 \\ 1
+		\end{bmatrix} + \frac{1}{2}\begin{bmatrix} 1 \\ 0
+		\end{bmatrix} + \frac{3}{2}\begin{bmatrix} 1 \\ 1
+		\end{bmatrix}, 	
+\end{equation*}
+%
+with then $y = \frac{1}{2}x^2 + \frac{1}{2}x^3 + \frac{3}{2}w^1$. Notice that this imply that the representation of each point is not unique.
+
+\begin{figure}[h]
+	\includegraphics{part_1/chapter_7/figures/Figure1.pdf}
+	\caption{Example showing that every point of $P = \braces{x_1 - x_2 \geq -2; x_1 + x_2 \geq 1, x_1,x_2 \geq 0}$ can be represented as a convex combination of its extreme point and a linear combination of its extreme rays} \label{p1c7:fig:resolution_example}
+\end{figure}
 
 
 \subsection{Dantzig-Wolfe decomposition}
+
+We start with the Dantzig-Wolfe decomposition, which consists of an alternative approach for reducing memory requirements when solving large-scale linear programming problems. Then, we show how this can be expanded further with the notion of delayed variable generation to yield a truly decomposed problem.
 
 As before, let $P_k = \braces{x_k \geq 0 : D_kx_k = d}$, with $P_k \neq \emptyset$ for $k \in \braces{1,\dots,K}$. Then, the problem $P$ can be reformulated as:
 %
@@ -95,7 +159,7 @@ As before, let $P_k = \braces{x_k \geq 0 : D_kx_k = d}$, with $P_k \neq \emptyse
 %
 Notice that $P$ has a complicating constraint structure, due to the constraints $\sum_{k=1}^K A_k x_k = b$. In order to devise a decomposition method for this setting, let us first assume that we have available for each of the sets $P_k$, $k \in \braces{1,\dots,K}$, (i) all extreme points, represented by $x_k^j$, $\forall j \in J_k$; and (ii) all extreme rays $w_k^r$, $\forall r \in R_k$. As one might suspect, this is in principle a demanding assumption, but one that we will be able to drop later on.
 
-Using the Resolution theorem (Theorem \ref{p1c6:thm:resolution_theorem}), we know that any element of $P_k$ can be represented as 
+Using the Resolution theorem (Theorem \ref{p1c7:thm:resolution_theorem}), we know that any element of $P_k$ can be represented as 
 %
 \begin{equation} \label{p1c7:eq:resolution_representation}
 	x_k = \sum_{j \in J_k} \lambda_k^j x_k^j + \sum_{r \in R_k} \theta_k^r w_k^r, 	
@@ -267,15 +331,115 @@ We finalise showing that the Dantzig-Wolfe and column generation methods can pro
 \end{proof}
 
 
-
 \section{Benders decomposition}
 
+Benders decomposition is an alternative decomposition method, suitable for settings in which \emph{complicating variables} are present. Differently than the Dantzig-Wolfe decomposition, the method presumes from the get-go the employment of delayed constraint generation. 
 
-Benders decomposition is an alternative decomposition method, suitable for settings in which \emph{complicating variables} are present. Differently than the Dantzig-Wolfe decomposition, the method presume from the get-go the employment of delayed constraint generation. 
+Benders decomposition has made significant inroads into practical applications. Not only is it extensively used in problems related to multi-period decision-making under uncertainty, but it is also available in the commercial solver CPLEX to be used directly, only requiring the user to indicate (or annotate) which are the complicating variables. 
 
-Benders decomposition has made significant inroads into practical applications. Not only it is extensively used in problems related to multi-period decision making under uncertainty, but it is also available in the commercial solver CPLEX to be used directly, only requiring the user to indicate (or annotate) which are the complicating variables. 
 
-Once again, let the problem $P$ be defined as
+\subsection{Parametric optimisation problems} \label{section_731}
+
+Before we proceed, let us discuss the idea of having optimisation problems stated as functions of the input data. More specifically, let $P(b) = \braces{x \in \reals^n : Ax = b, x \geq 0}$ and let $S = \braces{b \in \reals^m : P(b) \neq \emptyset}$. Being so, we can restate the set $S$ as 
+%
+\begin{equation*}
+	S = \braces{Ax : x \ge 0}.
+\end{equation*}
+%
+That is, the set $S$ is formed by the conic combination of the columns of $A$ for which $x$ is nonnegative (or, in other words, that $P(b)$ is feasible). Also, notice that this is a convex set, as discussed in Section \ref{section_621}. For any $b \in S$, we can define the function
+%
+\begin{equation}
+	F(b) = \min_{x \in P(b)} \braces{c^\top x},	
+\end{equation}
+%
+which takes as an argument $b$ and returns the optimal value of the parametrised optimisation problem. Notice that evaluating $F$ requires that an optimisation problem is solved.
+
+Now, let us assume that the dual feasibility set $D = \braces{p \in reals^m : p^top A \le c}$ is not empty. That implies that $F(b)$ is finite for every $b \in S$ (since different $b$'s simply imply that different objective functions $p^\top b$ over $D$. Our main objective here is to understand the structure of the function $F: S \mapsto \reals$. 
+
+Let $b^* \in S$ be a particular $b$. Suppose that there exists a nondegenerate optimal BFS $x_B$ with basis $B$. Then, we have that $x_B = B^{-1}b^*$, $F(b^*) = c_B^\top x_B =  c_B^\top B^{-1}b^*$ and that all reduced costs are nonnegative. Now, if we change $b^*$ to $b$ such that the difference is sufficiently small, $B^{-1}b^*$ remains positive and, consequently, $x_B$ remains a basic feasible solution. Furthermore, since $b$ does not affect the reduced costs (recall that our optimality condition is given by $\overline{c} = c^\top - c_B ^\top B^{-1}A \ge 0$), they remain nonnegative. Notice that this is the same argument we used in Section \ref{section_613} when we discussed changes in the input data in the context of sensitivity analysis.
+
+The optimal value $F(b)$ associated with this new $b$ sufficiently close to $b^*$   
+%
+\begin{equation*}
+	F(b) - F(b^*)= c_B B^{-1}(b - b*) = p^\top (b - b*) 
+\end{equation*}
+%
+where $p = c_B B^{-1}$ is the optimal solution of the dual problem 
+%
+\begin{align*}
+	\maxi & p^\top b \\
+	\st   & p^\top A \le c.
+\end{align*}
+%
+This allows us to observe two important characteristics of $F$. First, in the vicinity of $b^*$, $F(b)$ is a linear function of $b$, Also, $p$ represents a \emph{gradient} of $F$. This, again, is an alternative view to the conclusions we drew earlier in Section \ref{section_613}, and, in a way, further strengthens the idea of the optimal dual variables $p$ representing marginal values regarding changes in the components of $b$.
+
+With the above, we can formalise an important result regarding the convexity of the function $F(b)$.
+
+\begin{theorem}[Convexity of $F(b)$]
+	The optimal value function $F(b)$ is convex in $b$ on the set $S$.
+\end{theorem}
+
+% TODO: Chp7: Include proof
+
+
+\subsection{Properties of the optimal value function $F(b)$} \label{section_732}
+
+Let us again consider the dual problem $D$
+%
+\begin{align*}
+	D: \maxi & p^\top b \\
+	\st   & p^\top A \le c,
+\end{align*}
+%
+which is again assumed to be feasible. For any $b$ in $S$, $F(b)$ is finite, and by strong duality (cf. Theorem \ref{p1c5:thm:strong_duality}), we have that $F(b) = p^\top b$. Now, because of our outstanding assumption that $A$ has $m$ linearly independent rows (and therefore, columns), Theorem \ref{p1c3:thm:exist_extreme_point} guarantees that $D$ has at least one extreme point.
+
+Let us suppose that we know all of the extreme points $p^1, \dots, p^K$ of $D$. As the optimal solution for $D$ must be an extreme point, we can redefine $F$ as
+%
+\begin{equation} \label{p1c7:eq:function_F}
+	F(b) = \max_{i = 1, \dots, K} (p^i)^\top b, \forall b \in S.
+\end{equation}
+%
+Specifically, $F$ is the maximum of a finite collection of linear functions, and thus piecewise linear and convex (this, in fact, is an alternative way to prove the convexity of $F$). Furthermore, within the region where $F(b)$ is linear, or, as we have seen before, the change in $b$ is such that the corresponding optimal basis $B$ of the primal does not change, $F(b) = (p^i)^\top b$ where $p^i$ is the corresponding dual cost.
+
+Finally, we must consider the lack of differentiability of $F$. Notice that certain values of $b$ will indicate the point at which the optimal basis $B$ changes, which implies a change in $p$. These ``junctions'' represent the points in which $D$ has multiple (i.e., not unique) solutions, which, as we have also seen, implies that the primal problem becomes degenerate.
+
+Let us assume that we change $b$ in a particular way, i.e., $b = b^* + \theta d$, where $\theta \in \reals$. We can then redefine $F$ by letting 
+%
+\begin{equation*}
+	f(\theta) = F(b^* + \theta d).
+\end{equation*}
+%
+From \eqref{p1c7:eq:function_F}, we obtain
+%
+\begin{equation*}
+	f(\theta) = \max_{i = 1, \dots, K} (p^i)^\top (b^* - \theta d), b^* + \theta d \in S
+\end{equation*}
+%
+which represents the optimal cost as a function of the scalar $\theta$. In fact, $f(\theta)$ represents a section of the function $F$ in the direction given by the vector $d$, which is thus also piecewise linear and convex (and can be plotted). Figure X illustrates the function $f$.
+
+To finalise, we return to one remaining issue associated with differentiability. Although $p$ can be seen as a gradient of $F(b)$ at $b$, we know that $F$ is not differentiable everywhere. To circumvent that, we require a generalisation of the the concept of gradients, which given by the notion of subgradients. 
+
+\begin{definition}
+	Let $F$ be a convex function on the convex set $S$. Let $b^* \in S$ The vector $p$ is a subgradient of of $F$ at $b^*$ if
+	\begin{equation}
+		F(b^*) + p^\top (b - b*) \le F(b), \forall b \in S.
+	\end{equation}
+\end{definition}
+
+The last result we need is to show that the optimal solution of the dual problem $p^*$ is in fact a subgradient of $F(b^*)$ at $b^*$.
+
+\begin{theorem}
+	Suppose that the linear programming problem $P = \mini_{x \in \reals^n}\braces{c^\top x : Ax = b, x \ge 0}$ is feasible and the optimal cost is finite. Then, a vector $p \in reals^m$ is an optimal solution to the dual problem if and only if it is a subgradient of the optimal value function $F$ at $b^*$.
+\end{theorem}
+
+% TODO: Chp7: add proof.
+
+Therefore, more generally, we can say that at the breakpoints, $F$ has multiple subgradients while everywhere else, the subgradients are unique and correspond to the gradients of $F$.
+
+
+\subsection{Benders decomposition}
+
+Let us now return to the Benders decomposition method. Once again, let the problem $P$ be defined as
 %
 \begin{align*}
 	(P) :\mini_{x,y} & c^\top x + \sum_{k=1}^K f_k^\top y_k \\
@@ -284,7 +448,7 @@ Once again, let the problem $P$ be defined as
 		  			 & x \geq 0, y_k \geq 0, \ k \in \braces{1,\dots, K}. 
 \end{align*}
 %
-Notice that this is equivalent to the problem $P'$ presented in Section \ref{section_71}, but with a notation modified to make it easier to track how the terms are separated in the process. Again, we can see that $P$ has a set of complicating variables $x$, which becomes obvious when we recast the problem as
+Notice that this is equivalent to the problem $P'$ presented in Section \ref{section_71}, but with a notation modified to make it easier to track how the terms are separated in the process. We can see that $P$ has a set of complicating variables $x$, which becomes obvious when we recast the problem as
 %
 \begin{center}
 	\begin{tabular}{cccccccccc}
@@ -306,7 +470,7 @@ This structure is sometimes referred to as block-angular, referring to the initi
 	& y_k \geq 0.
 \end{align*}
 %
-Notice that these subproblems $k \in \braces{1,\dots, K}$ can be solved in parallel and, in certain contexts, might even have analytical closed-form solutions. The part missing is the development of a coordination mechanism that would allow for iteratively update the solution $\overline{x}$ based on information emerging from the solution of the subproblems $k \in \braces{1,\dots, K}$.
+Notice that these subproblems $k \in \braces{1,\dots, K}$ can be solved in parallel and, in certain contexts, might even have analytical closed-form solutions. The part missing is the development of a coordination mechanism that would allow for iteratively updating the solution $\overline{x}$ based on information emerging from the solution of the subproblems $k \in \braces{1,\dots, K}$.
 
 To see how that can be achieved, let us reformulate $P$ as 
 %
@@ -322,22 +486,25 @@ where, for $k \in \braces{1,\dots, K}$,
 	z_k(x) = \mini_y \braces{f_k^\top y_k : D_ky_k = e_k - C_k x}.	
 \end{equation*}
 %
-Note that obtaining $z_k(x)$ requires solving $S_k$, which, in turn, depends on $x$. To get around this difficulty, we can rely on linear programming duality, combined, once again, with the resolution theorem (Theorem \ref{p1c6:thm:resolution_theorem}).
+Notice the resemblance between $z_k(x)$ and the optimal value function $F(b)$ introduced in Section \ref{section_731}. This is because the subproblems become parametric optimisation problems but as a function of $x$. That is, in this case, the subproblems are assumed to have $x = \overline{x}$ set as a parameter. Analogously, evaluating $z_k(x)$ requires solving the subproblem $S_k$, which, in turn, depends on $x$. 
 
-First, let us consider the dual formulation of the subproblems $k \in \braces{1,\dots, K}$, which is given by
+The Benders decomposition works by iteratively constructing the optimal value function. Instead of assuming that all dual extreme points are known, we will iteratively collect them, forming an approximation of the optimal value function $z_k(x)$ that becomes increasingly precise as we collect more of such extreme points. And, to find new dual extreme points, we can use our current approximation of the optimal value function $z_k(x)$ in $P_R$, which, once solved, returns us a new $\overline{x}$ to be used for finding a new dual extreme point. Notice that this procedure is akin to iteratively finding the segments that form the optimal value functions.
+
+To formalise the discussion above, let us first consider the dual formulation of the subproblems $k \in \braces{1,\dots, K}$, which is given by
 %
 \begin{align*}
 	(S^D_k) : z^D_k = \maxi \ & p_k^\top (e_k - C_k x) \\
 	\st   & p_k^\top D_k \leq f_k.	 
 \end{align*}
 %
-The main advantage of utilising the equivalent dual formulation is to ``move'' the original decision variable $x$ to the objective function, a trick that will present its benefits shortly. Next, let us denote the feasibility set of $S^D_k$ as 
+%The main advantage of utilising the equivalent dual formulation is to ``move'' the original decision variable $x$ to the objective function, a trick that will present its benefits shortly. 
+Next, let us denote the feasibility set of $S^D_k$ as 
 %
 \begin{equation}
 	P_k =\braces{p : p^\top D_k \leq f_k}, \forall k \in \braces{1,\dots,K}, 
 \end{equation}
 %
-and assume that each $P_k \neq \emptyset$ with at least one extreme point. Relying on the resolution theorem, we can define the sets of extreme points of $P_k$, given by $p_k^i$, $i \in I_k$, and extreme rays $w^r_k$, $r \in R_k$.
+and assume that each $P_k \neq \emptyset$ with at least one extreme point\footnote{We have discussed in Section \ref{section_732} why we can assume that $P_k$ has at least one extreme point}. Relying on the resolution theorem (Theorem \ref{p1c7:thm:resolution_theorem}), we know that $P_k$ can be represented by its extreme points $p_k^i$, $i \in I_k$ and extreme rays $w^r_k$, $r \in R_k$.
 
 As we assume that $P_k \neq \emptyset$, two cases can occur when we solve $S^D_k$, $k \in \braces{1,\dots, K}$. Either $S^D_k$ is unbounded, meaning that the relative primal subproblem is infeasible, or $S^D_k$ is bounded, meaning that $z^D_k < \infty$.
 
@@ -347,7 +514,7 @@ From the first case, we can use Theorem \ref{p1c6:thm:unb_polyhedra} to conclude
 	(w^r_k)^\top (e_k - C_k x) \leq 0, \ \forall r \in R_k. \label{p1c7:eq:feas_cut_all}	
 \end{equation}
 %
-Furthermore, we know that if $S^D_k$ has a solution, that must lie on a vertex of $P_k$. So, having the available the set of all extreme vertices $p_k^i$, $i \in I_k$, we have that if one can solve $S^D_k$, it can be equivalently represented as
+Furthermore, we know that if $S^D_k$ has a solution, that must lie on a vertex of $P_k$. So, having  available the set of all extreme vertices $p_k^i$, $i \in I_k$, we have that if one can solve $S^D_k$, it can be equivalently represented as
 %
 \begin{equation*}
 	(S^D_k) : z_k(x) = \max_{i \in I_k} (p^i_k)^\top (e_k - C_k x),
@@ -369,9 +536,9 @@ Combining \eqref{p1c7:eq:feas_cut_all}--\eqref{p1c7:eq:opt_cut_all2}, we can ref
 	      & x \geq 0. \nonumber
 \end{align}
 %
-Notice that, just like the reformulation used for the Dantzig-Wolfe method presented in Section \ref{section_72}, the formulation of $P_R$ is of little practical use, since it requires the complete enumeration of (a typically prohibitive) number of extreme points and rays and is likely to be computationally intractable due to the large number of associated constraints. To address this issue, we can employ delayed constraint generation and iteratively generate only the constraints we observe to be violated. 
+Notice that, just like the reformulation used for the Dantzig-Wolfe method presented in Section \ref{section_72}, the formulation of $P_R$ is of little practical use since it requires the complete enumeration of (a typically prohibitive) number of extreme points and rays and is likely to be computationally intractable due to the large number of associated constraints. To address this issue, we can employ delayed constraint generation and iteratively generate only the constraints we observe to be violated. Notice that this can be alternatively interpreted as the idea of iteratively generating the segments of the optimal value function $z_k(x)$.
 
-By doing so, at a given iteration $l$, we have at hand a \emph{relaxed main problem} $P_M^l$, which comprises only some of the extreme point and rays obtained until iteration $l$. The relaxed main problem can be stated as
+Following this idea, at a given iteration $l$, we have at hand a \emph{relaxed main problem} $P_M^l$, which comprises only some of the constraints associated with the dual extreme points and rays obtained until iteration $l$. The relaxed main problem can be stated as
 %
 \begin{align*}
 	(P^l_M) : z_{P_M}^l = \mini_x & c^\top x + \sum_{k=1}^K\theta_k \\
@@ -383,15 +550,28 @@ By doing so, at a given iteration $l$, we have at hand a \emph{relaxed main prob
 %
 where $I_k^l \subseteq I_k$ represent subsets of extreme points $p^i_k$ of $P_k$, and $R^l_k \subseteq R_k$ subsets of extreme rays $w^r_k$ of $P_k$.
 
-One can iteratively obtain these extreme points and rays from the subproblems $S_k$, $k \in \braces{1, \dots, K}$. To see that, let us fist define that, at iteration $l$, we solve the the main problem $P_M^l$ and obtain a solution
+We can iteratively obtain these extreme points and rays from the subproblems $S_k$, $k \in \braces{1, \dots, K}$. To see that, let us first define that, at iteration $l$, we solve the main problem $P_M^l$ and obtain a solution
 %
 \begin{equation*}
 	\argmin_{x, \theta} \braces{P_M^l} = (\overline{x}^l, \overline{\theta}^l_1, \dots \overline{\theta}^l_K). 
 \end{equation*}
 %
-We can then solve the subproblems $S_k^l$, $k \in \braces{1, \dots, K}$, for that fixed solution $\overline{x}^l$ and then observe if we can find additional constraints that were to be violated if they had been in the relaxed main problem in the first place. In other words, we can identify if the solution $\overline{x}^l$ allows for identifying additional extreme points $p^i_k$ or extreme rays $w^r_k$ of $P_k$ that were not yet included in $P_M^l$.
+We can then solve the subproblems $S_k^l$, $k \in \braces{1, \dots, K}$, for that fixed solution $\overline{x}^l$ and then observe if we can find additional constraints that were to be violated if they had been in the relaxed main problem in the first place. In other words, we can identify if the solution $\overline{x}^l$ allows for identifying additional extreme points $p^i_k$ or extreme rays $w^r_k$ of $P_k$ that were not yet included in $P_M^l$. 
 
-To identify those, first recall that the subproblem (in its primal form), is given by
+Another way to interpret this notion of violation is to again think of the optimal value function. When we solve $S_k^l$, for each $k \in \braces{1, \dots, K}$, we are obtaining a ``true``(as opposed to approximate) evaluation of the optimal value function $z_k(\overline{x}^l)$ which, when compared against the working approximation of $z_k$ (valued as $\theta_k$) in the main problem, provides a value that is greater than that of $\theta$, i.e.,
+%
+\begin{equation}
+	\theta_k < (p^i_k)^\top (e_k - C_k \overline{x}^l).
+\end{equation}
+%
+This implies that the approximation of the optimal value function has a segment missing at $\overline{x}^l$, which is precisely the one given by $(p^i_k)^\top (e_k - C_k x)$. 
+
+%Figure XXX illustrates how the optimal value function approximation is iteratively constructed.
+
+% TODO: Chp7 - add a picture
+
+
+To identify those violated constraints, first recall that the subproblem (in its primal form) is given by
 %
 \begin{align*}
 	(S_k^l): \mini \ & f^\top y \\
@@ -439,6 +619,7 @@ Also, every time one solves $P_M^l$, a dual (lower for minimisation) bound $LB^l
 %
 where $(\overline{x}^l, \braces{\overline{\theta}^{l}_k}_{k=1}^K) = \argmin_{x, \theta} \braces{P_M^l}$, $\overline{y}_k^l = \argmin_y \braces{S_k^l}$, and $z^{Dl}_{k}$ is the objective function value of the dual subproblem $S_k^D$ at iteration $l$. Notice that, differently from the lower bound $LB^l$, there are no guarantees that the upper bound $UB^l$ will decrease monotonically. Therefore, one must compare the bound obtained at a given iteration $l$ using the solution $(\overline{x}^l, \overline{y}_1^l,\dots, \overline{y}^l_K)$ against an incumbent (or best-so-far) bound $UB^{l-1}$.
 
+\vfill 
 
 \pagebreak	
 
