@@ -4,7 +4,7 @@ In Chapter \ref{chapter_3}, we discussed all the necessary theoretical aspects r
 
 \subsection{Calculating step sizes}
 
-One discussion that we purposely delayed was that of how to define the value of the step size $\theta$ to be taken in the feasible direction $d$. Let $c \in \reals^n$, $A$ be a $m \times n$ full-rank matrix, $b$ a nonnegative $m$-sized vector\footnote{notice that this can be assumed without loss of generality, by a trivial transformation that adds constants on both sides and, thus, does not change the constraint} and $J = \braces{1,\dots,n}$. Consider the linear programming problem $P$ in the standard form 
+One discussion that we purposely delayed was that of how to define the value of the step size $\theta$ to be taken in the feasible direction $d$. Let $c \in \reals^n$, $A$ be a $m \times n$ full-rank matrix, $b$ a nonnegative $m$-sized vector\footnote{Notice that this can be assumed without loss of generality, by multiplying both sides by a constant, which does not change the constraint.} and $J = \braces{1,\dots,n}$. Consider the linear programming problem $P$ in the standard form 
 %
 	\begin{equation*}
 		(P) : \mini\braces{c^\top x : Ax = b, x \geq 0}.
@@ -195,7 +195,7 @@ Another important aspect related to implementations of the simplex method is how
 
 \subsection{Pivot or variable selection}
 
-The rules utilised for making choices regarding entering and leaving variables are generally referred to as \emph{pivoting rules}. However, the term most commonly used to refer to the selection of nonbasic variables to enter the basis is \emph{(simplex) pricing rules}.
+The rules utilised for making choices regarding entering and leaving variables are generally referred to as \emph{pivoting rules}. However, the term most commonly used to refer to the selection of nonbasic variables to enter the basis is \emph{(simplex) pricing rules}. Recall that these are applied to choose between those variables that have favourable (negative, for minimisation) reduced costs.
 
 % TODO: Chp4: add a bit more about these methods. Separate Devex and Steepest edge and give more details on both.
 \begin{itemize}
@@ -426,7 +426,7 @@ The bold terms in the tableau represent the pivot elements at each iteration, i.
 
 \subsection{Generating initial feasible solutions (two-phase simplex)} 
 
-We now consider the issue of converting general linear programming problems into the standard form they are assumed to be for the simplex method. As we mentioned before, problems with constraints of the form $Ax \le b$ can be converted to standard form by simply adding nonnegative \emph{slack variables} $s \geq 0$. In addition, we can trivially obtain an initial basic feasible solution (BFS) with $(x,s) = (0,b)$, with $B = I$, as
+We now consider the issue of converting general linear programming problems into the standard form they are assumed to be for the simplex method. As we mentioned before, problems with constraints of the form $Ax \le b$ can be converted to standard form by simply adding nonnegative \emph{slack variables} $s \geq 0$ (recall that $b \ge 0$ can be assumed without loss of generality). In addition, we can trivially obtain an initial basic feasible solution (BFS) with $(x,s) = (0,b)$, with $B = I$, as
 %
 \begin{equation*}
 		Ax \leq b \Rightarrow Ax + s = b.
@@ -435,10 +435,10 @@ We now consider the issue of converting general linear programming problems into
 Notice that this is equivalent to assuming all original problem variables (i.e., those that are not slack variables) to be initialised as zero (i.e., nonbasic) since this is a trivially available initial feasible solution. However, this method does not work for constraints of the form $Ax \ge b$, as in this case, the transformation would take the form 
 %
 \begin{equation*}
-	Ax \geq b \Rightarrow Ax - s = b \Rightarrow Ax - s + y = b.	
+	Ax \geq b \Rightarrow Ax - s = b \Rightarrow Ax - s = b.	
 \end{equation*}
 %
-Notice that making the respective slack variable basic would yield an initial value of $-b$ (recall that $b \ge 0$ can be assumed without loss of generality), making the basic solution not feasible.
+Notice that making the respective slack variable basic would yield an initial value of $-b$, making the basic solution not feasible.
 
 For more general problems, however, this might not be possible since simply setting the original problem variables to zero might not yield a feasible solution that can be used as a BFS. To circumvent that, we rely on \emph{artificial variables} to obtain a BFS.
 
