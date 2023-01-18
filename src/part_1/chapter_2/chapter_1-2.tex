@@ -220,7 +220,7 @@ which represents exactly the intersection of the half-spaces $a_i^\top x \geq b_
 			\node (a5x=b5) at (1.3,-2) {$a_5^\top x =b_5$};
 			\end{tikzpicture}
 			\vspace{1pt}
-		\caption{A hyperplane and its respective halfspaces (left) and the polyhedral set $\braces{x\in \reals^{2} : a_i^x \leq b_i, i =1,\dots, 5}$ (right).} \label{p1c2:fig:hyperplanes_and_polyhedral_set}		
+		\caption{A hyperplane and its respective halfspaces (left) and the polyhedral set $\braces{x\in \reals^{2} : a_i^x \geq b_i, i =1,\dots, 5}$ (right).} \label{p1c2:fig:hyperplanes_and_polyhedral_set}		
 	\end{figure}
 
 You might find authors referring to bounded polyhedral sets as polytopes. However, this is not used consistently across references, sometimes with switched meanings (for example, using polytope to refer to a set defined as in Definition \ref{p1c2:def:polyhedral_sets} and using polyhedron to refer to a bounded version of $S$). In this text, we will only use the term polyhedral set to refer to sets defined as in Definition \ref{p1c2:def:polyhedral_sets} and use the term bounded whenever applicable.
@@ -345,7 +345,20 @@ Figure \ref{p1c2:fig:convexity_theorem_examples} illustrates some of the stateme
 	\caption{Illustration of statement 1 (left), 2 (centre), and 3 and 4 (right)} \label{p1c2:fig:convexity_theorem_examples}
 \end{figure}	
 
-We will halt our discussion about convexity for now and return to it in deeper detail in Part 2. As it will become clearer then, the presence of convexity (which is a given in the context of linear programming, as we have just seen) is what allows us to conclude that the solutions returned by our optimisation algorithms are indeed optimal for the problem at hand. 
+We will halt our discussion about convexity for now and return to it in deeper detail in Part 2. We finish by showing a simple yet very powerful result, which states that the presence of convexity is what allows us to conclude that a locally optimal solution returned by an optimisation algorithm applied to a linear programming problem is indeed optimal for the problem at hand. It so turns out that, in the context of linear programming, convexity is a given since linear functions are convex by definition and the feasibility set of linear programming is also convex (as we have just shown in \ref{p1c2:thm:convexity}).
+
+\begin{theorem}[Global optimality for convex problems]
+ Let $f: \reals^n \to \reals$ be a convex function, that is, $f(\lambda x_1 + (1-\lambda)x_2) \le \lambda f(x_1) + (1-\lambda)f(x_2), \ \lambda \in [0,1]$, and let $S \subset \reals^n$ be a convex set. Let $\textbf{x}^{*}$ be an element of $S$. Suppose that $\textbf{x}^{*}$ is a local optimum for the problem of minimising $f(\textbf{x})$ over $S$. That is, there exists some $\epsilon > 0$ such that $f(\textbf{x}^{*}) \leq f(\textbf{x})$ for all $\textbf{x} \in S$ for which $\|\textbf{x} - \textbf{x}^{*}\| \leq \epsilon$. Then, $\textbf{x}^{*}$ is globally optimal, meaning that $f(\textbf{x}^{*}) \leq f(\textbf{x})$ for all $\textbf{x} \in S$. 
+\end{theorem}
+
+\begin{proof}
+	Suppose, in order to derive a contradiction that $f(x) < f(x^*)$ for some $x \in S$. Using Definition \ref{p1c2:def:convex_set}, we have that
+	$$f(\lambda x + (1-\lambda) x^*) \le \lambda f(x) + (1-\lambda) f(x^*) < \lambda f(x^*) + (1-\lambda) f(x^*) = f(x^*), \ \forall \lambda \in [0,1].$$
+	
+	We see that the strict inequality $f(\lambda x + (1-\lambda) x^*) < f(x^*)$ holds for any point $\lambda x + (1-\lambda) x^*$, including those with $\| \lambda x + (1-\lambda) x^* - x^* \| \le \epsilon$. Our assumption thus contradicts the local optimality of $x^*$, and this proves that $f(x) \ge f(x^*)$ for all $x \in S$.
+\end{proof}
+
+
 
 
 \section{Extreme points, vertices, and basic feasible solutions}
@@ -420,7 +433,7 @@ Definition \ref{p1c2:fig:active_constraint} formalises the notion of active cons
 Theorem \ref{p1c2:thm:active_const} sows a thread between having a collection of active constraints forming a vertex and being able to describe it as a basis of a subspace that is formed by the vectors $a_i$ that form these constraints. This link is what will allow us to characterise vertices by their forming active constraints.
 
 \begin{theorem}[Properties of active constraints]\label{p1c2:thm:active_const}
-	Let $\overline{x} \in \reals^n$ and $I = \braces{ i \in M_1 \cup M_2 \cup M_3 \mid a_i^\top \overline{x} = b_i}$. Then, the following are equivalent:
+	Let $\overline{x} \in \reals^n$ and $I = \braces{ i \in M_1 \cup M_2 \cup M_3 : a_i^\top \overline{x} = b_i}$. Then, the following are equivalent:
 	\begin{enumerate}
 		\item There exists $n$ vectors in $\braces{a_i}_{i \in I}$ that are linearly independent.  
 		\item The $\spans(\braces{a_i}_{i \in I})$ spans $\reals^n$. That is, every $x \in \reals^n$ can be expressed as a linear combination of $\braces{a_i}_{i \in I}$.
@@ -443,8 +456,9 @@ Notice that Theorem \ref{p1c2:thm:active_const} implies that there are (at least
 	\begin{enumerate}
 		\item $\overline{x}$ is a \emph{basic solution} if 
 		\begin{enumerate}
-			\item All equality constraints are active and,
-			\item Out of the constraints active at $\overline{x}$, $n$ of them are linearly independent.
+			\item All equality constraints are active,
+			\item Out of the constraints active at $\overline{x}$, $n$ of them are linearly independent, and
+			\item $\overline{x}$ is the unique solution of the linear system formed by $n$ linearly-independent active constraints.
 		\end{enumerate}
 		\item if $\overline{x}$  is a basic solution satisfying all constraints, we say $\overline{x}$ is a basic feasible solution. 
 	\end{enumerate}
