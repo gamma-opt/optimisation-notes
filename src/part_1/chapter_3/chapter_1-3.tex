@@ -42,10 +42,10 @@ It is a requirement for standard-form linear programs to have all variables to b
 
 These transformations, as we will see, will be required for employing the simplex method to solve linear programming problems with inequality constraints and, inevitably, will always render standard form linear programming problems with more variables than constraints, or $m < n$.
 
-The standard-form polyhedral set $P$ always has, by definition, $m$ active constraints because of its equality constraints. To reach the total of $n$ active constraints, $n-m$ of the remaining constraints $x_i \ge 0$, $i =1,\dots, n$, must be activated, and this is achieved by selecting $n-m$ of those to be set as $x_i = 0$. These $n$ active constraints (the original $m$ plus the $n-m$ variables set to zero) form a basic solution, as we seen in the last chapter. If it happens that the $m$ equalities can still be satisfied while the constraints $x_i \ge 0$, $i =1,\dots, n$, are satisfied, then we have a basic feasible solution (BFS). Theorem \ref{p1c3:thm:LI_and_bases} summarises this process, guaranteeing that the setting of $n-m$ variables to zero will render a basic solution.
+The standard-form polyhedral set $P$ always has, by definition, $m$ active constraints because of its equality constraints. To reach the total of $n$ active constraints, $n-m$ of the remaining constraints $x_i \ge 0$, $i =1,\dots, n$, must be made active, which can be done by selecting $n-m$ of those to be set as $x_i = 0$. These $n$ active constraints (the original $m$ plus the $n-m$ variables set to zero) form a basic solution, as we have seen in the last chapter. If it happens that the $m$ equalities can hold while the constraints $x_i \ge 0$, $i =1,\dots, n$, are satisfied, then we have a basic feasible solution (BFS). Theorem \ref{p1c3:thm:LI_and_bases} summarises this process, guaranteeing that the setting of $n-m$ variables to zero will render a basic solution.
 
 \begin{theorem}[Linear independence and basic solutions] \label{p1c3:thm:LI_and_bases}
-	Consider the constraints $Ax = b$ and $x \geq 0$, and assume that $A$ has $m$ linearly independent (LI) rows $M = \braces{1,\dots,m}$. A vector $\overline{x} \in \reals^n$ is a basic solution if and only if we have that $A \overline{x} = b$ and there exists indices $B(1), \dots, B(m)$ such that
+	Consider the constraints $Ax = b$ and $x \geq 0$, and assume that $A$ has $m$ linearly independent (LI) rows $I = \braces{1,\dots,m}$. A vector $\overline{x} \in \reals^n$ is a basic solution if and only if we have that $A \overline{x} = b$ and there exists indices $B(1), \dots, B(m)$ such that
 	\begin{enumerate}
 		\item[(1)] The columns $A_{B(1)}, \dots, A_{B(m)}$ of $A$ are LI
 		\item[(2)] If $j \neq B(1), \dots, B(m)$, then $\overline{x}_j = 0$.
@@ -59,7 +59,7 @@ The standard-form polyhedral set $P$ always has, by definition, $m$ active const
 		\sum_{i=1}^m A_{B(i)}\overline{x}_{B(i)} = \sum_{j=1}^n A_j\overline{x}_j = A\overline{x} = b.
 	\end{equation*}
 %
-	Since the columns $\braces{A_{B(i)}}_{i \in M}$ are LI, $\braces{\overline{x}_{B(i)}}_{i \in M}$ are uniquely determined and thus $A\overline{x} = b$ has a unique solution, implying that $\overline{x}$ is a basic solution (cf. Theorem \ref{p1c2:thm:BFS_vertex_extreme_point}).
+	Since the columns $\braces{A_{B(i)}}_{i \in I}$ are LI, $\braces{\overline{x}_{B(i)}}_{i \in I}$ are uniquely determined and thus $A\overline{x} = b$ has a unique solution, implying that $\overline{x}$ is a basic solution (cf. Theorem \ref{p1c2:thm:BFS_vertex_extreme_point}).
 	
 	Conversely, assume that $\overline{x}$ is a basic solution. Let $\overline{x}_{B(1)}, \dots, \overline{x}_{B(k)}$ be the nonzero components of $\overline{x}$. Thus, the system 
 %	
@@ -189,7 +189,7 @@ Notice that the process of moving between adjacent basis has a simple geometrica
 An important underlying assumption in Theorem \ref{p1c3:thm:LI_and_bases} is that the matrix $A$ in the definition of the polyhedral set $P$ is full (row) rank, that is, there are $m$ linearly independent rows and thus $m$ independent columns. Theorem \ref{p1c3:thm:red_const} shows that this assumption can actually be made without loss of generality. 
  
 \begin{theorem}[Redundant constraints]\label{p1c3:thm:red_const}
-	Let $P = \braces{x \in \reals^n \mid Ax = b, x \geq 0}$, where $A$ is $m \times n$ matrix with rows $\braces{a_i}_{i \in M}$ and $M = \braces{1,\dots,m}$. Suppose that $\rank(A) = k < m$ and that the rows $a_{i_1}, \dots, a_{i_k}$ are LI. Then $P$ is the same set as $Q = \braces{ x \in \reals^n : a^\top_{i_1}x = b_{i_1}, \dots, a^\top_{i_k}x = b_{i_k}, x \geq 0}$.
+	Let $P = \braces{x \in \reals^n \mid Ax = b, x \geq 0}$, where $A$ is $m \times n$ matrix with rows $\braces{a_i}_{i \in M}$ and $I = \braces{1,\dots,m}$. Suppose that $\rank(A) = k < m$ and that the rows $a_{i_1}, \dots, a_{i_k}$ are LI. Then $P$ is the same set as $Q = \braces{ x \in \reals^n : a^\top_{i_1}x = b_{i_1}, \dots, a^\top_{i_k}x = b_{i_k}, x \geq 0}$.
 \end{theorem}
 
 \begin{proof}
@@ -488,7 +488,6 @@ which gives $d^3 = (-3/2, 1/2, 1, 0)$. Analogously, for $x_4$, we have
     \end{bmatrix}.
 \end{equation*}
 
-
 The (reduced) cost of moving along the direction given by $d^3$ is 
 %
 \begin{equation*}
@@ -544,7 +543,7 @@ We have that $x_j = 0$ and $y_j \geq 0$	for $j \in I_N$. Thus, $d_j \geq 0$ and 
 To prove (2) by contradiction, assume that $x$ is optimal with $\overline{c}_j < 0$ for some $j \in I_N$. Thus, we could improve on $x$ moving along this $j^\text{th}$ direction $d$, contradicting the optimality of $x$.
 \end{proof}
 
-A couple of remarks are worth making at this point. First, notice that, in the presence of degeneracy, it might be that $x$ is optimal with $\overline{c}_j < 0$ for some $j \in I_N$. Luckily, the simplex method manages to get around this issue in an effective manner, as we will see in the next chapter. Another point to notice is that, if $\overline{c}_j > 0$, $\forall j \in I_N$, then $x$ is a \emph{unique optimal}. Analogously, if $\overline{c} \geq 0$ with $c_j =0$ for some $j \in I_N$, then it means that moving in that direction will cause no change in the objective function value, implying that both BFS are ``equally optimal'' and that the problem has multiple optimal solutions. 
+A couple of remarks are worth making at this point. First, notice that, in the presence of degeneracy, it might be that $x$ is optimal with $\overline{c}_j < 0$ for some $j \in I_N$. This is mostly caused by problems with multiple optima (i.e., the set of optimal solutions not being empty nor a singleton). Luckily, the simplex method manages to get around this issue in an effective manner, as we will see in the next chapter. Another point to notice is that, if $\overline{c}_j > 0$, $\forall j \in I_N$, then $x$ is a \emph{unique optimal}. Analogously, if $\overline{c} \geq 0$ with $c_j =0$ for some $j \in I_N$, then it means that moving in that direction will cause no change in the objective function value, implying that both BFS are ``equally optimal'' and that the problem has multiple optimal solutions. 
 
 \vfill
 \pagebreak
