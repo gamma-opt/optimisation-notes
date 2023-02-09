@@ -8,5 +8,4 @@
 *ipynb_checkpoints
 optimisation_notes.pdf
 src/optimisation-notes.pdf
-*.DS_Store
-*.texpadtmp
+.textpadtmp

@@ -322,7 +322,7 @@ Some interesting properties can be immediately concluded regarding polyhedral co
 Notice that $0 \in C$ is the unique extreme point of the polyhedral cone $C$. To see that, let $0 \neq x \in C$, $x_1 = (1/2) x$ and $x_2 = (3/2)x$. Note that $x_1, x_2 \in C$, and $x \neq x_1 \neq x_2$. Setting $\lambda_1 = \lambda_2 = 1/2$, we have that $\lambda_1x_1  + \lambda_2x_2 = x$ and thus, $x$ is not an extreme point (cf. Definition \ref{p1c2:def:extreme_point}). 
 
 
-\subsection{Recession cones and extreme rays}
+\subsection{Recession cones and extreme rays} \label{section_621}
 
 We now focus on a specific type of cone, called \emph{recession cones}. In the context of linear optimisation, recession cones are useful for identifying directions of unboundedness. Let us first formally define the concept.
 
@@ -451,7 +451,7 @@ We now pose this relationship more formally via a result generally known as the 
 
 The Farkas' lemma has a nice geometrical interpretation that represents the mutually exclusive relationship between the two sets. For that, notice that we can think of $b$ as being a conic combination of the columns $A_j$ of $A$, for some $x \ge 0$. If that cannot be the case, then there exists a hyperplane that separates $b$ and the cone formed by the columns of $A$, $C=\braces{y \in \reals^m : y = Ax}$. This is illustrated in Figure \ref{p1c6:fig:farkas}. Notice that the separation caused by such a hyperplane with normal vector $p$ implies that $p^\top Ax \geq 0$ and $p^\top b < 0$, i.e., $Ax$ and $b$ are on the opposite sides of the hyperplane. 
 
-\begin{figure}[h]
+\begin{figure}[H]
 	\begin{tikzpicture}
 		\node (pic) at (0,0) {\includegraphics{part_1/chapter_6/figures/Figure4.pdf}};
 		\node (A1) at (-1,0.6) {$A_1$};
@@ -464,65 +464,7 @@ The Farkas' lemma has a nice geometrical interpretation that represents the mutu
 \end{figure}
 
 
-\section{Resolution theorem*}
 
-Lastly, we present a result that will be the foundation for our discussion in the next chapter. Specifically, we will see how we can use a presentation of the polyhedral set $P$ purely based on extreme points and extreme rays to devise solution strategies that can be more efficient for large-scale linear programming problems. 
-
-For now, let us concentrate on this alternative representation. Basically, polyhedral sets in standard form can be represented in two manners: either by (i) a finite set of linear constraints; or (ii) by combinations of its extreme points and extreme rays.
-
-Clearly, the first representation is far more practical than the second. That is, the second representation is an \emph{explicit} representation that would require knowing beforehand each extreme point and extreme ray forming the polyhedral set. Notice that the first representation, which we have relied on so far, has extreme points and extreme rays only implicitly represented. However, we will see that this explicit representation has an important application in the devising of alternative solution methods for large-scale linear programming problems. This fundamental result is stated in Theorem \ref{p1c6:thm:resolution_theorem}. 
-
-\begin{theorem}[Resolution theorem]\label{p1c6:thm:resolution_theorem}
-	Let $P = \braces{x \in \reals^n : Ax \geq b}$ be a nonempty polyhedral set with at least one extreme point. Let $\braces{x_i}_{i=1}^k$ be the set with all extreme points, and $\braces{w}_{j=1}^r$ be the set of all extreme rays of $P$. Then $P = Q$, where 
-	\begin{equation*}
-		Q = \braces{\sum_{i=1}^k \lambda_i x^i + \sum_{j=1}^r \theta_jw^j : \lambda_i \geq 0, \ \theta_j \geq 0, \ \sum_{i=1}^k \lambda_i =1}.
-	\end{equation*}
-\end{theorem}
-
-%TODO: Chp6: Include proof for the resolution theorem
-
-Theorem \ref{p1c6:thm:resolution_theorem} has an important consequence, as it states that bounded polyhedra, i.e., polyhedral sets that have no extreme rays, can be represented by the convex hull of its extreme points. For now, let us look at an example that illustrates the concept.
-
-Consider the polyhedral set $P$ given by
-%
-\begin{equation*}
-	P = \braces{x_1 - x_2 \geq -2; x_1 + x_2 \geq 1, x_1,x_2 \geq 0}.
-\end{equation*}
-%
-The recession cone $C = {\bf recc}(P)$ is described by $d_1 - d_2 \geq 0$, $d_1 + d_2 \geq 0$ (from $Ad =0$), and $d_1, d_2 \geq 0$, which can be simplified as 
-%
-\begin{equation*}
-	C = \braces{(d_1, d_2) \in \reals^2 : 0 \leq d_2 \leq d_1}.
-\end{equation*}
-%
-We can then conclude that the two vectors $w^1 = (1,1)$ and $w_2 = (1,0)$ are extreme rays of $P$. Moreover, $P$ has three extreme points: $x_1 = (0,2)$, $x_2 = (0,1)$, and $x_3 = (1,0)$.
-
-Figure \ref{p1c6:fig:resolution_example} illustrates what is stated in Theorem \ref{p1c6:thm:resolution_theorem}. For example,  a representation for the point $y = (2,2) \in P$ is given by
-%
-\begin{equation*}
-	y = \begin{bmatrix} 2 \\ 2
-		\end{bmatrix}= \begin{bmatrix} 0 \\ 1
-		\end{bmatrix} + \begin{bmatrix} 1 \\ 1
-		\end{bmatrix} + \begin{bmatrix} 1 \\ 0
-		\end{bmatrix}, 	
-\end{equation*}
-%
-that is, $y = x^2 + w^1 + w^2$. Notice however, that $y$ could also be represented as 
-%
-\begin{equation*}
-	y = \begin{bmatrix} 2 \\ 2
-		\end{bmatrix}= \frac{1}{2}\begin{bmatrix} 0 \\ 1
-		\end{bmatrix} + \frac{1}{2}\begin{bmatrix} 1 \\ 0
-		\end{bmatrix} + \frac{3}{2}\begin{bmatrix} 1 \\ 1
-		\end{bmatrix}, 	
-\end{equation*}
-%
-with then $y = \frac{1}{2}x^2 + \frac{1}{2}x^3 + \frac{3}{2}w^1$. Notice that this imply that the representation of each point is not unique.
-
-\begin{figure}[h]
-	\includegraphics{part_1/chapter_6/figures/Figure5.pdf}
-	\caption{Example showing that every point of $P = \braces{x_1 - x_2 \geq -2; x_1 + x_2 \geq 1, x_1,x_2 \geq 0}$ can be represented as a convex combination of its extreme point and a linear combination of its extreme rays} \label{p1c6:fig:resolution_example}
-\end{figure}
 
 \pagebreak	
 
