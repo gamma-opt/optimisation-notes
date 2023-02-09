@@ -82,7 +82,7 @@ The development of professional-grade code employing decomposition methods is a 
 
 Before we move forward, we need to discuss some technical results that will be useful for describing the Dantzig-Wolfe and Benders decomposition methods. Those are results mostly based on the notion of linear duality from Chapters \ref{chapter_5} and \ref{chapter_6}.
 
-\subsection{Resolution theorem*}
+\subsection{Resolution theorem}
 
 %Lastly, we present a result that will be the foundation for our discussion in the next chapter. Specifically, we will see how we can use a presentation of the polyhedral set $P$ purely based on extreme points and extreme rays to devise solution strategies that can be more efficient for large-scale linear programming problems. 
 
@@ -340,7 +340,13 @@ Benders decomposition has made significant inroads into practical applications. 
 
 \subsection{Parametric optimisation problems} \label{section_731}
 
-Before we proceed, let us discuss the idea of having optimisation problems stated as functions of the input data. More specifically, let $P(b) = \braces{x \in \reals^n : Ax = b, x \geq 0}$ and let $S = \braces{b \in \reals^m : P(b) \neq \emptyset}$. Being so, we can restate the set $S$ as 
+Before we proceed, let us develop the idea of having optimisation problems stated as functions of the input data. Specifically, let 
+%
+\begin{equation*}
+	P(b) = \braces{x \in \reals^n : Ax = b, x \geq 0}
+\end{equation*}
+%
+be defined as a function of the input vector $b \in \reals^m$. That is, $P(b)$ is the set of feasible solutions when the right-hand side is set to $b$. Then, let $S = \braces{b \in \reals^m : P(b) \neq \emptyset}$ be the set of all vectors $b$ for which $P$ has at least one feasible solution. Being so, we can restate the set $S$ as 
 %
 \begin{equation*}
 	S = \braces{Ax : x \ge 0}.
@@ -349,19 +355,27 @@ Before we proceed, let us discuss the idea of having optimisation problems state
 That is, the set $S$ is formed by the conic combination of the columns of $A$ for which $x$ is nonnegative (or, in other words, that $P(b)$ is feasible). Also, notice that this is a convex set, as discussed in Section \ref{section_621}. For any $b \in S$, we can define the function
 %
 \begin{equation}
-	F(b) = \min_{x \in P(b)} \braces{c^\top x},	
+	F(b) = \min_x \braces{c^\top x : x  \in P(b)},	
 \end{equation}
 %
 which takes as an argument $b$ and returns the optimal value of the parametrised optimisation problem. Notice that evaluating $F$ requires that an optimisation problem is solved.
 
-Now, let us assume that the dual feasibility set $D = \braces{p \in reals^m : p^top A \le c}$ is not empty. That implies that $F(b)$ is finite for every $b \in S$ (since different $b$'s simply imply that different objective functions $p^\top b$ over $D$. Our main objective here is to understand the structure of the function $F: S \mapsto \reals$. 
-
-Let $b^* \in S$ be a particular $b$. Suppose that there exists a nondegenerate optimal BFS $x_B$ with basis $B$. Then, we have that $x_B = B^{-1}b^*$, $F(b^*) = c_B^\top x_B =  c_B^\top B^{-1}b^*$ and that all reduced costs are nonnegative. Now, if we change $b^*$ to $b$ such that the difference is sufficiently small, $B^{-1}b^*$ remains positive and, consequently, $x_B$ remains a basic feasible solution. Furthermore, since $b$ does not affect the reduced costs (recall that our optimality condition is given by $\overline{c} = c^\top - c_B ^\top B^{-1}A \ge 0$), they remain nonnegative. Notice that this is the same argument we used in Section \ref{section_613} when we discussed changes in the input data in the context of sensitivity analysis.
-
-The optimal value $F(b)$ associated with this new $b$ sufficiently close to $b^*$   
+Now, let us assume that the dual feasibility set 
 %
 \begin{equation*}
-	F(b) - F(b^*)= c_B B^{-1}(b - b*) = p^\top (b - b*) 
+	S_D = \braces{p \in \reals^m : p^\top A \le c}	
+\end{equation*}
+% 
+is not empty. That implies that $F(b)$ is finite for every $b \in S$ since different $b$'s simply imply that different objective functions $p^\top b$ over $S_D$ are considered. Our main objective here is to understand the structure of the function $F: S \mapsto \reals$. 
+
+Let $\overline{b} \in S$ be a particular $b$. Suppose that there exists a nondegenerate optimal BFS $x_B$ with basis $B$. Then, we have that $x_B = B^{-1}\overline{b}$, $F(\overline{b}) = c_B^\top x_B =  c_B^\top B^{-1}\overline{b}$ and that all reduced costs are nonnegative. 
+
+Now, if we change $\overline{b}$ to $b$ such that the difference is sufficiently small, $B^{-1}\overline{b}$ remains positive and, consequently, $x_B$ remains a basic feasible solution. Furthermore, since $b$ does not affect the reduced costs (recall that our optimality condition is given by $\overline{c} = c^\top - c_B ^\top B^{-1}A \ge 0$), they remain nonnegative. Notice that this is the same argument we used in Section \ref{section_613} when we discussed changes in the input data in the context of sensitivity analysis.
+
+The optimal value $F(b)$ associated with this new $b$ sufficiently close to $\overline{b}$   
+%
+\begin{equation*}
+	F(b) - F(\overline{b})= c_B B^{-1}(b - \overline{b}) = p^\top (b - \overline{b}) 
 \end{equation*}
 %
 where $p = c_B B^{-1}$ is the optimal solution of the dual problem 
@@ -371,7 +385,7 @@ where $p = c_B B^{-1}$ is the optimal solution of the dual problem
 	\st   & p^\top A \le c.
 \end{align*}
 %
-This allows us to observe two important characteristics of $F$. First, in the vicinity of $b^*$, $F(b)$ is a linear function of $b$, Also, $p$ represents a \emph{gradient} of $F$. This, again, is an alternative view to the conclusions we drew earlier in Section \ref{section_613}, and, in a way, further strengthens the idea of the optimal dual variables $p$ representing marginal values regarding changes in the components of $b$.
+This allows us to observe two important characteristics of $F$. First, in the vicinity of $\overline{b}$, $F(b)$ is a linear function of $b$, Also, $p$ represents a \emph{gradient} of $F$. This, again, is an alternative view to the conclusions we drew earlier in Section \ref{section_613}, and, in a way, further strengthens the idea of the optimal dual variables $p$ representing marginal values regarding changes in the components of $b$.
 
 With the above, we can formalise an important result regarding the convexity of the function $F(b)$.
 
@@ -379,7 +393,16 @@ With the above, we can formalise an important result regarding the convexity of 
 	The optimal value function $F(b)$ is convex in $b$ on the set $S$.
 \end{theorem}
 
-% TODO: Chp7: Include proof
+\begin{proof}
+
+	Let $b^i \in S$ and $x^i$ be their associated optimal solution, for $i = 1,2$. Thus, $F(b^i) = c^\top x^i$, for $i=1,2$. Let $\lambda \in [0,1]$. The vector $\overline{x} = \lambda x^1 + (1-\lambda)x^2$ is nonnegative, and $A\overline{x} = \lambda b^1 + (1-\lambda)b^2$. Thus, $\overline{x}$ is a feasible solution when $b$ is set to $\lambda b^1 + (1-\lambda)b^2$. Therefore,
+	%
+	\begin{equation*}
+		F(\lambda b^1 + (1-\lambda)b^2) \le c^\top \overline{x}	= \lambda c^\top x^1 + (1-\lambda) c^\top x^2 = \lambda F(b^1) + (1-\lambda) F(b^2),
+	\end{equation*}
+	%
+	which is the definition of a convex function. The first inequality is valid because $\overline{x}$ is a feasible solution for when $b$ is set to $\lambda b^1 + (1-\lambda)b^2$.
+\end{proof}
 
 
 \subsection{Properties of the optimal value function $F(b)$} \label{section_732}
@@ -391,48 +414,103 @@ Let us again consider the dual problem $D$
 	\st   & p^\top A \le c,
 \end{align*}
 %
-which is again assumed to be feasible. For any $b$ in $S$, $F(b)$ is finite, and by strong duality (cf. Theorem \ref{p1c5:thm:strong_duality}), we have that $F(b) = p^\top b$. Now, because of our outstanding assumption that $A$ has $m$ linearly independent rows (and therefore, columns), Theorem \ref{p1c3:thm:exist_extreme_point} guarantees that $D$ has at least one extreme point.
+which is again assumed to be feasible. For any $b$ in $S$, $F(b)$ is finite, and by strong duality (cf. Theorem \ref{p1c5:thm:strong_duality}), we have that $F(b) = p^\top b$. Because of our outstanding assumption that $A$ has $m$ linearly independent rows (and therefore, $m$ linearly independent columns), Theorem \ref{p1c3:thm:exist_extreme_point} guarantees that the feasible region of $D$ has at least one extreme point.
 
-Let us suppose that we know all of the extreme points $p^1, \dots, p^K$ of $D$. As the optimal solution for $D$ must be an extreme point, we can redefine $F$ as
+Let us suppose that we know all the extreme points $p^1, \dots, p^K$ of $D$. As the optimal solution for $D$ must be an extreme point, we can redefine $F$ as
 %
 \begin{equation} \label{p1c7:eq:function_F}
 	F(b) = \max_{i = 1, \dots, K} (p^i)^\top b, \forall b \in S.
 \end{equation}
 %
-Specifically, $F$ is the maximum of a finite collection of linear functions, and thus piecewise linear and convex (this, in fact, is an alternative way to prove the convexity of $F$). Furthermore, within the region where $F(b)$ is linear, or, as we have seen before, the change in $b$ is such that the corresponding optimal basis $B$ of the primal does not change, $F(b) = (p^i)^\top b$ where $p^i$ is the corresponding dual cost.
+Specifically, $F$ is the maximum of a finite collection of linear functions, and thus, piecewise linear. Furthermore, within the region where $F(b)$ is linear, or, as we have seen before, the change in $b$ is such that the corresponding optimal basis $B$ of the primal does not change, $F(b) = (p^i)^\top b$ where $p^i$ is the corresponding dual cost.
 
-Finally, we must consider the lack of differentiability of $F$. Notice that certain values of $b$ will indicate the point at which the optimal basis $B$ changes, which implies a change in $p$. These ``junctions'' represent the points in which $D$ has multiple (i.e., not unique) solutions, which, as we have also seen, implies that the primal problem becomes degenerate.
+Finally, we must consider the lack of differentiability of $F$. Notice that specific values of $b$ will indicate the point at which the optimal basis $B$ changes, which implies a change in $p$. These ``junctions'' represent the points in which $D$ has multiple (i.e., not unique) solutions, which, as we have also seen, implies that the primal problem becomes degenerate.
 
-Let us assume that we change $b$ in a particular way, i.e., $b = b^* + \theta d$, where $\theta \in \reals$. We can then redefine $F$ by letting 
+Let us assume that we change $b$ in a particular way, i.e., $b = \overline{b} + \theta d$, where $\theta \in \reals$. We can then redefine $F$ by letting 
 %
 \begin{equation*}
-	f(\theta) = F(b^* + \theta d).
+	f(\theta) = F(\overline{b} + \theta d).
 \end{equation*}
 %
 From \eqref{p1c7:eq:function_F}, we obtain
 %
 \begin{equation*}
-	f(\theta) = \max_{i = 1, \dots, K} (p^i)^\top (b^* - \theta d), b^* + \theta d \in S
+	f(\theta) = \max_{i = 1, \dots, K} (p^i)^\top (\overline{b} - \theta d), \overline{b} + \theta d \in S
 \end{equation*}
 %
-which represents the optimal cost as a function of the scalar $\theta$. In fact, $f(\theta)$ represents a section of the function $F$ in the direction given by the vector $d$, which is thus also piecewise linear and convex (and can be plotted). Figure X illustrates the function $f$.
+which represents the optimal cost as a function of the scalar $\theta$. In fact, $f(\theta)$ represents a section of the function $F$ in the direction given by the vector $d$, which is thus also piecewise linear and convex (and can be plotted). Figure \ref{p1c7:fig:b_function_theta} illustrates the function $f$ projected onto direction $d$ as a function of $\theta$.
 
-To finalise, we return to one remaining issue associated with differentiability. Although $p$ can be seen as a gradient of $F(b)$ at $b$, we know that $F$ is not differentiable everywhere. To circumvent that, we require a generalisation of the the concept of gradients, which given by the notion of subgradients. 
+\begin{figure}
+	\begin{tikzpicture}
+		\node (pic) at (0,0) {\includegraphics{part_1/chapter_7/figures/Figure2.pdf}};
+		\node[right] (p1) at (-1.75,-0.25) {$(p^1)^\top (\overline{b} + \theta d)$};
+		\node[right] (p2) at (0.5, -1.5) {$(p^2)^\top (\overline{b} + \theta d)$};
+		\node[right] (p3) at (1.25,-0.6) {$(p^3)^\top (\overline{b} + \theta d)$};
+		\node[below] (theta1) at (-1.4, -1.9) {$\theta_1$};
+		\node[below] (theta2) at (-0.125, -1.9) {$\theta_2$};
+		\node[below] (theta) at (2.7, -1.9) {$\theta$};
+		\node[right] (f_theta) at (-2.5, 2) {$f(\theta)$};
+	\end{tikzpicture}	
+	\caption{The optimal cost function $F$ as a function of $b$ in the direction $d$. The feasibility set $S_D$ has three extreme points $p^1$, $p^2$, and $p_3$, each associated with a hyperplane $p^i)^\top(\overline{b} + \theta d)$} \label{p1c7:fig:b_function_theta}
+\end{figure}
+
+To finalise, we return to one remaining issue associated with differentiability. Although $p$ can be seen as a gradient of $F(b)$ at $b$, we know that $F$ is not differentiable everywhere. To circumvent that, we require a generalisation of the the concept of gradients, which is given by the notion of subgradients. 
 
 \begin{definition}
-	Let $F$ be a convex function on the convex set $S$. Let $b^* \in S$ The vector $p$ is a subgradient of of $F$ at $b^*$ if
+	Let $F$ be a convex function on the convex set $S$. Let $\overline{b} \in S$ The vector $p$ is a subgradient of of $F$ at $\overline{b}$ if
 	\begin{equation}
-		F(b^*) + p^\top (b - b*) \le F(b), \forall b \in S.
+		F(\overline{b}) + p^\top (b - \overline{b}) \le F(b), \forall b \in S.
 	\end{equation}
 \end{definition}
 
-The last result we need is to show that the optimal solution of the dual problem $p^*$ is in fact a subgradient of $F(b^*)$ at $b^*$.
+Figure \ref{p1c7:fig:b_function} illustrates the notion of a subgradient. Notice that, in general, the subgradient is a singleton, composed only of the gradient (or normal vector) of the hyperplane, which is given by the vector $p$. At the nondifferentiable points (the junctions), the subgradient comprises all hyperplanes defined between the two hyperplanes intersecting (or all nonnegative linear combinations of the normal vectors of the intersecting hyperplanes). For these values of $b$, we notice that the dual problem has multiple solutions, implying that the referring BFS to the primal problem is denegerate.   
+
+
+The last result we need is to show that the optimal solution of the dual problem $p^*$ is in fact a subgradient of $F(\overline{b})$ at $\overline{b}$.
 
 \begin{theorem}
-	Suppose that the linear programming problem $P = \mini_{x \in \reals^n}\braces{c^\top x : Ax = b, x \ge 0}$ is feasible and the optimal cost is finite. Then, a vector $p \in reals^m$ is an optimal solution to the dual problem if and only if it is a subgradient of the optimal value function $F$ at $b^*$.
+	Suppose that the linear programming problem $P = \mini \braces{c^\top x : Ax = \overline{b}, x \ge 0}$ is feasible and the optimal cost is finite. Then, a vector $p \in \reals^m$ is an optimal solution to the dual problem if and only if it is a subgradient of the optimal value function $F$ at $\overline{b}$.
 \end{theorem}
 
-% TODO: Chp7: add proof.
+\begin{proof}
+	Recall that $F$ is defined on the set $S = \braces{b \in \reals^m : P(b) \neq \emptyset}$, and that $P(b) = \braces{x \in \reals^n : Ax = b, x \geq 0}$. Suppose $p$ is an optimal solution to the dual problem $D$. Then, strong duality implies that $p^\top \overline{b} = F(\overline{b})$. Consider now an arbitrary $b \in S$. For any feasible solution $x \in P(b)$, we have from weak duality that 
+	\begin{equation*}
+		p^\top b \le c^\top x \Rightarrow p^\top b \le \min_{x \in P(b)} c^\top x = F(b).
+	\end{equation*}
+	Notice that this implies that $p^\top b - p^\top \overline{b} \le F(b) - F(\overline{b})$, which in turn yields that $p$ is a subgradient of $F$ at $\overline{b}$ since it rearranges to
+	\begin{equation*}
+		F(\overline{b}) + p^\top (b - \overline{b}) \le F(b).
+	\end{equation*}
+	Let us consider the converse. Assume that $p$ is a subgradient of $F$ at $\overline{b}$. Thus, we have 
+	\begin{equation}
+		F(\overline{b}) + p^\top (b - \overline{b}) \le F(b), \ \forall b \in S. \label{p1c7:eq:subgradient_proof}
+	\end{equation}
+	Let choose an $x \ge 0$, and let $b = Ax$, meaning that $x \in P(b)$ and that $F(b) \le c^\top x$. Using \eqref{p1c7:eq:subgradient_proof}, we obtain
+	\begin{equation*}
+		p^\top Ax = p^\top b \le F(b) - F(\overline{b}) + p^\top \overline{b} \le c^\top x - F(\overline{b}) + p^\top \overline{b}.
+	\end{equation*}
+	Since $x \ge 0$, this implies that $p^\top A \le c$, showing that $p$ is a dual feasible solution. Also, for $x = 0$, we obtain $F(\overline{b}) \le p^\top \overline{b}$. Now, using weak duality, we have that a dual feasible solution $p'$ satisfies $(p')^\top \overline{b} \le F(\overline{b})$. Combining the two, we show that $p$ is dual optimal, since
+	\begin{equation*}
+		(p')^\top \overline{b} \le  p^\top \overline{b}.
+	\end{equation*}
+\end{proof}
+
+\begin{figure}[h]
+	\begin{tikzpicture}
+		\node (pic) at (0,0) {\includegraphics{part_1/chapter_7/figures/Figure3.pdf}};
+		\node[right] (Fb1) at (-3,-1.5) {$F(\overline{b}) + p^\top(b - \overline{b})$};
+		\node[right] (Fb2) at (4.6,-1) {$F(\overline{b}) + p^\top(b - \overline{b})$};
+		\node[below] (b1) at (-3.7, -2) {$\overline{b}$};
+		\node[below] (b2) at (3.4, -2) {$\overline{b}$};
+		\node[below] (b_axis1) at (-0.3, -2) {$b$};
+		\node[below] (b_axis2) at (5.9, -2) {$b$};
+		\node[right] (Fb_axis1) at (-5.55, 2) {$F(b)$};
+		\node[right] (Fb_axis1) at (0.55, 2) {$F(b)$};
+	\end{tikzpicture}	
+	\caption{The subgradients of the function $F$ at $\overline{b}$. On the left, the unique subgradient of $F$ at $\overline{b}$ is the gradient of the affine function $F(\overline{b}) + p^\top(b - \overline{b})$. On the right, the gradient of the affine function $F(\overline{b}) + p^\top(b - \overline{b})$ at $\overline{b}$ is contained in a subgradient for $F$ at $\overline{b}$.} \label{p1c7:fig:b_function}
+\end{figure}
+
+
 
 Therefore, more generally, we can say that at the breakpoints, $F$ has multiple subgradients while everywhere else, the subgradients are unique and correspond to the gradients of $F$.
 
@@ -488,12 +566,12 @@ where, for $k \in \braces{1,\dots, K}$,
 %
 Notice the resemblance between $z_k(x)$ and the optimal value function $F(b)$ introduced in Section \ref{section_731}. This is because the subproblems become parametric optimisation problems but as a function of $x$. That is, in this case, the subproblems are assumed to have $x = \overline{x}$ set as a parameter. Analogously, evaluating $z_k(x)$ requires solving the subproblem $S_k$, which, in turn, depends on $x$. 
 
-The Benders decomposition works by iteratively constructing the optimal value function. Instead of assuming that all dual extreme points are known, we will iteratively collect them, forming an approximation of the optimal value function $z_k(x)$ that becomes increasingly precise as we collect more of such extreme points. And, to find new dual extreme points, we can use our current approximation of the optimal value function $z_k(x)$ in $P_R$, which, once solved, returns us a new $\overline{x}$ to be used for finding a new dual extreme point. Notice that this procedure is akin to iteratively finding the segments that form the optimal value functions.
+The Benders decomposition works by iteratively constructing the optimal value function. Instead of assuming that all dual extreme points are known, we collect them iteratively, forming an approximation of the optimal value function $z_k(x)$ that becomes increasingly precise as we collect more such extreme points. And, to find new dual extreme points, we can use our current approximation of the optimal value function $z_k(x)$ in $P_R$, which, once solved, returns us a new $\overline{x}$ to be used for finding a new dual extreme point. Notice that this procedure is akin to iteratively finding the linear segments that form the optimal value functions $z_k(x)$.
 
 To formalise the discussion above, let us first consider the dual formulation of the subproblems $k \in \braces{1,\dots, K}$, which is given by
 %
 \begin{align*}
-	(S^D_k) : z^D_k = \maxi \ & p_k^\top (e_k - C_k x) \\
+	(S^D_k): z^D_k = \maxi \ & p_k^\top (e_k - C_k x) \\
 	\st   & p_k^\top D_k \leq f_k.	 
 \end{align*}
 %
@@ -516,9 +594,9 @@ From the first case, we can use Theorem \ref{p1c6:thm:unb_polyhedra} to conclude
 %
 Furthermore, we know that if $S^D_k$ has a solution, that must lie on a vertex of $P_k$. So, having  available the set of all extreme vertices $p_k^i$, $i \in I_k$, we have that if one can solve $S^D_k$, it can be equivalently represented as
 %
-\begin{equation*}
-	(S^D_k) : z_k(x) = \max_{i \in I_k} (p^i_k)^\top (e_k - C_k x),
-\end{equation*}   
+\begin{equation} \label{p1c7:eq:optimal_value_function_z}
+	(S^D_k) : z_k(x) = \max_{i \in I_k}~ (p^i_k)^\top (e_k - C_k x),
+\end{equation}   
 %
 which can be equivalently reformulated as
 \begin{align}
@@ -526,7 +604,7 @@ which can be equivalently reformulated as
 	\st & \theta_k \geq (p^i_k)^\top (e_k - C_k x), \ \forall i \in I_k. \label{p1c7:eq:opt_cut_all2}
 \end{align}
 
-Combining \eqref{p1c7:eq:feas_cut_all}--\eqref{p1c7:eq:opt_cut_all2}, we can reformulate $P_R$ into a single-level equivalent form 
+Again, notice that \eqref{p1c7:eq:optimal_value_function_z} is equivalent to \eqref{p1c7:eq:function_F}. Combining \eqref{p1c7:eq:feas_cut_all}--\eqref{p1c7:eq:opt_cut_all2}, we can reformulate $P_R$ into a single-level equivalent form 
 %
 \begin{align}
 	(P_R) : & \mini_x c^\top x + \sum_{k=1}^K\theta_k \nonumber\\
@@ -548,7 +626,7 @@ Following this idea, at a given iteration $l$, we have at hand a \emph{relaxed m
 	      & x \geq 0, 
 \end{align*}
 %
-where $I_k^l \subseteq I_k$ represent subsets of extreme points $p^i_k$ of $P_k$, and $R^l_k \subseteq R_k$ subsets of extreme rays $w^r_k$ of $P_k$.
+where $I_k^l \subseteq I_k$, $\forall k \in \braces{1,\dots,K}$ represent subsets of extreme points $p^i_k$ of $P_k$, and $R^l_k \subseteq R_k$ subsets of extreme rays $w^r_k$ of $P_k$.
 
 We can iteratively obtain these extreme points and rays from the subproblems $S_k$, $k \in \braces{1, \dots, K}$. To see that, let us first define that, at iteration $l$, we solve the main problem $P_M^l$ and obtain a solution
 %
@@ -558,7 +636,7 @@ We can iteratively obtain these extreme points and rays from the subproblems $S_
 %
 We can then solve the subproblems $S_k^l$, $k \in \braces{1, \dots, K}$, for that fixed solution $\overline{x}^l$ and then observe if we can find additional constraints that were to be violated if they had been in the relaxed main problem in the first place. In other words, we can identify if the solution $\overline{x}^l$ allows for identifying additional extreme points $p^i_k$ or extreme rays $w^r_k$ of $P_k$ that were not yet included in $P_M^l$. 
 
-Another way to interpret this notion of violation is to again think of the optimal value function. When we solve $S_k^l$, for each $k \in \braces{1, \dots, K}$, we are obtaining a ``true``(as opposed to approximate) evaluation of the optimal value function $z_k(\overline{x}^l)$ which, when compared against the working approximation of $z_k$ (valued as $\theta_k$) in the main problem, provides a value that is greater than that of $\theta$, i.e.,
+Another way to interpret this notion of violation is to again think of the optimal value function. When we solve $S_k^l$, for each $k \in \braces{1, \dots, K}$, we are obtaining a ``true`` (as opposed to approximate) evaluation of the optimal value function $z_k(\overline{x}^l)$ which, when compared against the working approximation of $z_k$ (valued as $\theta_k$) in the main problem, provides a value that is greater than that of $\theta_k$, that is,
 %
 \begin{equation}
 	\theta_k < (p^i_k)^\top (e_k - C_k \overline{x}^l).
@@ -566,10 +644,29 @@ Another way to interpret this notion of violation is to again think of the optim
 %
 This implies that the approximation of the optimal value function has a segment missing at $\overline{x}^l$, which is precisely the one given by $(p^i_k)^\top (e_k - C_k x)$. 
 
-%Figure XXX illustrates how the optimal value function approximation is iteratively constructed.
+Figure \ref{p1c7:fig:benders_iteration} illustrates how the optimal value function approximation is iteratively constructed.
 
-% TODO: Chp7 - add a picture
-
+\begin{figure}[h]
+	\begin{tikzpicture}
+		\node (pic) at (0,0) {\includegraphics{part_1/chapter_7/figures/Figure4.pdf}};
+		\node[right] (zb1_left) at (-5.4, 1) {$(p_k^1)^\top(e_k - C_kx)$};
+		\node[left]  (zb2_left) at (0, 0.5) {$(p_k^2)^\top(e_k - C_kx)$};
+		\node[right] (zb1_right) at (0.8, 1) {$(p_k^1)^\top(e_k - C_kx)$};
+		\node[left]  (zb2_right) at (6.2, 0.5) {$(p_k^2)^\top(e_k - C_kx)$};
+		\node[right] (zb3_right) at (4, -1.5) {$(p_k^3)^\top(e_k - C_kx)$};
+		\node[right] (zb_opt) at (-2.6, -1.4) {$(p_k^*)^\top(e_k - C_kx)$};
+		\node[below] (x1) at (-3.1, -1.9) {$\overline{x}^3$};
+		\node[below] (x2) at (3.95, -1.9) {$\overline{x}^4$};
+		\node[left]  (theta1) at (-5.6, -1.3) {$\overline{\theta}^3$};
+		\node[left]  (theta2) at (0.6, -0.8) {$\overline{\theta}^4$};
+		\node[left]  (z_dual) at (-5.6, -0.6) {$z(\overline{x}^3)$};
+		\node[below] (x_axis1) at (-0.4, -2) {$x$};
+		\node[below] (x_axis2) at (5.8, -2) {$x$};
+		\node[right] (z_axis1) at (-5.6, 2) {$z_k(x)$};
+		\node[right] (z_axis2) at (0.6, 2) {$z_k(x)$};
+	\end{tikzpicture}	
+	\caption{$z_k(x)$ is described by 3 line segments. At iteration $l=3$, two are available. The solution to $P_M^3$ returns $\overline{\theta}^3$, which is lower than $z(\overline{x}^3)$, obtained solving $S_k^D$ for $\overline{x}^l$. The solution $p^*_k = p^3_k$ from $z(\overline{x}^l)$ defines the missing segment $(p^*_k)^\top(e_k - C_kx)$. A new optimality cut is added and in iteration $l=4$, $\overline{x}^4$ is obtained from solving $P_M^4$. Notice that we would have $\overline{\theta}^{4} = z(\overline{x}^{4})$, meaning that the algorithm terminates.} \label{p1c7:fig:benders_iteration}
+\end{figure}
 
 To identify those violated constraints, first recall that the subproblem (in its primal form) is given by
 %
@@ -608,7 +705,7 @@ Algorithm \ref{p1c7:alg:benders} presents a pseudocode for the Benders decomposi
   \end{algorithmic}
 \end{algorithm}
 
-Notice that the algorithm terminates if no violated constraint is found. This in practice implies that $(p^i_k)^\top(e_k - C_k \overline{x}) \leq \overline{\theta}_k$ for all $k \in \braces{1,\dots,K}$, and thus $(\overline{x}, \braces{\overline{\theta}_k}_{k=1}^K)$ is optimal for $P$. In a way, if one consider the dual version subproblem, $S_k^D$, one can notice that it is acting as an implicit search for values of $p^i_k$ that can make $(p^i_k)^\top(e_k - C_k \overline{x})$ larger than $\overline{\theta}_k$, meaning that the current solution $\overline{x}$ violates \ref{p1c7:eq:opt_cut} and is thus not feasible to $P_M^l$. 
+Notice that the algorithm terminates if no violated constraint is found. This in practice implies that $(p^i_k)^\top(e_k - C_k \overline{x}) \leq \overline{\theta}_k$ for all $k \in \braces{1,\dots,K}$, and thus $(\overline{x}, \braces{\overline{\theta}_k}_{k=1}^K)$ is optimal for $P$. In a way, if one considers the dual version subproblem, $S_k^D$, one can notice that it is acting as an implicit search for values of $p^i_k$ that can make $(p^i_k)^\top(e_k - C_k \overline{x})$ larger than $\overline{\theta}_k$, meaning that the current solution $\overline{x}$ violates \eqref{p1c7:eq:opt_cut} and is thus not feasible to $P_M^l$. 
 
 Also, every time one solves $P_M^l$, a dual (lower for minimisation) bound $LB^l = z_{P_M}^l$ is obtained. This is simply because the relaxed main problem is a relaxation of the problem $P$, i.e., it contains less constraints than the original problem $P$. A primal (upper) bound can also be calculated at every iteration, which allows for keeping track of the progress of the algorithm in terms of convergence and preemptively terminate it at any arbitrary optimality tolerance. That can be achieved by setting
 %
