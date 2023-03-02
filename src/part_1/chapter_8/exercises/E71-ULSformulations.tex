@@ -1,4 +1,4 @@
-Consider the following formulations $P_{\text{ULS-1}}^{(x,s,y)}$ and $P_{\text{ULS-2}}^{(w,y)}$ as relaxations for the ULS problem defined over $N = \{1,\dots,n\}$ periods:
+Consider the following formulations $P_{\text{ULS-1}}^{(x,s,y)}$ and $P_{\text{ULS-2}}^{(w,y)}$ as linear (i.e., continuous) relaxations for the ULS problem defined over $N = \{1,\dots,n\}$ periods:
 \renewcommand*{\arraystretch}{1.1}
 \[P_{\text{ULS-1}}^{(x,s,y)} = \left\{
   \begin{array}{llr}
@@ -43,7 +43,7 @@ Consider the following formulations $P_{\text{ULS-1}}^{(x,s,y)}$ and $P_{\text{U
 (a) Use projection to show that $P_{\text{ULS-2}}^{(w,y)}$ is stronger than $P_{\text{ULS-1}}^{(x,s,y)}$, i.e, $P_{\text{ULS-2}}^{(w,y)} \subset P_{\text{ULS-1}}^{(x,s,y)}$.
 
 \emph{Hint:} 
-First, construct an extended formulation $P_{\text{ULS-2}}^{(x,s,y,w)}$ by writing the variables $x_t$ and $s_t$ in terms of variables $w_{it}$ and add them to $P_{\text{ULS-2}}^{(w,y)}$. Then, use projection to show that 
+First, construct an extended formulation $P_{\text{ULS-2}}^{(x,s,y,w)}$ by writing the variables $x_t$ and $s_t$ in terms of variables $w_{it}$ and add them to $P_{\text{ULS-2}}^{(w,y)}$. Then, use a projection to show that 
 \begin{equation*}
 \proj_{x,s,y}\,(P_{\text{ULS-2}}^{(x,s,y,w)}) \subseteq P_{\text{ULS-1}}^{(x,s,y)},
 \end{equation*} 
