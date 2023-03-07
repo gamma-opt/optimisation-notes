@@ -680,7 +680,7 @@ Then, two cases can lead to generating violated constraints that must be added t
 
 Notice that the above can also be accomplished by solving the dual subproblems $S^D_k$, $k \in \braces{1, \dots, K}$, instead. In that case, the extreme point $p^{il}_k$ is immediately available and so are the extreme rays $w^{rl}_k$ in case of unboundedness.
 
-Algorithm \ref{p1c7:alg:benders} presents a pseudocode for the Benders decomposition. Notice that the method can benefit in terms of efficiency from the use of dual simplex, since we are iteratively adding violated constraints to the relaxed main problem $P_M^l$. Likewise, the subproblem $S_k^l$ has only the independent terms being modified at each iteration and, in light of the discussion in Section \ref{section_613}, can also benefit from the use of dual simplex. Furthermore, the loop represented by Line \ref{p1c7:alg:benders-loop} can be parallelised to provide further computational performance improvements. 
+Algorithm \ref{p1c7:alg:benders} presents a pseudocode for the Benders decomposition. Notice that the method can benefit in terms of efficiency from the use of dual simplex, since we are iteratively adding violated constraints to the relaxed main problem $P_M^l$. Likewise, the dual of the subproblem $S_k^l$, $S_k^{Dl}$ has only the objective function coefficients being modified at each iteration and, in light of the discussion in Section \ref{section_613}, can also benefit from the use of dual simplex. Furthermore, the loop represented by Line \ref{p1c7:alg:benders-loop} can be parallelised to provide further computational performance improvements. 
 
 \begin{algorithm}[H]
     \caption{Benders decomposition} \label{p1c7:alg:benders}
@@ -691,8 +691,8 @@ Algorithm \ref{p1c7:alg:benders} presents a pseudocode for the Benders decomposi
     \Repeat 
         \State solve $P_M^l$ to obtain $\left(\overline{x}^l, \braces{\overline{\theta}_k^l}_{k=1}^K\right)$. 
         \For {$k \in \braces{1,\dots,K}$} \label{p1c7:alg:benders-loop}
-            \State solve $S_k^l$.
-            \If{$S_k^l$ is infeasible} 
+            \State solve $S_k^{Dl}$.
+            \If{$S_k^{Dl}$ is infeasible} 
             	\State obtain extreme ray $w_j^k$ and make $W^l = W^l \cup \braces{w_j^k}$.
             \Else
             	\State obtain extreme point $p_i^k$ and $P^l = P^l \cup \braces{p_i^k}$
