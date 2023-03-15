@@ -22,9 +22,9 @@ Consider the following IP problem and its standard form
 \end{table}
 \end{minipage}\\
 
-Solve the IP problem by LP-based branch and bound, i.e., use LP relaxations to compute dual (upper) bounds. Use Dual Simplex to efficiently solve the subproblem of each node starting from the optimal basis of the previous node. Recall that the LP relaxation of IP is obtained by relaxing the variables $x_1,\dots,x_5\in \integers_+$ to $x_1,\dots,x_5 \geq 0$.
+Solve the IP problem by LP-based branch and bound, i.e., use LP relaxations to compute dual (upper) bounds. Use dual simplex to efficiently solve the subproblem of each node starting from the optimal basis of the previous node. Recall that the LP relaxation of IP is obtained by relaxing the variables $x_1,\dots,x_5\in \integers_+$ to $x_1,\dots,x_5 \geq 0$.
 
-\emph{Hint:} The initial dual bound $\overline{z}$ is obtained by solving the LP relaxation of IP at the root node $S$. Let $[\underline{z},\overline{z}]$ be the lower and upper bounds of each node. The optimal tableau and the initial Branch \& Bound  tree with only the root node $S$ is shown below. 
+\emph{Hint:} The initial dual bound $\overline{z}$ is obtained by solving the LP relaxation of IP at the root node $S$. Let $[\underline{z},\overline{z}]$ be the lower and upper bounds of each node. The optimal tableau and the initial branch-and-bound tree with only the root node $S$ are shown below. 
 
 \vspace{5pt}
 
