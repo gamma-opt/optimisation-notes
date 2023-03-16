@@ -604,6 +604,8 @@ Next, we choose to solve the LP relaxation of $S_{12}$, which yields an integer 
 
 Notice that in this example, the order in which we solved the subproblems was crucial for pruning by bound the subproblem $S_{11}$, only possible because we happened to solve the LP relaxation of $S_{12}$ first and that happened to yield a feasible solution and associated primal bound. This illustrates an important aspect associated with the branch and bound method: having good feasible solutions available early on in the process increases the likelihood of performing more pruning by bound, which is highly desirable in terms of computational savings (and thus, performance). We will discuss in more detail the impacts of different search strategies later on when we consider this and other aspects involved in the implementation of mixed-integer programming solvers.
 
+
+
 \pagebreak 
 
 \section{Exercises}
