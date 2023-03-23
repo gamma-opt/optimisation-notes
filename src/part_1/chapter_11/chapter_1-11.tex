@@ -222,7 +222,13 @@ where $f_j = x_j - \lfloor x_j \rfloor$. This in effect is trying to reduce as m
 
 \subsubsection{Strong branching}
 
-Strong branching can be understood as an explicit look-ahead strategy. That is, to decide which variable to branch on, the method performs branching on all possible variables, and choose that provides the best improvement on the dual (LP relaxation) bound. Specifically, for each fractional variable, we can $x_j$, solve the LP relaxations corresponding to branching options $x_j \leq \lfloor x^\text{LP} \rfloor$ and $x_j \geq \lceil x^\text{LP} \rceil$ and then choose the fractional variable $x_j$ that leads to subproblems the best LP relaxation objective value.
+Strong branching can be understood as an explicit look-ahead strategy. That is, to decide which variable to branch on, the method performs branching on all possible variables, and choose that provides the best improvement on the dual (LP relaxation) bound. Specifically, for each fractional variable, we can $x_j$, solve the LP relaxations corresponding to branching options $x_j \leq \lfloor x^\text{LP} \rfloor$ and $x_j \geq \lceil x^\text{LP} \rceil$ to obtain LP relaxation objective values $Z_j^D$ and $Z_j^U$. We then choose the fractional variable $x_j$ that leads to subproblems the best LP relaxation objective values defined as 
+%
+\begin{equation*}
+	\arg\max_{j \in \braces{1,\dots,n}} \min\braces{Z_j^D, Z_j^U}, 	
+\end{equation*}
+% 
+assuming a minimization problem. Strong branching thus compares the worse LP relaxation bound for each fractional $x_j$ and picks the fractional variable for which this value is the best. 
 
 As you might suspect, there is a trade-off related to the observed reduction in the number of nodes explored, given by the more prominent improvement of the dual bound, and how computationally intensive is the method. There are however ideas that can exploit this trade off more efficiently. First, the solution of the subproblems might yield information related to infeasibility and pruning by limit, which can be used in favour of the method. 
 
