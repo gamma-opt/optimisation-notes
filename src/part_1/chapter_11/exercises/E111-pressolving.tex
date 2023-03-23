@@ -4,31 +4,28 @@
 	\item [(a)] \textit{Tightening bounds and redundant constraints}\\
 	
 	Consider the LP below,
-	\begin{table}[H]
-		\centering
-		\begin{tabular}{crcrcccc}
-			max         &  2$x_1$  & $+$ &   $x_2$  & $-$ &   $x_3$  \vspace{3pt}\\
-			s.t.        &  5$x_1$  & $-$ &  2$x_2$  & $+$ &  8$x_3$  & $\leq$ &  15  \vspace{3pt}\\
-			&  8$x_1$  & $+$ &  3$x_2$  & $-$ &   $x_3$  & $\leq$ &   9  \vspace{3pt}\\
-			&   $x_1$  & $+$ &   $x_2$  & $+$ &   $x_3$  & $\leq$ &   6  \vspace{3pt}\\
-			& \multicolumn{3}{c}{0 $\leq x_1 \leq 3$} \vspace{3pt}\\  
-			& \multicolumn{3}{c}{0 $\leq x_2 \leq 1$} \vspace{3pt}\\  
-			& \multicolumn{3}{c}{$x_3 \geq$ 1},   
-		\end{tabular}
-	\end{table}
-
-	derive tightened bounds for variables $x_1$ and $x_3$ from the first constraint and eliminate redundant constraints after that. \vspace{10pt}
+	%
+	\begin{flalign*}
+		\maxi & 2x_1 + x_2 - x_3 \\
+		\st   & 5x_1 - 2x_2 + 8x_3 \le 15 \\
+			  & 8x_1 + 3x_2 - x_3 \le 9 \\
+			  & x_1 + x_2 + x_3 \le 6 \\
+			  & 0 \le x_1 \le 3 \\
+			  & 0 \le x_2 \le 1 \\
+			  & x_3 \ge 1.
+	\end{flalign*}
+	%
+	Derive tightened bounds for variables $x_1$ and $x_3$ from the first constraint and eliminate redundant constraints after that. \vspace{10pt}
 
 	\item [(b)] \textit{Primal heuristics (RINS)}\\
 	
 	Consider the formulation UFL-W:
 	\begin{align}
-	 \text{(UFL-W)} : \quad &\mini_{x,y} \sum_{j\in N} f_jy_j + \sum_{i\in M}\sum_{j\in N} c_{ij}x_{ij} \label{IP:1}\\
-	       &\st\nonumber \\
-	       &\quad \sum_{j\in N}x_{ij} = 1, &\forall i \in M,\label{IP:2}\\
-	       &\quad \sum_{i\in M}x_{ij} \leq my_j, &\forall  j \in N,\label{IP:3}\\
-	       &\quad x_{ij} \geq 0, &\forall i \in M, \forall j \in N,\label{IP:4}\\
-	       &\quad y_j \in \{0,1\}, &\forall j\in N,\label{IP:5},
+	 \text{(UFL-W)} : \mini_{x,y} & \sum_{j\in N} f_jy_j + \sum_{i\in M}\sum_{j\in N} c_{ij}x_{ij} \label{IP:1}\\
+	       \st & \sum_{j\in N}x_{ij} = 1, \ \forall i \in M,\label{IP:2} \\
+	       	   & \sum_{i\in M}x_{ij} \leq my_j, \ \forall  j \in N,\label{IP:3} \\
+	       	   & x_{ij} \geq 0, &\forall i \in M, \ \forall j \in N,\label{IP:4} \\
+	           & y_j \in \{0,1\}, \ \forall j\in N,\label{IP:5}
 	\end{align}
 	
 	where $f_j$ is the cost of opening facility $j$, and $c_{ij}$ is the cost of satisfying client $i$'s demand from facility $j$. Consider an instance of the UFL with opening costs $f=(21,16,30,24,11)$ and client costs

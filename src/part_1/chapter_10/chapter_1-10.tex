@@ -1,6 +1,6 @@
 \section{Valid inequalities}
 
-In this chapter, we will discuss the idea of generating and adding constraints to improve a formulation of a (possibly mixed-)integer programming problem. This idea can either be implemented in a priori setting, for example before employing the branch-and-bound method, or as the solution method itself. These constraints are often called \emph{valid inequalities} or \emph{cuts}, though the latter is typically used in the context of cutting-planes methods.
+In this chapter, we will discuss the idea of generating and adding constraints to improve a formulation of a (possibly mixed-)integer programming problem. This idea can either be implemented in a priori setting, for example before employing the branch-and-bound method or as the solution method itself. These constraints are often called \emph{valid inequalities} or \emph{cuts}, though the latter is typically used in the context of cutting-planes methods.
 
 Let us start by defining the integer programming problem
 %
@@ -24,7 +24,7 @@ Cutting-plane methods are based on the idea of iteratively approximating the set
 	An inequality $\pi^\top  x \leq \pi_0$ is valid for $X \subset \reals^n$ if $\pi^\top  x \leq \pi_0$ for all $x \in X$.
 \end{definition}
 
-Notice that the condition for an inequality to be valid is that it does not remove any of the point in the original integer set $X$. In light of the idea of gradually approximating $\conv(X)$, one can infer that good valid inequalities are those that can ``cut off'' some of the area defined by the polyhedral set $P$, but without removing any of the points in $X$. This is precisely where the name \emph{cut} comes from. Figure \ref{p1c10:fig:valid_inequality} illustrates the process of adding a valid inequality to a formulation $P$. Notice how the inequality expose one of the facets of the convex hull of $X$. Cuts like such are called ``facet-defining'' and are the strongest types of cuts one can generate. We will postpone the discussion of stronger cuts to later in this chapter.
+Notice that the condition for an inequality to be valid is that it does not remove any of the point in the original integer set $X$. In light of the idea of gradually approximating $\conv(X)$, one can infer that good valid inequalities are those that can ``cut off'' some of the area defined by the polyhedral set $P$, but without removing any of the points in $X$. This is precisely where the name \emph{cut} comes from. Figure \ref{p1c10:fig:valid_inequality} illustrates the process of adding a valid inequality to a formulation $P$. Notice how the inequality exposes one of the facets of the convex hull of $X$. Cuts like such are called ``facet-defining'' and are the strongest types of cuts one can generate. We will postpone the discussion of stronger cuts to later in this chapter.
 
 \begin{figure}
 	\centering
@@ -199,7 +199,7 @@ In any case, in possession of a family of inequalities and a method to solve the
 		\While {$x_{LP}^k \notin \integers^n$} \label{Alg2:loop}
 		    \State solve the LP relaxation over $P$, obtaining the optimal objective value $z_{LP}^k$ and optimal solution $x_{LP}^k$. 
 		    \If {$x_{LP}^k \notin \integers^n$} 
-		        find $(\pi^k, \pi^k_0) \in \mathcal{F}$ such that ${\pi^k}^\top x > \pi^k_0$. \label{Alg2:SepProb}
+		        find $(\pi^k, \pi^k_0) \in \mathcal{F}$ such that ${\pi^k}^\top x_{LP}^k > \pi^k_0$. \label{Alg2:SepProb}
 		    \Else 
 		    	\State {\bf return} ($x_{LP}^k, z_{LP}^k$).
 		    \EndIf
@@ -350,9 +350,9 @@ Then, adding it to the previous tableau and employing the dual simplex again, le
 	\end{tabular}
 \end{center}
 
-Notice that now all variables are integer, and thus, an optimal for solution for the original integer programming problem was found. 
+Notice that now all variables are integer, and thus, an optimal solution for the original integer programming problem was found. 
 
-Some points are worth noticing. First, notice that, at the optimum, all variables, including the slacks, are integer. This is a consequence of having the Gomory cuts active at the optimal solution since \eqref{p1c10:eq:CG_cut}, and consequently, \eqref{p1c10:eq:gomorycut}, have both the left- and right-hand sides integer. Also, notice that at each iteration the problem increases in size, due to the new constraint being added, which implies that the basis also increases in size. Thought this is an issue also in branch-and-bound method, it can be a more prominent computational issue in the context of cutting-plane methods. 
+Some points are worth noticing. First, notice that, at the optimum, all variables, including the slacks, are integer. This is a consequence of having the Gomory cuts active at the optimal solution since \eqref{p1c10:eq:CG_cut}, and consequently, \eqref{p1c10:eq:gomorycut}, have both the left- and right-hand sides integer. Also, notice that at each iteration the problem increases in size, due to the new constraint being added, which implies that the basis also increases in size. Though this is an issue also in branch-and-bound method, it can be a more prominent computational issue in the context of cutting-plane methods. 
 
 We can also interpret the progress of the algorithm in graphical terms. First of all, notice that we can express the cuts in terms of the original variables $(x_1,x_2)$ by noticing that the original formulation gives $x_3 = 14 - 7x_1 + x_2$ and $x_4 = 3-x_2$. Substituting $x_3$ and $x_4$ in the cut $\frac{1}{7}x_3 + \frac{2}{7}x_4 - s = \frac{6}{7}$ gives $x_1 \leq 2$. More generally, we have that cuts can be expressed using the original problem variables, as stated in Proposition \ref{p1c10:prop:cuts_original}.
 
@@ -478,14 +478,14 @@ We can also interpret the progress of the algorithm in graphical terms. First of
 
 \section{Obtaining stronger inequalities}
 
-We finalise this chapter discussing the notion of strong inequalities and providing an example on how they can be made stronger in some cases by means of an external process. 
+We finalise this chapter by discussing the notion of strong inequalities and providing an example of how they can be made stronger in some cases by means of an external process. 
 
 
 \subsection{Strong inequalities}
 
-The notion of strong inequalities arises from the notion of stronger formulations, cf. Definition \ref{p1c8:def:better_formulations}. That is, we say that an inequality is strong in terms of its relative quality in describing the convex hull of integer set.
+The notion of strong inequalities arises from the notion of stronger formulations, cf. Definition \ref{p1c8:def:better_formulations}. That is, we say that an inequality is strong in terms of its relative quality in describing the convex hull of the integer set.
 
-However, in this context we are interested in comparing two alternative inequalities to decide which is stronger. For that, we can rely on the notions of \emph{dominance} and related \emph{redundancy} of inequalities. 
+However, in this context, we are interested in comparing two alternative inequalities to decide which is stronger. For that, we can rely on the notions of \emph{dominance} and related \emph{redundancy} of inequalities. 
 
 Consider two valid inequalities $\pi x \leq \pi_0$ and $\mu x \leq \mu_0$ that are valid for a polyhedral set $P = \braces{x \in \reals^n_+ : Ax \leq b}$. Definition \ref{p1c10:def:dominance} formalises the notion of dominance.
 
@@ -499,7 +499,7 @@ Let us illustrate the concept of dominance with a numerical example. Consider th
 	X = \braces{(0,0), (0,1), (0,2), (0,3), (0,4), (1,0), (1,1)}.	
 	\end{equation*}
 	
-Notice that, if we consider $u = 1/2$, we have that, for any $x=(x_1,x_2)$, that $1x_1 + 3x_2 \geq u(2x_1 + 4x_2) = x_1 + 2x_2$ and that $4 \leq 9u = 9/2$. Thus, we say that $x_1 + 3x_2 \le 4$ dominates $2x_1 + 4x_2 \leq 9$. Figure \ref{p1c10:fig:dominance} illustrates the two inequalities. Notice that $x_1 + 3x_2 \le 4$ is a stronger inequality, since it is more efficient in representing the convex hull of $X$ than $2x_1 + 4x_2 \le 9$.   
+Notice that, if we consider $u = 1/2$, we have that, for any $x=(x_1,x_2)$, that $1x_1 + 3x_2 \geq u(2x_1 + 4x_2) = x_1 + 2x_2$ and that $4 \leq 9u = 9/2$. Thus, we say that $x_1 + 3x_2 \le 4$ dominates $2x_1 + 4x_2 \leq 9$. Figure \ref{p1c10:fig:dominance} illustrates the two inequalities. Notice that $x_1 + 3x_2 \le 4$ is a stronger inequality since it is more efficient in representing the convex hull of $X$ than $2x_1 + 4x_2 \le 9$.   
 
 \begin{figure}
 	\begin{tikzpicture}[scale = 0.9,
@@ -530,7 +530,7 @@ Notice that, if we consider $u = 1/2$, we have that, for any $x=(x_1,x_2)$, that
 	\caption{Illustration of dominance between constraints. Notice that $x_1 + 3x_2 \le 4$ dominates $2x_1 + 4x_2 \le 9$ and is thus stronger}	\label{p1c10:fig:dominance}
 \end{figure}
 
-Another related concept is the notion of redundancy. Clearly, the presence of two constraints in which one dominates the other, the dominated constraint is also redundant and can be safely removed from the formulation of a polyhedral set $P$. However, in some cases one might not be able to identify redundant constraints simply because no constraint is clearly dominated by another. 
+Another related concept is the notion of redundancy. Clearly, in the presence of two constraints in which one dominates the other, the dominated constraint is also redundant and can be safely removed from the formulation of a polyhedral set $P$. However, in some cases one might not be able to identify redundant constraints simply because no constraint is clearly dominated by another. 
 
 Even then, there might be a way to identify weak (or redundant) constraints by combining two or more constraints that then form a dominating constraint. This is formalised in Definition \ref{p1c10:def:redundancy}.
 
@@ -616,7 +616,7 @@ The following are minimal cover inequalities for $X$.
 
 Notice that we would obtain a non-minimal cover $C^\prime$ by adding an inequality $x_i \leq 1$, $i \in C^\prime\setminus C$, to a minimal cover inequality of $C$, which makes the cover inequality somewhat redundant. For example, adding $x_7 \leq 1$ to a minimal cover inequality $x_1 + x_2 + x_3 \leq 2$ of $C = \{1,2,3\}$ yields a non-minimal cover $C^\prime = \braces{1,2,3,7}$ with inequality $x_1 + x_2 + x_3 + x_7 \leq 3$.
 
-There is a simple way to strengthen cover inequalities, using the notion of \emph{extended} cover inequalities. One can extend a cover inequality by expanding the set $C$ with elements that have a coefficient $a_j$, $j \in N \setminus C$ greater or equal than all coefficients $a_i$, $i \in C$. This guarantees that a swap between elements must happen for the inequality to be feasible, meaning that the right-hand side of the constraint remains $|C| - 1$. This is summarised in Proposition \ref{p1c10:prop:extended_cover}.
+There is a simple way to strengthen cover inequalities, using the notion of \emph{extended} cover inequalities. One can extend a cover inequality by expanding the set $C$ with elements that have a coefficient $a_j$, $j \in N \setminus C$ greater or equal to all coefficients $a_i$, $i \in C$. This guarantees that a swap between elements must happen for the inequality to be feasible, meaning that the right-hand side of the constraint remains $|C| - 1$. This is summarised in Proposition \ref{p1c10:prop:extended_cover}.
 
 \begin{proposition} \label{p1c10:prop:extended_cover}
 	If $C$ is a cover for $X$, the extended cover inequality
