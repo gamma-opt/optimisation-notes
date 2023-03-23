@@ -692,7 +692,7 @@ Algorithm \ref{p1c7:alg:benders} presents a pseudocode for the Benders decomposi
         \State solve $P_M^l$ to obtain $\left(\overline{x}^l, \braces{\overline{\theta}_k^l}_{k=1}^K\right)$. 
         \For {$k \in \braces{1,\dots,K}$} \label{p1c7:alg:benders-loop}
             \State solve $S_k^{Dl}$.
-            \If{$S_k^{Dl}$ is infeasible} 
+            \If{$S_k^{Dl}$ is unbounded} 
             	\State obtain extreme ray $w_j^k$ and make $W^l = W^l \cup \braces{w_j^k}$.
             \Else
             	\State obtain extreme point $p_i^k$ and $P^l = P^l \cup \braces{p_i^k}$
