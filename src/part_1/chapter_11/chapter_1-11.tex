@@ -222,7 +222,7 @@ where $f_j = x_j - \lfloor x_j \rfloor$. This in effect is trying to reduce as m
 
 \subsubsection{Strong branching}
 
-Strong branching can be understood as an explicit look-ahead strategy. That is, to decide which variable to branch on, the method performs branching on all possible variables, and choose that provides the best improvement on the dual (LP relaxation) bound. Specifically, for each fractional variable, we can $x_j$, solve the LP relaxations corresponding to branching options $x_j \leq \lfloor x^\text{LP} \rfloor$ and $x_j \geq \lceil x^\text{LP} \rceil$ to obtain LP relaxation objective values $Z_j^D$ and $Z_j^U$. We then choose the fractional variable $x_j$ that leads to subproblems the best LP relaxation objective values defined as 
+Strong branching can be understood as an explicit look-ahead strategy. That is, to decide which variable to branch on, the method performs branching on all possible variables, and choose that provides the best improvement on the dual (LP relaxation) bound. Specifically, for each fractional variable $x_j$, we can solve the LP relaxations corresponding to branching options $x_j \leq \lfloor x^\text{LP} \rfloor$ and $x_j \geq \lceil x^\text{LP} \rceil$ to obtain LP relaxation objective values $Z_j^D$ and $Z_j^U$. We then choose the fractional variable $x_j$ that leads to subproblems with the best LP relaxation objective values, defined as 
 %
 \begin{equation*}
 	\arg\max_{j \in \braces{1,\dots,n}} \min\braces{Z_j^D, Z_j^U}, 	
