@@ -17,9 +17,9 @@ or the subtour elimination constraints
 $$\sum_{i \in S}\sum_{j \in S}x_{ij} \leq |S|-1, \ \forall S \subset N, 2 \leq |S| \leq n-1,$$
 which are used to prevent subtours in TSP solutions. Thus, you have to show that: 
 \begin{enumerate}
-\item Constraints $(*)$ prevent subtours in any solution $x\in P_{MTZ}$.
-\item Every TSP solution $x$ (on the same graph $G$) satisfies the constraints $(*)$.
+	\item[(1)] Constraints $(*)$ prevent subtours in any solution $x\in P_{MTZ}$.
+	\item[(2)]Every TSP solution $x$ (on the same graph $G$) satisfies the constraints $(*)$.
 \end{enumerate}
-You can prove 1. by contradiction. First, assume that a solution $x\in P_{MTZ}$ has a subtour with $k$ arcs $(i_1,i_2),\dots,(i_{k-1},i_k),(i_k,i_1)$ and $k$ nodes $\{i_1,\dots,i_k\} \in N\setminus\{1\}$. Then, write the constraints $(*)$ for all arcs in this subtour and try to come up with a contradiction.
+You can prove (1) by contradiction. First, assume that a solution $x\in P_{MTZ}$ has a subtour with $k$ arcs $(i_1,i_2),\dots,(i_{k-1},i_k),(i_k,i_1)$ and $k$ nodes $\{i_1,\dots,i_k\} \in N\setminus\{1\}$. Then, write the constraints $(*)$ for all arcs in this subtour and try to come up with a contradiction.
 
-You can prove 2. by finding suitable values for each $u_2,\dots,u_n$ that will satisfy the constraints $(*)$ for any TSP solution $x$. Recall that a TSP solution represents a \emph{tour} that visits each of the $N = \{1,\dots,n\}$ cities exactly once and returns to the starting city.
+You can prove (2) by finding suitable values for each $u_2,\dots,u_n$ that will satisfy the constraints $(*)$ for any TSP solution $x$. Recall that a TSP solution represents a \emph{tour} that visits each of the $N = \{1,\dots,n\}$ cities exactly once and returns to the starting city.

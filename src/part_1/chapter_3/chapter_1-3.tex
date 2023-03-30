@@ -189,15 +189,15 @@ Notice that the process of moving between adjacent basis has a simple geometrica
 An important underlying assumption in Theorem \ref{p1c3:thm:LI_and_bases} is that the matrix $A$ in the definition of the polyhedral set $P$ is full (row) rank, that is, there are $m$ linearly independent rows and thus $m$ independent columns. Theorem \ref{p1c3:thm:red_const} shows that this assumption can actually be made without loss of generality. 
  
 \begin{theorem}[Redundant constraints]\label{p1c3:thm:red_const}
-	Let $P = \braces{x \in \reals^n \mid Ax = b, x \geq 0}$, where $A$ is $m \times n$ matrix with rows $\braces{a_i}_{i \in M}$ and $I = \braces{1,\dots,m}$. Suppose that $\rank(A) = k < m$ and that the rows $a_{i_1}, \dots, a_{i_k}$ are LI. Then $P$ is the same set as $Q = \braces{ x \in \reals^n : a^\top_{i_1}x = b_{i_1}, \dots, a^\top_{i_k}x = b_{i_k}, x \geq 0}$.
+	Let $P = \braces{x \in \reals^n : Ax = b, x \geq 0}$, where $A$ is $m \times n$ matrix with rows $\braces{a_i}_{i \in I}$ and $I = \braces{1,\dots,m}$. Suppose that $\rank(A) = k < m$ and that the rows $a_{i_1}, \dots, a_{i_k}$ are LI. Then $P$ is the same set as $Q = \braces{ x \in \reals^n : a^\top_{i_1}x = b_{i_1}, \dots, a^\top_{i_k}x = b_{i_k}, x \geq 0}$.
 \end{theorem}
 
 \begin{proof}
 	Assume, without loss of generality, that $i_1 = 1$ and $i_k = k$. Clearly, $P \subset Q$, since a solution satisfying the constraints forming $P$ also satisfies those forming $Q$.
 	
-	As $\rank(A) = k$, the rows $a_{i_1}, \dots, a_{i_k}$ form a basis in the row space of $A$ and any row $a_i$, $i \in M$, can be expressed as $a^\top_i = \sum_{j=1}^k \lambda_{ij}a_j^\top$ for $\lambda_{ij} \in \reals$.
+	As $\rank(A) = k$, the rows $a_{i_1}, \dots, a_{i_k}$ form a basis in the row space of $A$ and any row $a_i$, $i \in I$, can be expressed as $a^\top_i = \sum_{j=1}^k \lambda_{ij}a_j^\top$ for $\lambda_{ij} \in \reals$.
 	
-	For $y \in Q$ and $i \in M$, we have $a_i^\top y = \sum_{j=1}^k \lambda_{ij}a_j^\top y = \sum_{j=1}^k \lambda_{ij}b_{j} = b_i$, which implies that $y \in P$ and that $Q \subset P$. Consequently, $P = Q$. \qedhere			
+	For $y \in Q$ and $i \in I$, we have $a_i^\top y = \sum_{j=1}^k \lambda_{ij}a_j^\top y = \sum_{j=1}^k \lambda_{ij}b_{j} = b_i$, which implies that $y \in P$ and that $Q \subset P$. Consequently, $P = Q$. \qedhere			
 \end{proof}
 
 Theorem \ref{p1c3:thm:red_const} implies that any linear programming problem in standard form can be reduced to an equivalent problem with linearly independent constraints. It turns out that, in practice, most professional-grade solvers (i.e., software that implements solution methods and can be used to find optimal solutions to mathematical programming models) have \emph{preprocessing} routines to remove redundant constraints. This means that the problem is automatically treated to become smaller by not incorporating unnecessary constraints. 

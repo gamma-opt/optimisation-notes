@@ -451,7 +451,7 @@ which represents the optimal cost as a function of the scalar $\theta$. In fact,
 		\node[below] (theta) at (2.7, -1.9) {$\theta$};
 		\node[right] (f_theta) at (-2.5, 2) {$f(\theta)$};
 	\end{tikzpicture}	
-	\caption{The optimal cost function $F$ as a function of $b$ in the direction $d$. The feasibility set $S_D$ has three extreme points $p^1$, $p^2$, and $p_3$, each associated with a hyperplane $p^i)^\top(\overline{b} + \theta d)$} \label{p1c7:fig:b_function_theta}
+	\caption{The optimal cost function $F$ as a function of $b$ in the direction $d$. The feasibility set $S_D$ has three extreme points $p^1$, $p^2$, and $p_3$, each associated with a hyperplane $(p^i)^\top(\overline{b} + \theta d)$} \label{p1c7:fig:b_function_theta}
 \end{figure}
 
 To finalise, we return to one remaining issue associated with differentiability. Although $p$ can be seen as a gradient of $F(b)$ at $b$, we know that $F$ is not differentiable everywhere. To circumvent that, we require a generalisation of the the concept of gradients, which is given by the notion of subgradients. 
@@ -504,7 +504,7 @@ The last result we need is to show that the optimal solution of the dual problem
 		\node[below] (b2) at (3.4, -2) {$\overline{b}$};
 		\node[below] (b_axis1) at (-0.3, -2) {$b$};
 		\node[below] (b_axis2) at (5.9, -2) {$b$};
-		\node[right] (Fb_axis1) at (-5.55, 2) {$F(b)$};
+		\node[right] (Fb_axis1) at (-5.65, 2) {$F(b)$};
 		\node[right] (Fb_axis1) at (0.55, 2) {$F(b)$};
 	\end{tikzpicture}	
 	\caption{The subgradients of the function $F$ at $\overline{b}$. On the left, the unique subgradient of $F$ at $\overline{b}$ is the gradient of the affine function $F(\overline{b}) + p^\top(b - \overline{b})$. On the right, the gradient of the affine function $F(\overline{b}) + p^\top(b - \overline{b})$ at $\overline{b}$ is contained in a subgradient for $F$ at $\overline{b}$.} \label{p1c7:fig:b_function}
@@ -680,7 +680,7 @@ Then, two cases can lead to generating violated constraints that must be added t
 
 Notice that the above can also be accomplished by solving the dual subproblems $S^D_k$, $k \in \braces{1, \dots, K}$, instead. In that case, the extreme point $p^{il}_k$ is immediately available and so are the extreme rays $w^{rl}_k$ in case of unboundedness.
 
-Algorithm \ref{p1c7:alg:benders} presents a pseudocode for the Benders decomposition. Notice that the method can benefit in terms of efficiency from the use of dual simplex, since we are iteratively adding violated constraints to the relaxed main problem $P_M^l$. Likewise, the subproblem $S_k^l$ has only the independent terms being modified at each iteration and, in light of the discussion in Section \ref{section_613}, can also benefit from the use of dual simplex. Furthermore, the loop represented by Line \ref{p1c7:alg:benders-loop} can be parallelised to provide further computational performance improvements. 
+Algorithm \ref{p1c7:alg:benders} presents a pseudocode for the Benders decomposition. Notice that the method can benefit in terms of efficiency from the use of dual simplex, since we are iteratively adding violated constraints to the relaxed main problem $P_M^l$. Likewise, the dual of the subproblem $S_k^l$, $S_k^{Dl}$ has only the objective function coefficients being modified at each iteration and, in light of the discussion in Section \ref{section_613}, can also benefit from the use of dual simplex. Furthermore, the loop represented by Line \ref{p1c7:alg:benders-loop} can be parallelised to provide further computational performance improvements. 
 
 \begin{algorithm}[H]
     \caption{Benders decomposition} \label{p1c7:alg:benders}
@@ -691,8 +691,8 @@ Algorithm \ref{p1c7:alg:benders} presents a pseudocode for the Benders decomposi
     \Repeat 
         \State solve $P_M^l$ to obtain $\left(\overline{x}^l, \braces{\overline{\theta}_k^l}_{k=1}^K\right)$. 
         \For {$k \in \braces{1,\dots,K}$} \label{p1c7:alg:benders-loop}
-            \State solve $S_k^l$.
-            \If{$S_k^l$ is infeasible} 
+            \State solve $S_k^{Dl}$.
+            \If{$S_k^{Dl}$ is unbounded} 
             	\State obtain extreme ray $w_j^k$ and make $W^l = W^l \cup \braces{w_j^k}$.
             \Else
             	\State obtain extreme point $p_i^k$ and $P^l = P^l \cup \braces{p_i^k}$
@@ -728,6 +728,9 @@ where $(\overline{x}^l, \braces{\overline{\theta}^{l}_k}_{k=1}^K) = \argmin_{x, 
 %\subsection*{Exercise 7.2: Cutting stock (CS) problem}
 %\input{part_1/chapter_7/exercises/E72-CS}
 
-\subsection*{Exercise 7.2: Benders decomposition}
+\subsection*{Exercise 7.2: Parametric optimization}
+\input{part_1/chapter_7/exercises/E72-parametric}
+
+\subsection*{Exercise 7.3: Benders decomposition}
 \input{part_1/chapter_7/exercises/E73-Benders}
 
