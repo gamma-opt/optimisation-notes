@@ -1,0 +1,28 @@
+Using Branch-and-Bound, solve the UFL-W problem from the exercises in Chapter 9:
+\begin{align}
+    \text{(UFL-W)} : \mini_{x,y} & \sum_{j\in N} f_jy_j + \sum_{i\in M}\sum_{j\in N} c_{ij}x_{ij}\\
+    \st & \sum_{j\in N}x_{ij} = 1, &\forall i \in M,\\
+        & \sum_{i\in M}x_{ij} \leq my_j, &\forall  j \in N,\\
+        & x_{ij} \geq 0, &\forall i \in M, \forall j \in N,\\
+        & y_j \in \{0,1\}, &\forall j\in N,
+\end{align}
+
+with opening costs $f=(4,3,4,4,7)$ and client costs
+
+\begin{equation*}
+ (c_{ij}) = \left(
+	\begin{array}{ccccc}
+		12 & 13 & 6 & 0  & 1 \\
+		8  & 4  & 9 & 1  & 2 \\
+		2  & 6  & 6 & 0  & 1 \\
+		3  & 5  & 2 & 1  & 8 \\
+		8  & 0  & 5 & 10 & 8 \\
+		2  & 0  & 3 & 4  & 1
+	\end{array}
+ \right).
+\end{equation*}
+
+\begin{itemize}
+ \item To obtain a good start for branching, use strong branching at the root node. All following branching variables should be selected using maximum infeasibility.
+ \item For node selection, use the best bound selection to minimze the number of evaluated nodes.
+\end{itemize}
