@@ -237,7 +237,7 @@ The second scenario concerns changes in variables that are basic in the optimal 
 Let $c_j$ is the coefficient of the $l^{\text{th}}$ basic variable, that is $j = B(l)$. In this case, $c_B$ becomes $c_B + \delta e_l$, meaning that all optimality conditions are simultaneously affected. Thus, we have to define a range for $\delta$ in which the condition
 %
 \begin{equation*}
-	(c_B + \delta e_i)^\top B^{-1}A_i \leq c_i, \, \forall i \neq j 
+	(c_B + \delta e_l)^\top B^{-1}A_i \leq c_i, \, \forall i \neq j 
 \end{equation*}
 %
 holds. Notice that we do not need to consider $j$ since $x_j$ is a basic variable, and thus, its reduced costs are assumed to remain zero.
