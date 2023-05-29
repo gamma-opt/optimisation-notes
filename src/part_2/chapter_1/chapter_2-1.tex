@@ -2,7 +2,7 @@
 
 An optimisation is one of these words that has many meanings, depending on the context you take as a reference. In the context of this course, optimisation refers to \emph{mathematical optimisation}, which is a discipline of applied mathematics.
 
-In mathematical optimisation, we build upon concepts and techniques from calculus, analysis, linear algebra, and other domains of mathematics to develop methods that allow us finding values for variables within a given domain that maximise (or minimise) the value of a function. In specific, we are trying to solve the following general problem:
+In mathematical optimisation, we build upon concepts and techniques from calculus, analysis, linear algebra, and other domains of mathematics to develop methods that allow us to find values for variables within a given domain that maximise (or minimise) the value of a function. In specific, we are trying to solve the following general problem:
 %
 \begin{align}
     \min &f(x) \label{eq:opt_prob} \\
@@ -109,7 +109,7 @@ Markowitz (1952) proposed using $x^\top\Sigma x$ as a risk measure that captures
 	& 0 \leq x_j \leq 1, \ \forall j \in J. \label{ex2:const2}
 \end{align} 
 %
-Objective function \eqref{ex2:obj} represents the portfolio risk to be minimised, while constraint \eqref{ex2:const1} enforces that the expected return must be at least $\epsilon$. Notice that $\epsilon$ can be seen as a resource that has to be (at least) completely depleted, if one wants to do a parallel with the resource allocation structure discussed early. Constraint \eqref{ex2:const2} defined the domain of the decision variables. Notice how the problem is posed in a scaled form, where $x_j \in [0,1]$ represents a percentage of a hypothetical available capital for investment.
+Objective function \eqref{ex2:obj} represents the portfolio risk to be minimised, while constraint \eqref{ex2:const1} enforces that the expected return must be at least $\epsilon$. Notice that $\epsilon$ can be seen as a resource that has to be (at least) completely depleted if one wants to do a parallel with the resource allocation structure discussed early. Constraint \eqref{ex2:const2} defined the domain of the decision variables. Notice how the problem is posed in a scaled form, where $x_j \in [0,1]$ represents a percentage of a hypothetical available capital for investment.
 
 In this example, the problem is nonlinear due to the quadratic nature of the objective function $x^\top\Sigma x = \sum_{i,j \in J} \sigma_{ij}x_ix_j$. As we will see later on, there are efficient methods that can be employed to solve quadratic problems like this.
 
@@ -152,12 +152,12 @@ Our objective is to develop a model that incorporates a given level of protectio
 The tractability of robust optimisation models depends on the geometry of the uncertainty set employed. Let us assume in what follows that 
 %
 \begin{align}
-	\epsilon_i = \braces{\overline{a}_i + P_iu \mid ||u||_2 \leq \Gamma_i} \label{eq:ellipsoid}
+	\epsilon_i = \braces{\overline{a}_i + P_iu \mid \|u\|_2 \leq \Gamma_i} \label{eq:ellipsoid}
 \end{align}
 %
-is an ellipsoid with the characteristic matrix $P_i$ (i.e., its eigenvalues show how the ellipsoid extends in every direction from $\overline{a}_i$) and $\Gamma_i$ employs a scaling of the ellipsoid size.
+is an ellipsoid with a characteristic matrix $P_i$ and $\Gamma_i$ scales the ellipsoid size. The singular values and corresponding left-singular vectors of $P_i$ describe how the ellipsoid extends from $\overline{a}_i$ in different directions. In particular, for any ellipsoid $\epsilon_i$, the characteristic matrix $P_i$ can be chosen to be symmetric and positive definite (which will be our case, as we will see next), in which case the singular values and singular vectors of $P_i$ coincide with its eigenvalue and eigenvectors.
 
-{\bf Remark:} an alternative (perhaps more frequent) characterisation of an ellipsoid $\epsilon \subset \reals^n$ centred at $\overline{x}$ is given by $\epsilon = \braces{x \in \reals^n \mid (x - \overline{x})^\top A(x - \overline{x}) = 1}$. By making $A = P^{-2}$, we recover the representation in \eqref{eq:ellipsoid}.
+{\bf Remark:} an alternative (perhaps more frequent) characterisation of an ellipsoid $\epsilon \subset \reals^n$ centred at $\overline{x}$ is given by $\epsilon = \braces{x \in \reals^n \mid (x - \overline{x})^\top A(x - \overline{x}) = \Gamma^2}$. By making $A = (PP^\top)^{-1}$, we recover the representation in \eqref{eq:ellipsoid}, assuming $P$ is invertible.
 
 We can now formulate the \emph{robust counterpart}, which consists of a risk-averse version of the original resource allocation problem. In that, we try to anticipate the worst possible outcome and make decisions that are both optimal and guarantee feasibility in this worst-case sense. This standpoint translates into the following optimisation model.
 %
@@ -172,21 +172,21 @@ Notice how the constraint \eqref{ex3:robust_const} has an embedded optimisation 
 Assuming that the uncertainty set $\epsilon_i$ is an ellipsoid, the following result holds.
 %
 \begin{align}
-	\max_{a_{i} \in \epsilon_i}\braces{a_i^\top x}  & = \overline{a}_i^\top x + \max_u\braces{u^\top P_i x : ||u||_2 \leq \Gamma_i} \label{eq:robust_set1}\\
-	& = \overline{a}_i^\top x + \Gamma_i||P_i x||_2. \label{eq:robust_set2}
+	\max_{a_{i} \in \epsilon_i}\braces{a_i^\top x}  & = \overline{a}_i^\top x + \max_u\braces{u^\top P_i x : \|u\|_2 \leq \Gamma_i} \label{eq:robust_set1}\\
+	& = \overline{a}_i^\top x + \Gamma_i\|P_i x\|_2. \label{eq:robust_set2}
 \end{align}
 %
-In \eqref{eq:robust_set1}, we recast the inner problem in terms of the ellipsoidal uncertainty set, ultimately meaning that we recast the inner maximisation problem in terms of variable $u$. Since the only constraint is $||u||_2 \leq \Gamma_i$, in \eqref{eq:robust_set2} we can derive a closed form for the inner optimisation problem.
+In \eqref{eq:robust_set1}, we recast the inner problem in terms of the ellipsoidal uncertainty set, ultimately meaning that we recast the inner maximisation problem in terms of variable $u$. Since the only constraint is $\|u\|_2 \leq \Gamma_i$, in \eqref{eq:robust_set2} we can derive a closed form for the inner optimisation problem.
 
 With the closed form derived in \eqref{eq:robust_set2}, we can reformulate the original bi-level problem as a tractable single-level problem of the following form
 %
 \begin{align}
 	\maxi \ &  c^\top x \nonumber \\
-	\st & \overline{a}_i^\top x + \Gamma_i||P_i x||_2 \leq b_i, \ \forall i \in I \label{eq:robust_counter1}\\
+	\st & \overline{a}_i^\top x + \Gamma_i\|P_i x\|_2 \leq b_i, \ \forall i \in I \label{eq:robust_counter1}\\
 	& x_j \geq 0, \ \forall j \in J. \nonumber
 \end{align} 
 %
-Notice how the term $\Gamma_i||P_i^\top x||_2$ creates a buffer for constraint \eqref{eq:robust_counter1}, ultimately preventing the complete depletion of the resource. Clearly, this will lead to a suboptimal solution when compared to the original deterministic at the expense of providing protection against deviations in coefficients $a_i$. This difference is often referred to as the \emph{price of robustness}.
+Notice how the term $\Gamma_i\|P_i^\top x\|_2$ creates a buffer for constraint \eqref{eq:robust_counter1}, ultimately preventing the complete depletion of the resource. Clearly, this will lead to a suboptimal solution when compared to the original deterministic at the expense of providing protection against deviations in coefficients $a_i$. This difference is often referred to as the \emph{price of robustness}.
 
 In Figure \ref{fig:ellipsoids}, we show the ellipsoidal sets for two levels of $\Gamma_i$ for a single constraint $i$. We define 
 %
@@ -205,9 +205,9 @@ using the average and standard deviation of the original distributions that gene
 
 \subsection{Classification: support-vector machines}
 
-This is an example in which the resource allocation structure within the optimisation model is not as obvious. Suppose we are given a data set $D \in \reals^{n}$ with $|D| = N + M$ that can be divided into two disjunct sets $I^- = \braces{x_1, \dots, x_N}$ and $I^+ = \braces{x_1,\dots, x_M}$. 
+This is an example in which the resource allocation structure within the optimisation model is not as obvious. Suppose we are given a data set $D \subset \reals^{n}$ with $|D| = N + M$ that can be divided into two disjunct sets $I^- = \braces{x_1, \dots, x_N}$ and $I^+ = \braces{x_1,\dots, x_M}$. 
 
-Each element in $D$ is an observation of a given set of $n$ features with values represented by a $x \in \reals^n$ that has been classified as belonging to set $I^-$ and $I^+$. Because of the availability of labelled data, classification is said to be ane xample of supervised learning in the field of machine learning. 
+Each element in $D$ is an observation of a given set of $n$ features with values represented by a $x \in \reals^n$ that has been classified as belonging to set $I^-$ and $I^+$. Because of the availability of labelled data, classification is said to be an example of supervised learning in the field of machine learning. 
 
 Figure \ref{fig:classified_observations} illustrates this situation for $n = 2$, in which the orange dots represent points classified as belonging to $I^-$ (negative observations) and the blue dots represent points classified as belonging to $I^+$ (positive observations).
 
@@ -217,7 +217,7 @@ Figure \ref{fig:classified_observations} illustrates this situation for $n = 2$,
     \label{fig:classified_observations}
 \end{figure}
 
-Our task is to obtain a function $f:\reals^n \mapsto \reals$ from a given family of functions that is capable to, given an observed set of features $\hat{x}$, classify whether it belongs to $I^-$ or $I^+$. In other words, we want to calibrate $f$ such that
+Our task is to obtain a function $f:\reals^n \mapsto \reals$ from a given family of functions that is capable of, given an observed set of features $\hat{x}$, classify whether it belongs to $I^-$ or $I^+$. In other words, we want to calibrate $f$ such that
 %
 \begin{align}
 	f(x_i) < 0, \ \forall x_i \in I^-, \text{ and } f(x_i) > 0, \ \forall x_i \in I^+.  
@@ -246,14 +246,14 @@ The optimisation problem that finds optimal parameters $a$ and $b$ can be stated
 	\mini \ & \sum_{i=1}^M u_i + \sum_{i=1}^N v_i \label{ex4:obj}\\
 	\st & a^\top x_i - b - u_i \leq 0, i = 1, \dots, M \label{ex4:const1} \\
     & a^\top x_i - b + v_i \geq 0, i = 1,\dots,N \label{ex4:const2} \\
-    & ||a||_2 = 1 \label{ex4:const3} \\
+    & \|a\|_2 = 1 \label{ex4:const3} \\
     & u_i \geq 0, i = 1, \dots, N \\
     & v_i \geq 0, i = 1, \dots, M \\
     & a \in \reals^n, b \in \reals. \label{ex4:end}   
 \end{align} 
 %
 The objective function \eqref{ex4:obj} accumulates the total misclassification error. Constraint \eqref{ex4:const1} allows for capturing the misclassification error for each $x_i \in I^-$. Notice that $u_i = \max\braces{0, a^\top x_i -b} = e^-(x_i \in I^-; a, b)$. Likewise, constraint \eqref{ex4:const2} guarantees that $v_i = e^+(x_i \in I^+; a, b)$.
-To avoid trivial solutions in which $(a,b) = (0, 0)$, the normalisation constraint $|| a ||_2 = 1$ is imposed in constraint \eqref{ex4:const3}, which turns the model nonlinear.
+To avoid trivial solutions in which $(a,b) = (0, 0)$, the normalisation constraint $\| a \|_2 = 1$ is imposed in constraint \eqref{ex4:const3}, which turns the model nonlinear.
 
 Solving the model \eqref{ex4:obj}--\eqref{ex4:end} provides optimal $(a,b)$ which translates into the classifier represented as the green line in Figure \ref{fig:observations_with_classifier}.
 
@@ -263,7 +263,7 @@ Solving the model \eqref{ex4:obj}--\eqref{ex4:end} provides optimal $(a,b)$ whic
     \label{fig:observations_with_classifier}
 \end{figure}
  
-A variant referred to as \emph{robust classifier} penalises not only the the misclassification error, but also the observations within a given slab $S = \braces{x \in \reals^n \mid -1 \leq a^\top x - b \leq 1}$. Notice that, being the two lines defined by $f^-(x) : a^\top x - b = -1$ and $f^+(x) : a^\top x - b = +1$, the distance between the two hyperplanes is given by $\frac{2}{||a||_2}$. 
+A variant referred to as \emph{robust classifier} penalises not only the the misclassification error, but also the observations within a given slab $S = \braces{x \in \reals^n \mid -1 \leq a^\top x - b \leq 1}$. Notice that, being the two lines defined by $f^-(x) : a^\top x - b = -1$ and $f^+(x) : a^\top x - b = +1$, the distance between the two hyperplanes is given by $\frac{2}{\|a\|_2}$. 
 
 Accordingly, we redefine our error measures as follows. 
 %
@@ -278,10 +278,10 @@ Accordingly, we redefine our error measures as follows.
 	    \end{cases}                   
 \end{align*}
 %
-By doing so, a penalty is applied not only to those points that were misclassified but also to those points correctly classified that happen to be inside the slab $S$. To define an optimal robust classifier, one must trade off the size of the slab, which is inversely proportional to $||a||$, and the total of observations that fall in the slab $S$. The formulation for the robust classifier then becomes
+By doing so, a penalty is applied not only to those points that were misclassified but also to those points correctly classified that happen to be inside the slab $S$. To define an optimal robust classifier, one must trade off the size of the slab, which is inversely proportional to $\|a\|$, and the total of observations that fall in the slab $S$. The formulation for the robust classifier then becomes
 %
 \begin{align}
-	\mini \ & \sum_{i=1}^M u_i + \sum_{i=1}^N v_i + \gamma||a||_2^2 \label{ex5:obj}\\
+	\mini \ & \sum_{i=1}^M u_i + \sum_{i=1}^N v_i + \gamma\|a\|_2^2 \label{ex5:obj}\\
 	\st & a^\top x_i - b - u_i \leq -1, \ i = 1,\dots,M \label{ex5:const1} \\
 	    & a^\top x_i - b + v_i \geq 1, \ i = 1,\dots,N \label{ex5:const2} \\
 	    & u_i \geq 0, i = 1, \dots, N \\
@@ -289,7 +289,7 @@ By doing so, a penalty is applied not only to those points that were misclassifi
 	    & a \in \reals^n, b \in \reals.
 \end{align} 
 %  
-In objective function \eqref{ex5:obj}, the errors accumulated in variables $u_i$, $i=1,\dots,N$ and $v_i$, $i = 1,\dots,M$ and the squared norm $||a||_2^2$ are considered simultaneously. The term $\gamma$ is a scalar used to impose an emphasis on minimising the norm $||a||_2$ and incentivising a larger slab $S$ (recall that the slab is large for smaller $||a||_2$). The squared norm  $||a||_2^2$ is considered instead as a means to recover differentiability, as the norm  $||a||_2$ is not differentiable. Later on, we will see how beneficial it is for optimisation methods to be able to assume differentiability. Moreover, note how in constraints \eqref{ex5:const1} and \eqref{ex5:const2} $u$ and $v$ also accumulate penalties for correctly classified $x_i$ that happen to be between the slab $S$, that is, that have term $a^\top x - b$ larger/ smaller than -1/ +1. Figure \ref{fig:observations_with_rob_classifier} shows a robust classifier an arbitrary value of $\gamma$.
+In objective function \eqref{ex5:obj}, the errors accumulated in variables $u_i$, $i=1,\dots,N$ and $v_i$, $i = 1,\dots,M$ and the squared norm $\|a\|_2^2$ are considered simultaneously. The term $\gamma$ is a scalar used to impose an emphasis on minimising the norm $\|a\|_2$ and incentivising a larger slab $S$ (recall that the slab is large for smaller $\|a\|_2$). The squared norm  $\|a\|_2^2$ is considered instead as a means to recover differentiability, as the norm  $\|a\|_2$ is not differentiable. Later on, we will see how beneficial it is for optimisation methods to be able to assume differentiability. Moreover, note how in constraints \eqref{ex5:const1} and \eqref{ex5:const2} $u$ and $v$ also accumulate penalties for correctly classified $x_i$ that happen to be between the slab $S$, that is, that have term $a^\top x - b$ larger/ smaller than -1/ +1. Figure \ref{fig:observations_with_rob_classifier} shows a robust classifier with an arbitrary value of $\gamma$.
 
 \begin{figure}[H]
     \includegraphics[width=0.8\textwidth]{part_2/chapter_1/figures/classes_with_robust_classifier.pdf}
