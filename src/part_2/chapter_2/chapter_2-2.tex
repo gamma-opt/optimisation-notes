@@ -22,42 +22,75 @@ to be convex, we need to verify whether $f$ is a \emph{convex function} and $X$ 
 
 \section{Identifying convexity of sets}
  
-Before we formally define convex sets, let us first look at the idea of \emph{combinations}. For that, let $S \subseteq \reals^n$ be a set and $x_j \in S$ for $j=1,\dots,k$ be a collection of vectors (i.e., $n$-dimensional ``points'') belonging to $S$. Then, we have that:
+Before we formally define convex sets, let us first look at the idea of \emph{combinations}. For that, let $S \subseteq \reals^n$ be a set and $x_j \in S$ for $j=1,\dots,k$ be an arbitrary finite collection of vectors (i.e., $n$-dimensional ``points'') belonging to $S$. Then, we have that:
 %
 \begin{itemize} 
-	\item A \emph{linear combination} of $x_j$ for $j=1,\dots, k$ is the set 
+	\item A \emph{linear combination} of $x_j$,  $j=1,\dots, k$, is
 %
 	\begin{align}
-		\braces{x \in \reals^n : \sum_{j=1}^k \lambda_jx_j, \ \lambda_j \in \reals \text{ for } j=1,\dots, k}.
+		x = \sum_{j=1}^k \lambda_jx_j, 
 	\end{align}
 %
-	\item An \emph{affine combination} is a linear combination, with the additional constraint that $\sum_{j=1}^k \lambda_j = 1$. That is,
-%
-	\begin{align}
-		\braces{x \in \reals^n : \sum_{j=1}^k \lambda_jx_j, \ \sum_{j=1}^k \lambda_j = 1, \ \lambda_j \in \reals \text{ for } j=1, \dots, k}.
-	\end{align}
+where $\lambda_j \in \reals$ for $j=1,\dots,k$.
+	\item An \emph{affine combination} is a linear combination, with the additional constraint that $\sum_{j=1}^k \lambda_j = 1$. 
 %
 	\item A \emph{conic combination} is a linear combination with the additional condition that $\lambda_j \geq 0$ for $j = 1,\dots,k$.
 %
-	\begin{align}
-		\braces{x \in \reals^n : \sum_{j=1}^k \lambda_jx_j, \ \lambda_j \geq 0 \text{ for } j=1,\dots,k}.
-	\end{align}
-%
-	\item And finally, a \emph{convex combination} is the intersection between an affine and a conic combinations, implying that $\lambda_j \in [0,1]$.  
-%
-	\begin{align}
-		\braces{x \in \reals^n : \sum_{j=1}^k \lambda_jx_j, \ \sum_{j=1}^k \lambda_j = 1, \ \lambda_j \geq 0 \text{ for } j=1,\dots,k}.
-	\end{align}
+	\item And finally, a \emph{convex combination} is both an affine and a conic combination, i.e., it is a linear combination with the additional conditions that 
+		\begin{itemize}
+			\item $\sum_{j=1}^k \lambda_j=1$ and  
+			\item $\lambda_j \ge 0$, $j = 1,\dots,k$.  
+		\end{itemize}
+		Notice that implies that $\lambda_j \in [0,1]$ for $j = 1,\dots,k$.
 % 
 \end{itemize}
 
 We say that a set is convex if it contains all points formed by the convex combination of any pair of points in this set. This is equivalent to saying that the set contains the line segment between any two points belonging to the set. 
 
 \begin{definition}[Convex sets] \label{def:convex_sets}
-	A set $S \subseteq \reals^n$ is said to be convex if $\overline{x} = \sum_{j=1}^k \lambda_jx_j$ belongs to $S$, where $\sum_{j=1}^k \lambda_j = 1$, $\lambda_j \geq 0$ and $x_j \in S$ for $j=1,\dots, k$.
+	A set $S \subseteq \reals^n$ is said to be convex if $x = \lambda x_1 + (1- \lambda)x_2$ belongs to $S$, for all $x_1, x_2 \in S$ and $0 \le \lambda \le 1$.
 \end{definition}
 
-Definition \ref{def:convex_sets} is useful as it allows for showing that some set operations preserve convexity. 
+We can build upon Definition \ref{def:convex_sets} to show that a set is convex if it contains all convex combinations of points in the set. This is stated in Proposition \ref{prop:convex_sets}.
+
+\begin{proposition}[Convex sets and convex combinations]
+	\label{prop:convex_sets}
+	A set $S \subset \reals^n$ is convex if and only if all finite convex combinations of its elements belong to $S$.
+\end{proposition}
+
+\begin{proof}
+	First, assume that $S \subseteq \reals^n$ contains all finite convex combinations of its elements. That is, for any integer $k$, we have that
+	\begin{equation*}
+		x \in S, \text{ where } x = \sum_{j=1}^k \lambda_j x_j 
+	\end{equation*}
+	if $x_1,\dots,x_k \in S$ and $\lambda_j \geq 0$, $j = 1, \dots, k$, satisfy $\sum_{j=1}^k \lambda_j =1$.	In particular, this implies that $x = \lambda x_1 + (1-\lambda)x_2$ belongs to $S$ for any $x_1, x_2 \in S$ and $0 \le \lambda \le 1$. Thus, $S$ is convex\footnote{Notice that, as $\lambda \ge 0$, we have that $1 - \lambda \ge 0$ and, somewhat obviously $\lambda + (1 - \lambda) = 1$, which means that our arbitrary $x$ is indeed a convex combination of $x_1$ and $x_2$, as per Definition \ref{def:convex_sets}}.
+	
+	Next, let us assume that $S \subseteq \reals^n$ is convex. We will demonstrate via induction that $S$ contains all convex combinations of its elements. First, notice that $S$ straightforwardly contains all convex combinations of $x_1 \in S$, since the only convex combination of a singleton is itself. This is the \emph{base case} of our induction argument.
+	
+	Let $l$ be an arbitrary integer and assume that 
+%
+	\begin{equation}
+		y \in S, \text{ where } y = \sum_{j=1}^l \mu_j y_j \label{eq:convex_sets_induction_hypothesis}
+	\end{equation}
+%
+	for any $y_1, \dots, y_l \in S$ and $\mu_j \ge 0$, $j = 1, \dots, l$, that satisfy $\sum_{j=1}^l = 1$. That is, we assume all ``$l$-dimensional'' convex combinations of elements in $S$ belong to $S$, which is our \emph{induction hypothesis}. We will now focus on using \eqref{eq:convex_sets_induction_hypothesis} and the convexity of $S$ to show that all ``($l+1$)-dimensional'' convex combinations of elements in $S$ also belong to $S$, which is our \emph{induction step}.
+	
+	To this end, let $x_1, \dots, x_{l+1} \in S$ be arbitrarily selected, and assume that $\lambda_j \ge 0$, $j = 1, \dots, l+1$, satisfy $\sum_{j=1}^{l+1}\lambda_j = 1$. Without loss of generality, we may assume that $0 \le \lambda_{l+1} < 1$. Indeed, due to the conditions imposed on $\lambda_j$, $j = 1, \dots, l+1 \ge 2$, all of them cannot equal 1. Thus we have
+%	
+	\begin{equation}
+		x := \sum_{j=1}^{l+1} \lambda_j x_j = \lambda_{l+1}x_{l+1} + (1-\lambda_{l+1})\sum_{j=1}^l \mu_j x_j, \label{eq:convex_sets_induction_step}
+	\end{equation}
+%
+	where $\mu_j = \lambda_j / (1 - \lambda_{l+1})$. Notice that $\mu_j \ge 0$ for all $j = 1, \dots, l$ and, furthermore,
+%
+	\begin{equation}
+		\sum_{j=1}^l \mu_j = \frac{1}{1 - \lambda_{l+1}} \sum_{j=1}^l \lambda_j = \frac{1}{1-\lambda_{l+1}} \left( \sum_{j=1}^{l+1} \lambda_j - \lambda_{l+1} \right) = \frac{1 - \lambda_{l+1}}{1 - \lambda_{l+1}} = 1.
+	\end{equation}
+%
+	As per our induction hypothesis, the $l$-dimensional convex combination $\sum_{j=1}^l\mu_j x_j$ belongs to $S$, as does $x_{l+1}$ by assumption. Because $S$ is convex, the arbitrary $(l+1)$-dimensional convex combination of $x$ defined in \eqref{eq:convex_sets_induction_step} also belongs to $S$. This completes the induction step and the proof.
+\end{proof}
+
+Definition \ref{def:convex_sets} and Proposition \ref{prop:convex_sets} are useful as it allows for showing that some set operations preserve convexity. 
 
 \subsection{Convexity-preserving set operations}
 
@@ -111,11 +144,11 @@ There are several familiar sets that are known to be convex. Having the knowledg
 Some important examples of convex sets include:
 \begin{itemize}
 	\item Them empty set $\emptyset$, any singleton $\{\overline{x}\}$ and the whole space $\reals^n$; 
+	\item hyperplanes: $H = \braces{x : p^\top x = \alpha} \subset \reals^n$, where $p \neq 0$ is a normal vector and $\alpha\in \reals$ is a scalar. Notice that $H$ can be equivalently represented as $H = \braces{x \in \reals^n: p^\top(x - \overline{x}) = 0}$ for any $\overline{x} \in H$;
 	\item halfspaces: $S = \braces{x : p^\top x \leq \alpha} \subset \reals^n$;
-	\item hyperplanes: $H = \braces{x : p^\top x = \alpha} \subset \reals^n$, where $p \neq 0^n$ is a normal vector and $\alpha\in \reals$ is a scalar. Notice that $H$ can be equivalently represented as $H = \braces{x \in \reals^n: p^\top(x - \overline{x}) = 0}$ for $\overline{x} \in H$;
 	\item polyhedral sets: $P = \braces{x : Ax \leq b} \subset \reals^n$, where $A\in \reals^{m\times n}$ and $b \in \reals^n$;
-	\item norm-induced sets (balls): $B = \braces{x : ||x - \overline{x}|| \leq \alpha} \subseteq \reals^n$, where $|| \cdot ||$ is any norm and $\alpha$ a scalar;
-	\item norm cones: $C =\braces{(x,\alpha) \in \reals^{n+1}: ||x|| \leq \alpha} $;
+	\item norm-induced sets (balls): $B = \braces{x : \|x - \overline{x}\| \leq \alpha} \subseteq \reals^n$, where $\| \cdot \|$ is any norm and $\alpha$ a scalar;
+	\item norm cones: $C =\braces{(x,\alpha) \in \reals^{n+1}: \|x\| \leq \alpha} $;
 \end{itemize} 
 
 For example, let us consider the polyhedral set $P = \braces{x \in \reals^n : Ax \leq b} \subset \reals^n$ with $A$ being a $m \times n$ matrix. Notice that $S$ is the intersection of a collection of half-spaces $H_i = \braces{x \in \reals^n : a_i^\top x \leq b_i}$, where $a_i$ are vectors from the rows of the matrix $A$ and $b_i$ are the components of the column vector $b$. We know that $H_i$ are convex sets, thus $P = \cap_{i=1}^m H_i$ is also convex, as the intersection of sets is a convexity-preserving set operation.
@@ -140,7 +173,7 @@ Hyperplanes and halfspaces will play a central role in the developments we will 
 		\caption{A hyperplane $H = \braces{x \in \reals^n: p^\top(x - \overline{x}) = 0}$ with normal vector $p$ displaced to $\overline{x}$.}
 	\end{figure}
 	
-	Analogously, a halfspaces can be represented as $S = \braces{x \in \reals^n : p^\top(x - \overline{x}) \le 0}$ where $p^\top \overline{x} = \alpha$ is the hyperplane that forms the boundary of the halfspace. This definition suggests a simple geometrical interpretation: the halfspace $S$ consists of $\overline{x}$ plus any vector with an obtuse or right angle (i.e., greater of equal to 90$^\circ$) with the outward normal vector $p$.
+	Analogously, a (closed) halfspace can be represented as $S = \braces{x \in \reals^n : p^\top(x - \overline{x}) \le 0}$ where $p^\top \overline{x} = \alpha$, with $\alpha = p^\top \overline{x}$, is the hyperplane that forms the boundary of the halfspace. This definition suggests a simple geometrical interpretation: the halfspace $S$ consists of $\overline{x}$ plus any vector with an obtuse or right angle (i.e., greater or equal to 90$^\circ$) with the outward normal vector $p$.
  
  	\begin{figure}[H]
 	    \begin{tikzpicture}
@@ -151,7 +184,7 @@ Hyperplanes and halfspaces will play a central role in the developments we will 
     		\node (x) at (1.9, -1.3) {$x$};
     		\node (H) at (1.7, 0.3) {$S$};
 		\end{tikzpicture}
-		\caption{A halfspace $S = \braces{x \in \reals^n : p^\top(x - \overline{x}) \le 0}$ defined by the same hyperplane $H$. Notice how the vectors $p$ (or $p - \overline{x}$, which is fundamentally the same vector but translated to $\overline{x}$) and $x - \overline{x}$ form angles greater or equal than $90^\circ$.}
+		\caption{A halfspace $S = \braces{x \in \reals^n : p^\top(x - \overline{x}) \le 0}$ defined by the same hyperplane $H$. Notice how the vectors $p$ and $x - \overline{x}$ form angles greater or equal than $90^\circ$.}
 	\end{figure}
 	
 	\begin{figure}[H]
@@ -168,43 +201,44 @@ Hyperplanes and halfspaces will play a central role in the developments we will 
 
 \subsubsection{Norm balls and norm cones}
 
-An Euclidean ball (or simply ball) of radius $\epsilon$ in $\reals^n$ has the form
+A closed Euclidean ball (or simply ball) of radius $\epsilon$ in $\reals^n$ has the form
 %
 \begin{equation*}
-	B(\overline{x}, r) = \braces{x \in \reals^n : || x - \overline{x}||_2 \le \epsilon} \equiv \braces{x \in \reals^n : (x - \overline{x})^\top (x - \overline{x}) \le \epsilon^2}
+	B(\overline{x}, r) = \braces{x \in \reals^n : \| x - \overline{x}\|_2 \le \epsilon} \equiv \braces{x \in \reals^n : (x - \overline{x})^\top (x - \overline{x}) \le \epsilon^2}
 \end{equation*}
 %
 As one might suspect, balls are convex, which can be proved by noting that
 %
 \begin{align*}
-	||\lambda x_1 + (1 - \lambda) x_2 - \overline{x}||_2  & = ||\lambda (x_1 - \overline{x}) + (1 - \lambda) (x_2 - \overline{x})||_2 \\
-	& \le \lambda ||x_1 - \overline{x}||_2 + + (1 - \lambda) ||x_2 - \overline{x}||_2 \le \epsilon.
+	\|\lambda x_1 + (1 - \lambda) x_2 - \overline{x}\|_2  & = \|\lambda (x_1 - \overline{x}) + (1 - \lambda) (x_2 - \overline{x})\|_2 \\
+	& \le \lambda \|x_1 - \overline{x}\|_2 + + (1 - \lambda) \|x_2 - \overline{x}\|_2 \le \epsilon.
 \end{align*}
 %
-Notice that between the first and the second line, we use the triangle inequality, which states that $||x + y|| \le ||x|| + ||y||$ for any two vectors $x$ and $y$ and any norm (including the Euclidean norm). 
+Notice that between the first and the second line, we use the triangle inequality, which states that $\|x + y\| \le \|x\| + \|y\|$ for any two vectors $x$ and $y$ and any norm (including the Euclidean norm). 
 
-Euclidean balls are a special case of norm balls, which are defined as $B(\overline{x}, r) = \braces{x \in \reals^n : || x - \overline{x}|| \le \epsilon}$ where $||\ \cdot \ ||$ is any norm on $\reals^n$. 
+Euclidean balls are a special case of norm balls, which are defined as $B(\overline{x}, r) = \braces{x \in \reals^n : \| x - \overline{x}\| \le \epsilon}$ where $\|\ \cdot \ \|$ is any norm on $\reals^n$. 
 
-A related set is the norm cone, defined as $C(x, \alpha) = \braces{(x,\alpha) \in \reals^{n+1} : ||x|| \le \alpha}$, where $\alpha$ is a scalar. For example, the second-order cone (also known as the ice cream cone or Lorentz cone) is the norm cone for the Euclidean norm.
+A related set is the norm cone, defined as $C(x, \alpha) = \braces{(x,\alpha) \in \reals^{n+1} : \|x\| \le \alpha}$, where $\alpha$ is a scalar. For example, the second-order cone (also known as the ice cream cone or Lorentz cone) is the norm cone for the Euclidean norm.
 
 \begin{remark} 
-	Norm induced sets (balls or cones) are convex for any norm $||x||_p = \left(\sum_{i=1}^n x_i^p\right)^{\frac{1}{p}}$ for $x \in \reals^n$ and $p \geq 1$.
+	Norm-induced sets (balls or cones) are convex for any norm $\|x\|_p = \left(\sum_{i=1}^n x_i^p\right)^{\frac{1}{p}}$ for $x \in \reals^n$ and $p \geq 1$.
 \end{remark}
 
 
 \section{Convex hulls} 
 
-A \emph{convex hull} of a set $S$, denoted $\conv(S)$ is the set formed by all convex combinations of all points in $S$. As the name suggests, $\conv(S)$ is a convex set, regardless of $S$ being or not convex. 
+The \emph{convex hull} of a set $S$, denoted as $\conv(S)$ is the set formed by all convex combinations of all points in $S$. As the name suggests, $\conv(S)$ is a convex set, regardless of $S$ being convex or not. 
 
 Another interpretation for $\conv(S)$ is to think of it as the tightest enveloping (convex) set that contains $S$. Notice that, if $S$ is convex, then $S = \conv(S)$.  Formally, convex hulls are defined as follows.
 
 \begin{definition}[Convex hull of a set]\label{def: convex_hull}
-	Let $S \subseteq \reals^n$ be an arbitrary set. The convex hull of $S$, denoted by $\conv(S)$, is the collection of all convex combinations of $S$. That is, for $x_j \in S$, with $j = 1,\dots, k$, $x \in \conv(S)$ if and only if 
+	Let $S \subseteq \reals^n$ be an arbitrary set. The convex hull of $S$, denoted by $\conv(S)$, is the collection of all convex combinations of elements in $S$. That is, $x \in \conv(S)$ if and only if for some integer $k$, 
 	%
 	\begin{equation*}
-		x = \sum_{j=1}^k \lambda_jx_j : \sum_{j=1}^k \lambda_j = 1, \ \lambda_j \geq 0, \text{ for } j = 1,\dots,k.
+		x = \sum_{j=1}^k \lambda_jx_j
 	\end{equation*}                       
 	%
+	for $x_1,\dots x_k$ in $S$, $\lambda_j \ge 0$, $j= 1,\dots,k$, satisfying $\sum_{j=1}^k \lambda_j = 1$. 
 \end{definition}
 %
 
@@ -265,46 +299,46 @@ Many of the set-related results we will see in this course depends on the charac
 \subsection{Closure, interior and boundary of a set}
 
 
-Let us define some properties that will be useful in this course. For that, we will use an $\epsilon$-neighbourhood of $x \in \reals^n$ (which is a norm ball of radius $\epsilon$ centred in $x$) defined as
+Let us define some properties that will be useful in this course. For that, we will use an open $\epsilon$-neighbourhood of $x \in \reals^n$ (which is a norm ball of radius $\epsilon$ centred in $x$) defined as
 %
 \begin{align*}
     N_\epsilon(x) = \braces{y : ||y - x|| < \epsilon}.
 \end{align*}
 %
-Let $S \subseteq \reals^n$ be an arbitrary set. We can use $N_\epsilon$ to define the following elements related to $S$.  
+Let $S \subseteq \reals^n$ be an arbitrary set. We can use $N_\epsilon$ to define the following concepts related to $S$.  
 \begin{enumerate}
-\item \emph{Closure of $S$}: the set defined by the closure of $S$, denoted $\clo(S)$, is defined as 
-%
-\begin{align*}
-\clo(S) = \braces{x \in \reals^n : S \cap N_\epsilon(x) \neq \emptyset \text{ for every } \epsilon > 0}. 
-\end{align*}
-%
-Notice that the closure might contain points that do not belong to $S$. We say that a set is \emph{closed} if $S = \clo(S)$, that is, the set itself is its own closure. 
-%
-\item \emph{Interior of $S$}: the interior of $S$, denoted $\intr(S)$, is the set
-\begin{align*}
-\intr{S} = \braces{x \in S : N_\epsilon(x) \subset S \text{ for some } \epsilon > 0}.
-\end{align*}
-%
-If $S$ is the same as its own interior, then we say that $S$ is \emph{open}. Some authors say that $S$ is solid if it has a nonempty interior (that is, $\intr(S) \neq \emptyset$. Notice that the interior of $S$ is a subset of $S$, that is $\intr(S) \subseteq S$.
-%
-\item \emph{Boundary of $S$}: the boundary of $S$, denoted $\bou(S)$ is the collection of points defined by
-%
-\begin{align*}
-\bou(S) = \braces{x \in \reals^n : N_\epsilon(x) \text{ contains some } x_i \in S \text{ and some } x_j \notin S \text{ for every } \epsilon > 0}.
-\end{align*}
-%
-We say that $S$ is bounded if exists $N_\epsilon(x)$, $x \in \reals^n$, for some $\epsilon > 0$ such that $S \subset N_\epsilon(x)$. 
+	\item \emph{Interior of $S$}: the interior of $S$, denoted $\intr(S)$, is the set
+	\begin{align*}
+	\intr{S} = \braces{x \in S : N_\epsilon(x) \subset S \text{ for some } \epsilon > 0}.
+	\end{align*}
+	%
+	If $S$ is the same as its own interior, then we say that $S$ is \emph{open}. Some authors say that $S$ is solid if it has a nonempty interior, that is, $\intr(S) \neq \emptyset$. Notice that the interior of $S$ is a subset of $S$, that is $\intr(S) \subseteq S$.
+	%
+	\item \emph{Boundary of $S$}: the boundary of $S$, denoted $\bou(S)$ is defined by
+	%
+	\begin{align*}
+	\bou(S) = \braces{x \in \reals^n : N_\epsilon(x) \text{ contains some } y \in S \text{ and some } z \notin S \text{ for every } \epsilon > 0}.
+	\end{align*}
+	%
+	\item \emph{Closure of $S$}: the closure of $S$, denoted $\clo(S)$, is defined as 
+	%
+	\begin{align*}
+	\clo(S) = \braces{x \in \reals^n : S \cap N_\epsilon(x) \neq \emptyset \text{ for every } \epsilon > 0}. 
+	\end{align*}
+	%
+	Notice that the closure might contain points that do not belong to $S$. We say that a set is \emph{closed} if $S = \clo(S)$, that is, the set itself is its own closure. 
+	%
+	\item \emph{Boundedness}: we say that $S$ is bounded if exists $N_\epsilon(x)$, $x \in \reals^n$, for some $\epsilon > 0$ such that $S \subset N_\epsilon(x)$. 
 \end{enumerate}
 
-We say that a set is \emph{compact} if it is both \emph{closed} and \emph{bounded}. Compact sets appear very frequently in real-world applications of optimisation, since typically one can assume the existence of bounds for decision variables (such as nonnegativity or maximum physical bounds or, at an extreme case, smallest/ largest computational constants). Another frequent example of bounded set is the convex hull of a collection of discrete points, which is called by some authors \emph{polytopes} (effectively bounded polyhedral sets).  
+Because our setting is finite-dimensional by definition, we say that a set is \emph{compact} if it is both \emph{closed} and \emph{bounded}. Compact sets appear very frequently in real-world applications of optimisation, since typically one can assume the existence of bounds for decision variables (such as nonnegativity or maximum physical bounds or, in an extreme case, smallest/ largest computational constants). Another frequent example of a bounded set is the convex hull of a collection of discrete points, which is called by some authors \emph{polytopes} (effectively bounded polyhedral sets).  
 
 Let us consider the following example. Let $S = \braces{(x_1,x_2) \in \reals^n : x_1^2 + x_2^2 \leq 1}$. Then, we have that:
 \begin{enumerate}
 	\item $\clo(S) = \braces{(x_1,x_2) \in \reals^n : x_1^2 + x_2^2 \leq 1}$. Since $S = \clo(S)$, $S$ is closed.
 	\item $\intr(S) = \braces{(x_1,x_2) \in \reals^n : x_1^2 + x_2^2 < 1}$. 
 	\item $\bou(S) = \braces{(x_1,x_2) \in \reals^n : x_1^2 + x_2^2 = 1}$. Notice that it makes $S$ bounded.
-	\item $S$ is compact, since it is closed and bounded. 
+	\item $S$ is compact since it is closed and bounded. 
 \end{enumerate}
 
 Notice that, if $S$ is closed, then $\bou(S) \subset S$. That is, its boundary is part of the set itself. Moreover, it can be shown that $\clo(S) = \bou(S) \cup S$ is the smallest closed set containing $S$. 
@@ -415,7 +449,7 @@ Notice that $S$ lies in the half-space $(y-\overline{x})^\top(x - \overline{x}) 
 
 \subsection{Halfspaces and separation}
 
-We can use halfspaces to build the concept of separation. Let us start recalling that a hyperplane $H = \braces{x : p^\top x = \alpha}$ with normal vector $p \in \reals^n$ and $\alpha \in \reals$ defines two half-spaces $H^+ = \braces{x : p^\top x \geq \alpha}$ and $H^- = \braces{x : p^\top x \leq \alpha}$. Figure \ref{fig:hyperplane} illustrates the concept. Notice how the vector $p$ lies in the half-space $H^+$.
+We can use halfspaces to build the concept of separation. Let us start by recalling that a hyperplane $H = \braces{x : p^\top x = \alpha}$ with normal vector $p \in \reals^n$ and $\alpha \in \reals$ defines two (closed) half-spaces $H^+ = \braces{x : p^\top x \geq \alpha}$ and $H^- = \braces{x : p^\top x \leq \alpha}$. Figure \ref{fig:hyperplane} illustrates the concept. Notice how the vector $p$ points towards the half-space $H^+$.
 %
 \begin{figure}
 %	\includegraphics[scale=0.6]{Figures/hyperplanes.pdf}
@@ -436,7 +470,7 @@ Any hyperplane $H$ can be defined in reference to a point $\overline{x} \in H$ b
 	p^\top(x - \overline{x}) = p^\top x - p^\top \overline{x} = \alpha - \alpha = 0.  
 \end{align*}
 %
-From that, the half-spaces defined by $H$ can be equivalently stated as $H^+ = \braces{x : p^\top (x - \overline{x}) \geq 0}$ and $H^- = \braces{x : p^\top (x - \overline{x}) \leq 0}$.
+From that, the half-spaces defined by $H$ can be equivalently defined as $H^+ = \braces{x : p^\top (x - \overline{x}) \geq 0}$ and $H^- = \braces{x : p^\top (x - \overline{x}) \leq 0}$.
 
 We can now define the separation of convex sets. 
 %
@@ -476,10 +510,10 @@ Let $S \neq \emptyset$ be a closed convex set in $\reals^n$ and $y \notin S$. Th
 \end{theorem}
 %
 \begin{proof}
-	Theorem \ref{thm:closest_point} guarantees the existence of a unique minimising $\overline{x} \in S$ such that $(y-\overline{x})^\top(x - \overline{x}) \leq 0$ for each $x \in S$. Let $p = (y - \overline{x}) \neq 0$ and $\alpha = \overline{x}^\top(y - \overline{x}) = p^\top\overline{x}$. Then we get $p^\top x \leq \alpha$ for each $x \in S$, while $p^\top y - \alpha = (y - \overline{x})^\top(y - \overline{x}) = ||y - \overline{x}||^2 > 0$.
+	Theorem \ref{thm:closest_point} guarantees the existence of a unique minimising $\overline{x} \in S$ such that $(y-\overline{x})^\top(x - \overline{x}) \leq 0$ for each $x \in S$. Let $p = (y - \overline{x}) \neq 0$ and $\alpha = (y - \overline{x})^\top\overline{x} = p^\top\overline{x}$. Then we get $p^\top x \leq \alpha$ for each $x \in S$, while $p^\top y - \alpha = (y - \overline{x})^\top(y - \overline{x}) = \|y - \overline{x}\|^2 > 0$.
 \end{proof}
 
-This is the first proof we look at in these notes, and the reason for that is its importance in many of the results we will discuss further. The proof first looks at the problem of finding a minimum distance point as an optimisation problem and uses the Weierstrass theorem (our Theorem \ref{thm:closest_point} is a consequence of the Weierstrass theorem stated in Theorem \ref{thm:weierstrass}) to guarantee that such a $\overline{x}$ exists. Being a minimum distance point, we know from Theorem \ref{thm:closest_point} that $(y-\overline{x})^\top(x - \overline{x}) \leq 0$ holds. Now by defining $p$ and $\alpha$ as in the proof, one might notice that
+This is the first proof we look at in these notes, and the reason for that is its importance in many of the results we will discuss further. The proof first looks at the problem of finding a minimum distance point as an optimisation problem and uses the Weierstrass theorem (in our finite-dimensional setting, Theorem \ref{thm:closest_point} is a consequence of the Weierstrass theorem stated in Theorem \ref{thm:weierstrass}) to guarantee that such a $\overline{x}$ exists. Being a minimum distance point, we know from Theorem \ref{thm:closest_point} that $(y-\overline{x})^\top(x - \overline{x}) \leq 0$ holds. Now by defining $p$ and $\alpha$ as in the proof, one might notice that
 %
 \begin{align*}
 	& (y-\overline{x})^\top(x - \overline{x}) \leq 0 \ \Leftrightarrow \ 
@@ -492,7 +526,7 @@ The inequality $p^\top y > \alpha$ is demonstrated to hold in the final part by 
 \begin{align*}
 	p^\top y - \alpha &= 
 	(y - \overline{x})^\top y - \overline{x}^\top(y - \overline{x}) \\ &= 
-	y^\top(y - \overline{x}) - \overline{x}^\top(y - \overline{x}) \\ & = (y - \overline{x})^\top (y - \overline{x}) = || y - \overline{x} ||^2 > 0.
+	y^\top(y - \overline{x}) - \overline{x}^\top(y - \overline{x}) \\ & = (y - \overline{x})^\top (y - \overline{x}) = \| y - \overline{x} \|^2 > 0.
 \end{align*}
 
 Theorem \ref{thm:separation} has interesting consequences. For example, one can apply it to every point in the boundary $\bou(S)$ to show that $S$ is formed by the intersection of all half-spaces containing $S$. 
@@ -519,10 +553,10 @@ Farkas' theorem plays a central role in deriving optimality conditions. It can a
 	
 	Next, suppose $(2)$ has no solution. Let $S = \braces{x \in \reals^n : x = A^\top y, \ y \geq 0}$. \hspace{-3pt}Notice that $S$ is closed and convex and that $c \notin S$. By Theorem \ref{thm:separation}, there exists $p \in \reals^n$ and $\alpha \in \reals$ such that $p^\top c > \alpha$ and $p^\top x \leq \alpha$ for $x \in S$. 
 	
-	As $0 \in S$, $\alpha \geq 0$ and $p^\top c > 0$. Also, $\alpha \geq p^\top A^\top y = y^\top Ap$ for $y \geq 0$. This implies that $Ap \leq 0$, and thus $p$ satisfies $(1)$. 
+	As $0 \in S$, $\alpha \geq 0$ and thus $p^\top c > 0$. Also, $\alpha \geq p^\top A^\top y = y^\top Ap$ for all $y \geq 0$. This implies that $Ap \leq 0$, and thus $p$ satisfies $(1)$. 
 \end{proof}
 
-The first part of the proof shows that, if we assume that system (2) has a solution, than $c^\top x > 0$ cannot hold for $y \geq 0$. The second part uses the separation theorem (Theorem \ref{thm:separation}) to show that $c$ can be seen as a point not belonging to the closed convex set $S$ for which there is a separation hyperplane and that the existence of such plane implies that system (1) must hold. The set $S$ is closed and convex since it is a conic combination of rows $a_i$, for $i=1, \dots, m$. Using the $0 \in S$, one can show that $\alpha \geq 0$. The last part uses the identity $p^\top A^\top  = (Ap)^\top$ and the fact that $(Ap)^\top y = y^\top Ap$. Notice that, since $y$ can be arbitrarily large and $\alpha$ is a constant, $y^\top Ap \leq \alpha$ can only hold if $y^\top Ap \leq 0$, requiring that $p \leq 0$ since $y \geq 0$ from the definition of $S$.
+The first part of the proof shows that, if we assume that system (2) has a solution, then $c^\top x > 0$ cannot hold for $y \geq 0$. The second part uses the separation theorem (Theorem \ref{thm:separation}) to show that $c$ can be seen as a point not belonging to the closed convex set $S$ for which there is a separation hyperplane and that the existence of such plane implies that system (1) must hold. The set $S$ is closed and convex since it is a conic combination of rows $a_i$, $i=1, \dots, m$ of $A$. Using the fact that $0 \in S$, one can show that $\alpha \geq 0$. The last part uses the identity $p^\top A^\top  = (Ap)^\top$ and the fact that $(Ap)^\top y = y^\top Ap$. Since the components of $y$ can be arbitrarily large positive numbers and $\alpha$ is a nonnegative constant, $y^\top Ap \leq \alpha$ holds for all $y \ge 0$ if and only if $y^\top Ap > \epsilon$ were true for some $\epsilon>0$ and $\tilde{y}\ge 0$, then choosing $y = \beta\tilde{y} \ge 0$, $\beta > 0$,m and letting $\beta \to \infty$ would lead to arbitrarily large values for $y^\top Ap \ge \beta \epsilon$, which would contradict $y^\top Ap \le \alpha$.
 
 Farkas' theorem has an interesting geometrical interpretation arising from this proof, as illustrated in Figure \ref{fig:farkas}. Consider the cone $C$ formed by the rows of $A$
 %
@@ -533,10 +567,10 @@ Farkas' theorem has an interesting geometrical interpretation arising from this 
 The \emph{polar cone} of $C$, denoted $C^0$, is formed by the all vectors having angles of 90$^\circ$ or more with vectors in $C$. That is, 
 %
 \begin{align*}
-	C^0 = \braces{x : Ax \leq 0}.
+	C^0 = \braces{x \in \reals^n : c^\top x \le 0, \forall c \in C} = \braces{x : Ax \leq 0}.
 \end{align*}
 %
-Notice that $(1)$ has a solution if the intersection between the polar cone $C^0$ and the positive ($H^+$ as defined earlier) half-space $H^+ = \braces{x \in \reals^n: c^\top x > 0}$ is not empty. If $(2)$ has a solution, as in the beginning of the proof, then $c \in C$ and the intersection $C^0 \cap H^+ = \emptyset$. Now, if $(2)$ does not have a solution, that is, $c \notin C$, then one can see that $C^0 \cap H^+$ cannot be empty, meaning that $(1)$ has a solution.  
+Notice that $(1)$ has a solution if the intersection between the polar cone $C^0$ and the positive half-space $H^+ = \braces{x \in \reals^n: c^\top x > 0}$ is not empty. If $(2)$ has a solution, as in the beginning of the proof, then $c \in C$ and the intersection $C^0 \cap H^+ = \emptyset$. Now, if $(2)$ does not have a solution, that is, $c \notin C$, then one can see that $C^0 \cap H^+$ cannot be empty, meaning that $(1)$ has a solution.  
 
 \begin{figure}[h]
 %	\includegraphics[width = 0.7\textwidth]{Figures/farkas.pdf}
@@ -605,7 +639,7 @@ One characteristic that convex sets present that will be of great importance whe
 	Let $S \neq \emptyset$ be a convex set in $\reals^n$, and let $\overline{x} \in \bou(S)$. Then there exists $p \neq 0$ such that $p^\top(x - \overline{x}) \leq 0$ for each $x \in \clo(S)$.
 \end{theorem}
 
-The proof follows immediately from Theorem \ref{thm:separation}, without explicitly considering a point $y \notin S$ and by noticing that $\bou(S) \subset \clo(S)$. Figure \ref{fig:support_convex} provides an illustration of the theorem. 
+The proof follows from Theorem \ref{thm:separation}, without explicitly considering a point $y \notin S$ and by noticing that $\bou(S) \subset \clo(S)$. Figure \ref{fig:support_convex} provides an illustration of the theorem. 
 
 \begin{figure}[H]
 %	\includegraphics[width=0.3\textwidth]{Figures/support_convex.pdf}
