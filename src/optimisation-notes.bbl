@@ -1,0 +1,28 @@
+\begin{thebibliography}{1}
+
+\bibitem{bertsimas1997introduction}
+Dimitris Bertsimas and John~N Tsitsiklis.
+\newblock {\em Introduction to linear optimization}, volume~6.
+\newblock Athena Scientific Belmont, MA, 1997.
+
+\bibitem{birge2011introduction}
+John~R Birge and Francois Louveaux.
+\newblock {\em Introduction to stochastic programming}.
+\newblock Springer Science \& Business Media, 2011.
+
+\bibitem{kwon2019julia}
+Changhyun Kwon.
+\newblock {\em Julia Programming for Operations Research}.
+\newblock Changhyun Kwon, 2019.
+
+\bibitem{taha2003operations}
+Hamdy~A Taha.
+\newblock {\em {Operations Research: An Introduction (7th Edition)}}.
+\newblock Pearson/Prentice Hall, 2003.
+
+\bibitem{williams2013model}
+H~Paul Williams.
+\newblock {\em Model building in mathematical programming}.
+\newblock John Wiley \& Sons, 2013.
+
+\end{thebibliography}
