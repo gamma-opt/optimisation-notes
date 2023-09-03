@@ -1,0 +1,27 @@
+\section{What is optimisation under uncertainty?}
+
+We now change our focus to a critical premise associated with optimisation models. In all the discussion in the previous parts, relating to either linear (Part \ref{part_1}) or nonlinear (Part \ref{part_2}) optimisation models, we assumed that the input data has a deterministic nature, i.e., is known. As one may suspect this is rarely the case. 
+
+Optimisation under uncertainty consists of a collection of \emph{modelling techniques} that seek to incorporate countermeasures against uncertainties in the input data in the description of an optimal solution. Essentially, we will still rely on much of the knowledge we developed insofar, meaning that, at the end of the day, we will be solving linear, mixed-integer, or non-linear models, and thus, all of the analyses, results, and methods we seem will still be at our disposal.
+
+What will become a challenging aspect is that, typically, these optimisation models will become much more challenging from a computational standpoint, be it due to increased size (more constraints and variables) or because of additional elements that turn linear models mixed-integer or nonlinear. 
+
+This part of our notes focuses on the modelling approaches that can take into account uncertainty, ways in which uncertainty can be represented, and how we can adapt some of the solution (e.g., decomposition) methods we have seen so far to practically solve these optimisation-under-uncertainty models.
+
+Before we proceed, let us first define what we mean by uncertainty in optimisation models and alternative ways in which it can be represented.
+
+\section{Modelling uncertainty}
+
+Mathematical programming models assume that the input is \emph{deterministic} in nature. That is, consider the linear optimisation model given by:
+
+\begin{equation}
+	\begin{aligned}
+		\mini & c^\top x \\
+		\st   & Ax = b \\
+			  & x \in X.	
+	\end{aligned}	
+	\tag{1}
+\end{equation}
+
+
+

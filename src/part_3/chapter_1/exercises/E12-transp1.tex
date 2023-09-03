@@ -1,0 +1,32 @@
+Consider the following network, where the supplies from the Austin and Buffalo nodes need to meet the demands in Chicago, Denver, and Erie. The data for the problem is presented in table below.
+
+\begin{figure}[h]
+	\begin{tikzpicture}[scale=1,
+		node/.style={circle, fill=blue!40, draw, minimum size=3em, inner sep=1pt},
+		node2/.style={circle, fill=orange, draw, minimum size=3em, inner sep=1pt}] 
+    	\node[above] at (0, 4.75) {Plants};                                                                                  
+    	\node[above] at (3, 4.75) {Clients};
+	    \node[node] (1) at (0, 2) {\footnotesize Austin};
+	    \node[node] (2) at (0, 3.5) {\footnotesize Buffalo};
+	    \node[node2] (3) at (3, 4) {\footnotesize Chicago};
+	    \node[node2] (4) at (3, 2.5) {\footnotesize Denver};
+	    \node[node2] (5) at (3, 1) {\footnotesize Erie};
+	    \foreach \x in {1,...,2} {
+	       \foreach \y in {3,...,5} {
+	          \draw[->, thick] (\x) -- (\y);
+	          }}      
+	\end{tikzpicture}
+\end{figure}
+
+\begin{table}[h]
+	\begin{tabular}{r|ccc|c}
+    	& & {\it Clients} &\\\hline
+    	{\it Factory} & Chicago & Denver & Eire \\\hline
+    	Buffalo 		  & 4       & 9      & 8    & 25 \\
+    	Austin        & 10      & 7      & 9    & 600 \\\hline
+    	Demands       & 15      & 12     & 13   & - \\\hline
+	\end{tabular}
+	\caption{Problem data: unit transportation costs, demands and capacities}
+\end{table}
+
+Solve the transportation problem, finding the minimum cost transportation plan.
