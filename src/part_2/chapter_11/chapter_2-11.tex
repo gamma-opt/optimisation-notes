@@ -203,7 +203,7 @@ where $\mu$ is a penalty term, $[\, \cdot \,] = \max\braces{0, \cdot}$, and $\De
 %
 \begin{align*}
 l_1-QP&(x^k, v^k) :\\
-\mini & \ \nabla f(x^k)^\top d + \frac{1}{2}d^\top\nabla^2L(x^k,v^k)d  + \mu\left[ \sum_{i=1}^m y_i  + \sum_{i=1}^l (z^+_i - z^-_i) \right]\\
+\mini & \ \nabla f(x^k)^\top d + \frac{1}{2}d^\top\nabla^2L(x^k,v^k)d  + \mu\left[ \sum_{i=1}^m y_i  + \sum_{i=1}^l (z^+_i + z^-_i) \right]\\
  \st & -\Delta^k \leq d \leq \Delta^k\\
  & y_i \geq g_i(x^k) + \nabla g_i(x^k)^\top d, i = 1\dots, m\\
  & z^+_i - z^-_i = h_i(x^k) + \nabla h_i(x^k)^\top d, i = 1,\dots,l \\ 
