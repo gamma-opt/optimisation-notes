@@ -34,14 +34,8 @@ Though I wrote those, these were improved by the work of many people to whom I a
 
 ## Contributing
 
-The material is in constant developments and therefore, subject to error and typos. If you find anything that you suspect to be a problem, please post an [issue](https://github.com/gamma-opt/optimisation-notes/issues) describing where the problem is and how to solve it. Even better, if you are confident with Githb (or would lie to try it out) you can file a [pull request](https://github.com/gamma-opt/optimisation-notes/pulls) directly! 
+The material is constantly developing and therefore, subject to error and typos. If you find anything that you suspect to be a problem, please post an [issue](https://github.com/gamma-opt/optimisation-notes/issues) describing where the problem is and how to solve it. Even better, if you are confident with Githb (or would like to try it out) you can file a [pull request](https://github.com/gamma-opt/optimisation-notes/pulls) directly! 
 
-
-## Discussion forum
-
-Associated with the material, we have a forum about the content of the notes in the [Discussion](https://github.com/gamma-opt/optimisation-notes/discussions) section. If you have any questions about the material, a good starting point is to search the forum. We also curate it with questions students ask, so you might find your answer there. Otherwise, feel free to post questions related to the material.
-
-Notice that questions related to any of the assessments of the courses should be ask in the appropriate channels. The questions in the forum are exclusively for **the lecture's content**.
 
 ## License
 
