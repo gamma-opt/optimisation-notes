@@ -2,7 +2,7 @@
 
 We now turn our focus to recognising whether a given point satisfy necessary and/or sufficient conditions for optimality. Even though these conditions can be used to test if a candidate point is optimal for a problem, its most important use is serving as a framework for directing solution methods in their search for optimal solutions. 
 
-Before we proceed, let us define the terminology we will use to refer to solutions. Let $f:\reals^n \mapsto \reals$. Consider the problem
+Before we proceed, let us define the terminology we will use to refer to solutions. Let $f:\reals^n \to \reals$. Consider the problem
 $(P) :~ \mini\braces{f(x) : x \in S}$.
 % 
 \begin{enumerate}
@@ -54,7 +54,7 @@ Figure \ref{fig:example_optima} illustrates the concepts above. Solution $x_1$ i
 We can now state what is possibly the most important result in optimisation. In a nutshell, this results allows one promote local optimality to global optimality in the presence of convexity. 
 
 \begin{theorem}[global optimality of convex problems]\label{thm:convex_global}
-Let $S \subseteq \reals^n$ be a nonempty convex set and $f:S \mapsto \reals$ convex on $S$. Consider the problem $(P):~\mini \braces{f(x) : x \in S}$. Suppose $\overline{x}$ is a local optimal solution to $P$. Then $\overline{x}$ is a global optimal solution.
+Let $S \subseteq \reals^n$ be a nonempty convex set and $f:S \to \reals$ convex on $S$. Consider the problem $(P):~\mini \braces{f(x) : x \in S}$. Suppose $\overline{x}$ is a local optimal solution to $P$. Then $\overline{x}$ is a global optimal solution.
 \end{theorem}
 
 \begin{proof}
@@ -76,7 +76,7 @@ The proof is built using contradiction. That is, we show that for a solution to 
 We first look at optimality conditions in a general sense to then translate the concept to unconstrained and constrained problems specifically. Taking this more general standpoint is also helpful to understand how these can be specialised in the absence of a closed domain or in the presence of differentiability. We assume convexity for now, and later we will discuss further the consequences of the absence of convexity. Note that unconstrained problems have convex feasibility set (i.e., the whole $\reals^n$), and thus what follows can be generalised to unconstrained optimisation problems.
 %
 \begin{theorem}[optimality condition for convex problems] \label{thm:opt_conditions}
-Let $S \subseteq \reals^n$ be a nonempty convex set and $f:\reals^n \mapsto \reals$ convex on $S$. Consider the problem $(P) \,:\, \mini\braces{f(x) : x \in S}$.\hspace{-2pt} Then, $\overline{x}\in S$ is an optimal solution to $(P)$ if and only if $f$ has a subgradient $\xi$ at $\overline{x}$ such that $\xi^\top(x - \overline{x}) \geq 0$ for all $x \in S$. 
+Let $S \subseteq \reals^n$ be a nonempty convex set and $f:\reals^n \to \reals$ convex on $S$. Consider the problem $(P) \,:\, \mini\braces{f(x) : x \in S}$.\hspace{-2pt} Then, $\overline{x}\in S$ is an optimal solution to $(P)$ if and only if $f$ has a subgradient $\xi$ at $\overline{x}$ such that $\xi^\top(x - \overline{x}) \geq 0$ for all $x \in S$. 
 \end{theorem}  
 
 \begin{proof}
@@ -175,7 +175,7 @@ We have developed most of the concepts required to state optimality conditions f
 Let us start defining what it means to be a \emph{descent direction}.
 
 \begin{theorem}[descent direction]\label{thm:descent_dir}
-Suppose $f: \reals^n \mapsto \reals$ is differentiable at $\overline{x}$. If there is $d$ such that $\nabla f(\overline{x})^\top d < 0$, there exists $\delta > 0$ such that $f(\overline{x} + \lambda d) < f(\overline{x})$ for each $\lambda \in (0, \delta)$, so that $d$ is a descent direction of $f$ at $\overline{x}$.
+Suppose $f: \reals^n \to \reals$ is differentiable at $\overline{x}$. If there is $d$ such that $\nabla f(\overline{x})^\top d < 0$, there exists $\delta > 0$ such that $f(\overline{x} + \lambda d) < f(\overline{x})$ for each $\lambda \in (0, \delta)$, so that $d$ is a descent direction of $f$ at $\overline{x}$.
 \end{theorem}
 %
 \begin{proof}
@@ -229,7 +229,7 @@ The second-order conditions can be used to attest local optimality of $\overline
 In case $f$ is convex, then the first-order condition $\nabla f(x) = 0$ becomes also sufficient for attesting the global optimality of $\overline{x}$. Recall that $f$ is convex if and only if $H(x)$ is positive semidefinite for all $x \in \reals^n$, meaning that in this case the second-order necessary conditions are also satisfied at $\overline{x}$.
 %
 \begin{theorem}
-Let $f: \reals^n \mapsto \reals$ be convex. Then $\overline{x}$ is a global minimum if and only if $\nabla f(\overline{x}) = 0$.
+Let $f: \reals^n \to \reals$ be convex. Then $\overline{x}$ is a global minimum if and only if $\nabla f(\overline{x}) = 0$.
 \end{theorem}
 %
 \begin{proof}

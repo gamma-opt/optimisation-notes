@@ -132,7 +132,7 @@ Notice that Corollary \ref{cor:strong_duals_1} implies that if the optimal solut
 
 To investigate the cases in which strong duality can hold, let us focus on a graphical interpretation of Lagrangian dual problems. For that, let us first define some auxiliary elements. 
 
-For the sake of simplicity, consider $(P) : \mini\braces{f(x) : g(x) \leq 0, x \in X}$ with $f : \reals^n \mapsto \reals$, a single constraint $g:\reals^n \mapsto \reals$ and $X \subseteq \reals^n$ an open set.
+For the sake of simplicity, consider $(P) : \mini\braces{f(x) : g(x) \leq 0, x \in X}$ with $f : \reals^n \to \reals$, a single constraint $g:\reals^n \to \reals$ and $X \subseteq \reals^n$ an open set.
 
 Let us define the mapping $G = \braces{(y,z) : y = g(x), z = f(x), x \in X}$, which consists of a mapping of points $x \in X$ to the $(y,z)$-space obtained using $(f(x), g(x))$. In this setting, solving $P$ means finding a point with minimum ordinate $z$ for which $y \leq 0$. Figure \ref{fig:generic_G} illustrate this setting.
 %
@@ -453,7 +453,7 @@ Since $f$ and $\beta$ are continuous and $X$ is compact, $\theta$ is finite on $
 The proof uses the fact that the Lagrangian function $\theta(w)$ is the infimum of affine functions in $w$, and therefore concave. An alternative approach to show the concavity of the Lagrangian function is to show that it has subgradients everywhere. This is established in Theorem \ref{thm:Lagrangian_dual_subgradient}. 
 
 \begin{theorem} \label{thm:Lagrangian_dual_subgradient}
-Let $X \subset \reals^n$ be a nonempty compact set, and let $f: \reals^n \mapsto \reals$ and $\beta : \reals^{n} \mapsto \reals^{m+l}$, with $w^\top\beta(x) = \binom{u}{v}^\top \binom{g(x)}{h(x)}$ be continuous. If $\overline{x} \in X(\overline{w}) = \braces{x \in X : x = \arg \min \braces{f(x) + w^\top\beta(x)}}$, then $\beta(\overline{x})$ is a subgradient of $\theta(\overline{w})$.
+Let $X \subset \reals^n$ be a nonempty compact set, and let $f: \reals^n \to \reals$ and $\beta : \reals^{n} \to \reals^{m+l}$, with $w^\top\beta(x) = \binom{u}{v}^\top \binom{g(x)}{h(x)}$ be continuous. If $\overline{x} \in X(\overline{w}) = \braces{x \in X : x = \arg \min \braces{f(x) + w^\top\beta(x)}}$, then $\beta(\overline{x})$ is a subgradient of $\theta(\overline{w})$.
 \end{theorem}
 %
 \begin{proof}

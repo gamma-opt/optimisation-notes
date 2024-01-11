@@ -26,7 +26,7 @@ Algorithm \ref{Alg1} has two main elements, namely the computation of the direct
 
 Finding an optimal step size $\lambda_k$ is in itself an optimisation problem. The name line search refers to the fact that it consists of a unidimensional search as $\lambda_k \in \reals$. 
 
-Suppose that $f: \reals^n \mapsto \reals$ is differentiable. We define the unidimensional function $\theta: \reals \mapsto \reals$ as
+Suppose that $f: \reals^n \to \reals$ is differentiable. We define the unidimensional function $\theta: \reals \to \reals$ as
 %
 \begin{align*}
 \theta(\lambda) = f(x + \lambda d).
@@ -325,7 +325,7 @@ The Armijo rule is called \emph{backtracking} in some contexts, due to the succe
     
 \section{Unconstrained optimisation methods}
 
-We now focus on developing methods that can be employed to optimise $f: \reals^n \mapsto \reals$. We start with coordinate descent method, which is derivative free, to then discuss the gradient method and Newton's method. In essence, the main difference between the three methods is how the directions $d_k$ in Algorithm \ref{Alg1} are determined. Also, all of these methods rely on line searches to define optimal step sizes, which can be any of the methods seen before or any other unidimensional optimisation method.
+We now focus on developing methods that can be employed to optimise $f: \reals^n \to \reals$. We start with coordinate descent method, which is derivative free, to then discuss the gradient method and Newton's method. In essence, the main difference between the three methods is how the directions $d_k$ in Algorithm \ref{Alg1} are determined. Also, all of these methods rely on line searches to define optimal step sizes, which can be any of the methods seen before or any other unidimensional optimisation method.
 
 \subsection{Coordinate descent}
 

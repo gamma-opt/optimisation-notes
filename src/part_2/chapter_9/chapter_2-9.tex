@@ -7,13 +7,13 @@ Consider the problem $(P): \mini\braces{f(x) : g(x) \leq 0, h(x) = 0, x \in X}$.
 $$
 (P_\mu) : \mini\braces{f(x) + \mu\alpha(x) : x \in X},
 $$
-where $\mu > 0$ is a \emph{penalty term} and $\alpha(x) : \reals^n \mapsto \reals$ is a \emph{penalty function} of the form
+where $\mu > 0$ is a \emph{penalty term} and $\alpha(x) : \reals^n \to \reals$ is a \emph{penalty function} of the form
 %
 \begin{equation} 
 	\alpha(x) = \sum_{i=1}^m \phi(g_i(x)) + \sum_{i=1}^l\psi(h_i(x)). \label{eq:penalty_function}	
 \end{equation}
 
-For $\alpha(x)$ to be a suitable penalty function, one must observe that $\phi : \reals^n \mapsto \reals$ and $\psi: \reals^n \mapsto \reals$ are continuous and satisfy
+For $\alpha(x)$ to be a suitable penalty function, one must observe that $\phi : \reals^n \to \reals$ and $\psi: \reals^n \to \reals$ are continuous and satisfy
 %
 \begin{align*}
 	& \phi(y) \hspace{1.0pt}= 0 \text{ if } y \leq 0 \text{ and } \phi(y) \hspace{0.5pt}> 0 \text{ if } y > 0\\
@@ -323,7 +323,7 @@ ADMM is particularly relevant as a method for (un)constrained problems in which 
 
 % Include examples from l1-regression and LP/QP.
 
-%Consider the following example, arising from applications of $l_1$-regularisation. Let $f: \reals^n \mapsto \reals$ convex and $X$ a closed convex set. $P$ is defined as
+%Consider the following example, arising from applications of $l_1$-regularisation. Let $f: \reals^n \to \reals$ convex and $X$ a closed convex set. $P$ is defined as
 %$$
 %(P) : \mini_{x \in X} \ f(x) + \gamma||x||_1, 
 %$$

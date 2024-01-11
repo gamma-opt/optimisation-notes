@@ -8,12 +8,12 @@ Now we turn our attention to identifying the convexity of functions. Consider th
     	         & x \in X  
 \end{align*}
 % 
-with $f:\reals^n \mapsto \reals$, $g: \reals^n \mapsto \reals^m$ and $X \subseteq \reals^n$. Assuming $X$ is a convex set, the next step towards attesting that $(P)$ is a convex problem is to check whether $f$ and $g$ are convex. It is important to emphasise (perhaps redundantly at this point) how crucial is for us to be able to attest the convexity $(P)$, since it allows us to generalise local optimality results to the whole domain of the problem.
+with $f:\reals^n \to \reals$, $g: \reals^n \to \reals^m$ and $X \subseteq \reals^n$. Assuming $X$ is a convex set, the next step towards attesting that $(P)$ is a convex problem is to check whether $f$ and $g$ are convex. It is important to emphasise (perhaps redundantly at this point) how crucial is for us to be able to attest the convexity $(P)$, since it allows us to generalise local optimality results to the whole domain of the problem.
 
 The convexity of functions has a different definition than that used to define convex sets.
 %
 \begin{definition}[Convexity of a function I]\label{def:convex_function}
-	Let $f:S \mapsto \reals$ where $S \subseteq \reals^n$ is a nonempty convex set. The function $f$ is said to be \emph{convex} on $S$ if
+	Let $f:S \to \reals$ where $S \subseteq \reals^n$ is a nonempty convex set. The function $f$ is said to be \emph{convex} on $S$ if
 	$$ f(\lambda x_1 + (1-\lambda)x_2) \leq \lambda f(x_1) + (1-\lambda)f(x_2)
 	$$
 	for each $x_1, x_2 \in S$ and for each $\lambda \in [0,1]$.
@@ -39,14 +39,14 @@ Some examples of convex function are:
 Knowing that these common functions are convex is helpful for identifying convexity in more complex functions formed by \emph{composition}. By knowing that an operation between functions preserves convexity, we can infer the convexity of more complicated functions. The following are convexity preserving operations.
 %
 \begin{enumerate}
-	\item Let $f_1, \dots, f_k : \reals^n \mapsto \reals$ be convex. Then these are convex:
+	\item Let $f_1, \dots, f_k : \reals^n \to \reals$ be convex. Then these are convex:
 	\begin{itemize}
 		\item $f(x) = \sum_{j=1}^k\alpha_j f_j(x)$ where $\alpha_j >0$ for $j=1,\dots,k$;
 		\item $f(x) = \max\braces{f_1(x), \dots, f_k(x)}$;
 	\end{itemize}
-		\item $f(x) = \frac{1}{g(x)}$ on $S$, where $g:\reals^n \mapsto \reals$ is concave and $S = \braces{x : g(x) > 0}$; 
-		\item $f(x) = g(h(x))$, where $g: \reals \mapsto \reals$ is a nondecreasing convex function and $h:\reals^n \mapsto \reals$ is convex.
-	\item $f(x) = g(h(x))$,\hspace{-1pt} where $g: \reals^m\hspace{-1pt} \mapsto\hspace{-1pt} \reals$ is convex and\hspace{-1pt} $h:\reals^n \mapsto \reals^m$ is affine: $h(x) = Ax + b$ with $A\in \reals^{m\times n}$ and $b\in \reals^m$.
+		\item $f(x) = \frac{1}{g(x)}$ on $S$, where $g:\reals^n \to \reals$ is concave and $S = \braces{x : g(x) > 0}$; 
+		\item $f(x) = g(h(x))$, where $g: \reals \to \reals$ is a nondecreasing convex function and $h:\reals^n \to \reals$ is convex.
+	\item $f(x) = g(h(x))$,\hspace{-1pt} where $g: \reals^m\hspace{-1pt} \to\hspace{-1pt} \reals$ is convex and\hspace{-1pt} $h:\reals^n \to \reals^m$ is affine: $h(x) = Ax + b$ with $A\in \reals^{m\times n}$ and $b\in \reals^m$.
 \end{enumerate}
 
 
@@ -55,7 +55,7 @@ Knowing that these common functions are convex is helpful for identifying convex
 There is a strong connection between convexity of sets and the convexity of functions. Let us first consider \emph{level sets}, which is one type of set spawned by functions. 
 
 \begin{definition}[Lower level set]
-	Let $S \subseteq \reals^n$\hspace{-1pt} be a nonempty set. The lower level set of $f: \reals^n \mapsto \reals$ for $\alpha \in \reals$ is given by
+	Let $S \subseteq \reals^n$\hspace{-1pt} be a nonempty set. The lower level set of $f: \reals^n \to \reals$ for $\alpha \in \reals$ is given by
 	%
 	\begin{align*}
 		S_\alpha = \braces{x \in S : f(x) \leq \alpha}.
@@ -82,7 +82,7 @@ Figure \ref{fig:sublevels} illustrates the lower level sets of two functions. Th
 Notice that, for convex functions, no discontinuity can be observed, making $S_\alpha$ convex. Lemma \ref{lem:level_sets} states this property.
 
 \begin{lemma}\label{lem:level_sets}
-	Let $S \subseteq \reals^n$ be a nonempty convex set and $f:S \mapsto \reals$ a convex function. Then, any level set $S_\alpha$ with $\alpha \in \reals$ is convex. 
+	Let $S \subseteq \reals^n$ be a nonempty convex set and $f:S \to \reals$ a convex function. Then, any level set $S_\alpha$ with $\alpha \in \reals$ is convex. 
 \end{lemma} 
 %
 \begin{proof}
@@ -99,7 +99,7 @@ Notice that, for convex functions, no discontinuity can be observed, making $S_\
 \emph{Epigraphs}, on the other hand, can be used to show the convexity of functions. Let us first formally define epigraphs.
 %
 \begin{definition}[Ephigraph]
-	Let $S \subseteq \reals^n$\hspace{-1pt} be a nonempty set and $f:S \mapsto \reals$.\hspace{-1pt} The epigraph of $f$ is $$ \epi(f) = \braces{(x, y) : x \in S, y \in \reals, y \geq f(x)} \subseteq \reals^{n+1}
+	Let $S \subseteq \reals^n$\hspace{-1pt} be a nonempty set and $f:S \to \reals$.\hspace{-1pt} The epigraph of $f$ is $$ \epi(f) = \braces{(x, y) : x \in S, y \in \reals, y \geq f(x)} \subseteq \reals^{n+1}
 $$
 \end{definition}
 %
@@ -120,7 +120,7 @@ Figure \ref{fig:epigraphs} illustrates the epigraphs of two functions. Notice th
 \end{figure}
 %
 \begin{theorem}[Convex epigraphs]\label{thm:convex_epi}
-	Let $S \subseteq \reals^n$ be a nonempty convex set and $f:S \mapsto \reals$. Then $f$ is convex if and only if $\epi(f)$ is a convex set.
+	Let $S \subseteq \reals^n$ be a nonempty convex set and $f:S \to \reals$. Then $f$ is convex if and only if $\epi(f)$ is a convex set.
 \end{theorem}
 %
 \begin{proof}
@@ -147,7 +147,7 @@ To prove the implication ``if $\epi(f)$ is convex, then $f$ is convex'', we defi
 Subgradients can be understood as supporting hyperplanes at the boundary of function epigraphs. They can be seem as first-order local approximations of the function, which is often helpful information for optimisation methods when searching for directions of improvement.
 %
 \begin{definition}[Subgradients]
-	Let $S \subseteq \reals^n$ be a nonempty convex set and $f:S \mapsto \reals$ a convex function. Then $\xi\in \reals^n$ is a \emph{subgradient} of $f$ at $\overline{x} \in S$ if
+	Let $S \subseteq \reals^n$ be a nonempty convex set and $f:S \to \reals$ a convex function. Then $\xi\in \reals^n$ is a \emph{subgradient} of $f$ at $\overline{x} \in S$ if
 	\begin{align} 
 	f(x) \geq f(\overline{x}) + \xi^\top(x - \overline{x}). \label{eq:subgradient_inequality}
 	\end{align}
@@ -158,10 +158,10 @@ Inequality \eqref{eq:subgradient_inequality} is called the \emph{subgradient ine
 	\partial_f(\overline{x}) = \braces{\xi \in \reals^n : f(x) \geq f(\overline{x}) + \xi^\top(x - \overline{x})}.
 	$$ 
 
-Every convex function $f : S \mapsto \reals$ has at least one subgradient at any point $\overline{x}$ in the interior of the convex set $S$. Requiring that $\overline{x} \in \intr(S)$ allows us to disregard boundary points of $f$ where $\partial(\overline{x})$ might be empty. Theorem \ref{thm:exist_subgrad} presents this result.
+Every convex function $f : S \to \reals$ has at least one subgradient at any point $\overline{x}$ in the interior of the convex set $S$. Requiring that $\overline{x} \in \intr(S)$ allows us to disregard boundary points of $f$ where $\partial(\overline{x})$ might be empty. Theorem \ref{thm:exist_subgrad} presents this result.
 %
 \begin{theorem}\label{thm:exist_subgrad}
-	Let $S \subseteq \reals^n$ be a nonempty convex set and $f:S \mapsto \reals$ a convex function. Then for all $\overline{x} \in \intr(S)$, there exists $\xi\in \reals^n$ such that
+	Let $S \subseteq \reals^n$ be a nonempty convex set and $f:S \to \reals$ a convex function. Then for all $\overline{x} \in \intr(S)$, there exists $\xi\in \reals^n$ such that
 	$$ H = \braces{(x,y) : y = f(\overline{x}) + \xi^\top(x - \overline{x})}$$ supports $\epi(f)$ at $(\overline{x}, f(\overline{x}))$. In particular,
 	$$f(x) \geq f(\overline{x}) + \xi^\top(x - \overline{x}), \forall x \in S.$$
 \end{theorem}
@@ -176,11 +176,11 @@ The proof consists of directly applying Theorem \ref {thm:convex_epi} and then u
 Let us first define differentiability of a function.
 %
 \begin{definition}
-	Let $S \subseteq \reals^n$ be a nonempty set. The function $f:S \mapsto \reals$ is differentiable at $\overline{x} \in \intr(S)$ if there exists a vector $\nabla f(\overline{x})$, called a gradient vector, and a function $\alpha: \reals^n \mapsto \reals$ such that 
+	Let $S \subseteq \reals^n$ be a nonempty set. The function $f:S \to \reals$ is differentiable at $\overline{x} \in \intr(S)$ if there exists a vector $\nabla f(\overline{x})$, called a gradient vector, and a function $\alpha: \reals^n \to \reals$ such that 
 	$$
 	f(x) = f(\overline{x}) + \nabla f(\overline{x})^\top(x - \overline{x}) + ||x-\overline{x}||\alpha(\overline{x};x-\overline{x})
 	$$ 
-	where $\lim_{x \mapsto \overline{x}}\alpha(\overline{x}; x - \overline{x})=0$. If this is the case for all $\overline{x} \in \intr(S)$, we say that the function is differentiable in $S$.
+	where $\lim_{x \to \overline{x}}\alpha(\overline{x}; x - \overline{x})=0$. If this is the case for all $\overline{x} \in \intr(S)$, we say that the function is differentiable in $S$.
 \end{definition}
 %
 Notice that this definition is based on the existence of first-order (Taylor series) expansion, with an error term $\alpha$. This definition is useful as it highlights the requirement that $\nabla f(\overline{x})$ exists and is unique at $\overline{x}$ since the gradient is given by $\nabla f(x) = \left[ \frac{\partial f(x)}{\partial x_i} \right]_i=1,\dots,n$. 
@@ -188,7 +188,7 @@ Notice that this definition is based on the existence of first-order (Taylor ser
 If $f$ is differentiable in $S$, then its subdifferential $\partial(x)$ is a singleton (a set with a single element) for all $x \in S$. This is shown in Lemma \ref{lem:singleton_subgradient}
 %
 \begin{lemma}\label{lem:singleton_subgradient}
-	Let $S \subseteq \reals^n$ be a nonempty convex set and $f:S \mapsto \reals$ a convex function. Suppose that $f$ is differentiable at $\overline{x} \in \intr(S)$. Then $\partial_f(\overline{x}) = \braces{\nabla f(\overline{x})}$, i.e., the subdifferential $\partial_f(\overline{x})$ is a singleton with $\nabla f(\overline{x})$ as its unique element.
+	Let $S \subseteq \reals^n$ be a nonempty convex set and $f:S \to \reals$ a convex function. Suppose that $f$ is differentiable at $\overline{x} \in \intr(S)$. Then $\partial_f(\overline{x}) = \braces{\nabla f(\overline{x})}$, i.e., the subdifferential $\partial_f(\overline{x})$ is a singleton with $\nabla f(\overline{x})$ as its unique element.
 \end{lemma}
 %
 \begin{proof}
@@ -201,7 +201,7 @@ If $f$ is differentiable in $S$, then its subdifferential $\partial(x)$ is a sin
 	$
 	0 \geq \lambda(\xi - \nabla f(\overline{x}))^\top d -\lambda ||d||\alpha(\overline{x}; \lambda d).
 	$
-	Dividing by $\lambda > 0$ and letting $\lambda \mapsto 0^+$, we obtain $(\xi - \nabla f(\overline{x}))^\top d \leq 0$. Now, by setting $d = \xi - \nabla f(\overline{x})$, it becomes clear that $\xi = \nabla f(\overline{x})$.
+	Dividing by $\lambda > 0$ and letting $\lambda \to 0^+$, we obtain $(\xi - \nabla f(\overline{x}))^\top d \leq 0$. Now, by setting $d = \xi - \nabla f(\overline{x})$, it becomes clear that $\xi = \nabla f(\overline{x})$.
 \end{proof}
 
 Notice that in the proof we use $\overline{x} + \lambda d$ to indicate that $x$ is in direction $d$, scaled by $\lambda > 0$. The fact that $\partial_f(x)$ is a singleton comes from the uniqueness of the solution for $(\xi - \nabla f(\overline{x}))^\top(\xi - \nabla f(\overline{x})) = 0$.
@@ -230,10 +230,10 @@ Figure \ref{fig:subgradients} illustrates subdifferential sets for three distinc
 
 
 
-If $f:S \mapsto \reals$ is a convex differentiable function, then Theorem \ref{thm:exist_subgrad} can be combined with Lemma \ref{lem:singleton_subgradient} to express the one of the most powerful results relating $f$ and its affine (first-order) approximation at $\overline{x}$.
+If $f:S \to \reals$ is a convex differentiable function, then Theorem \ref{thm:exist_subgrad} can be combined with Lemma \ref{lem:singleton_subgradient} to express the one of the most powerful results relating $f$ and its affine (first-order) approximation at $\overline{x}$.
 %
 \begin{theorem}[Convexity of a function II]\label{thm:convex_affine_bound}
-	Let $S \subseteq \reals^n$ be a nonempty convex open set, and let $f:S \mapsto \reals$ be differentiable on $S$. The function $f$ is convex if and only if for any $\overline{x} \in S$, we have
+	Let $S \subseteq \reals^n$ be a nonempty convex open set, and let $f:S \to \reals$ be differentiable on $S$. The function $f$ is convex if and only if for any $\overline{x} \in S$, we have
 	%
 	\begin{align*}
 		f(x) \geq f(\overline{x}) + \nabla f(\overline{x})^\top(x - \overline{x}), ~\forall x \in S.
@@ -273,20 +273,20 @@ Let $f_{ij}(\overline{x}) = \frac{\partial^2f(\overline{x})}{\partial x_i\partia
 Second-order differentiability can be defined as follows.
 %
 \begin{definition}[Second-order differentiability]
-	Let $S \subseteq \reals^n$ be a nonempty set, and let $f:S \mapsto \reals$. Then $f$ is twice differentiable at $\overline{x} \in \intr(S)$ if there exists a vector $\nabla f(\overline{x})\in \reals^n$, an $n \times n$ symmetric matrix $H(\overline{x})$ (the Hessian), and a function $\alpha: \reals^n \mapsto \reals$ such that 
+	Let $S \subseteq \reals^n$ be a nonempty set, and let $f:S \to \reals$. Then $f$ is twice differentiable at $\overline{x} \in \intr(S)$ if there exists a vector $\nabla f(\overline{x})\in \reals^n$, an $n \times n$ symmetric matrix $H(\overline{x})$ (the Hessian), and a function $\alpha: \reals^n \to \reals$ such that 
 	\begin{align*}
 	f(x) = f(\overline{x}) + \nabla f(\overline{x})^\top(x - \overline{x}) + 
 	\frac{1}{2}(x - \overline{x})^\top H(\overline{x})(x - \overline{x}) + 
 	||x-\overline{x}||^2\alpha(\overline{x};x-\overline{x})
 	\end{align*}
 	%
-	where $\lim_{x \mapsto \overline{x}}\alpha(\overline{x}; x - \overline{x})=0$. If this is the case for all $\overline{x} \in S$, we say that the function is twice differentiable in $S$.
+	where $\lim_{x \to \overline{x}}\alpha(\overline{x}; x - \overline{x})=0$. If this is the case for all $\overline{x} \in S$, we say that the function is twice differentiable in $S$.
 \end{definition}
 %
 We say that $H(\overline{x})$ is \emph{positive semi-definite} if $x^\top H(\overline{x})x \geq 0$ for $x \in \reals^n$. Having a positive semi-definite Hessian for all $x \in S$ implies that the function is convex in $S$. 
 %
 \begin{theorem}
-	Let $S \subseteq \reals^n$ be a nonempty convex open set, and let $f:S \mapsto \reals$ be twice differentiable on $S$.\hspace{-4pt} Then\hspace{-1pt} $f$\hspace{-1pt} is convex if and only if the Hessian matrix is positive semidefinite (PSD) at each point in $S$.
+	Let $S \subseteq \reals^n$ be a nonempty convex open set, and let $f:S \to \reals$ be twice differentiable on $S$.\hspace{-4pt} Then\hspace{-1pt} $f$\hspace{-1pt} is convex if and only if the Hessian matrix is positive semidefinite (PSD) at each point in $S$.
 \end{theorem}
 %
 \begin{proof}
@@ -321,7 +321,7 @@ Checking for positive semi-definiteness can be done efficiently using appropriat
 Quasiconvexity can be seem as the generalisation of convexity to functions that are not convex, but share similar properties that allow for defining global optimality conditions. One class of these functions are named \emph{quasiconvex}. Let us first technically define quasiconvex functions.
 %
 \begin{definition}[quasiconvex functions]
-	Let $S \subseteq \reals^n$ be a nonempty convex set and $f:S \mapsto \reals$. Function $f$ is quasiconvex if, for each $x_1 ,x_2 \in S$ and $\lambda \in (0,1)$, we have
+	Let $S \subseteq \reals^n$ be a nonempty convex set and $f:S \to \reals$. Function $f$ is quasiconvex if, for each $x_1 ,x_2 \in S$ and $\lambda \in (0,1)$, we have
 	\begin{align}
 		f(\lambda x_1 + (1 - \lambda)x_2 ) \leq \max\braces{f(x_1), f(x_2)}. \label{eq:quasiconvexity}
 	\end{align}
@@ -363,7 +363,7 @@ Examples of quasiconvex functions include:
 An important property of quasiconvex functions is that their level sets are convex. 
 %
 \begin{theorem}
-	Let $S \subseteq \reals^n$ be a nonempty convex set and $f:S \mapsto \reals$. Function $f$ is quasiconvex if and only if $S_\alpha = \braces{x \in S: f(x) \leq \alpha}$ is convex for all $\alpha \in \reals$.
+	Let $S \subseteq \reals^n$ be a nonempty convex set and $f:S \to \reals$. Function $f$ is quasiconvex if and only if $S_\alpha = \braces{x \in S: f(x) \leq \alpha}$ is convex for all $\alpha \in \reals$.
 \end{theorem}
 %
 \begin{proof}
@@ -377,7 +377,7 @@ The proof relies on the convexity of the domain $S$ to show that a convex combin
 Quasiconvex functions have an interesting first-order condition that arises from the convexity of its level sets.
 
 \begin{theorem}\label{thm:first-order_quasiconvex}
-Let $S \subseteq \reals^n$ be a nonempty open convex set, and let $f:S \mapsto \reals$\lb be differentiable on $S$. Then $f$ is quasiconvex if and only if, for $x_1, x_2 \in S$ and $f(x_1) \leq f(x_2)$, $\nabla f(x_2)^\top(x_1 - x_2) \leq 0$.
+Let $S \subseteq \reals^n$ be a nonempty open convex set, and let $f:S \to \reals$\lb be differentiable on $S$. Then $f$ is quasiconvex if and only if, for $x_1, x_2 \in S$ and $f(x_1) \leq f(x_2)$, $\nabla f(x_2)^\top(x_1 - x_2) \leq 0$.
 \end{theorem}
 %
 \begin{figure}[h]

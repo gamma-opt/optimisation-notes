@@ -22,7 +22,7 @@ $$
 
 These cones are geometrical descriptions of the regions that, from a given point $\overline{x}$, one can obtain feasible ($D$) and improving ($F$) solutions. This is useful in that it allows to express the optimality conditions for $\overline{x}$ as  observing that $F \cap D = \emptyset$ holds. In other words, $\overline{x}$ is optimal if there exists no feasible direction that can provide improvement in the objective function value.
 
-Although having a geometrical representation of such sets can be useful in solidifying the conditions for which a feasible solution is also optimal, we need to derive an \emph{algebraic} representation of such sets that can be used in computations. To reach that objective, let us start by defining an algebraic representation for $F$. For that, let us assume that $f : S \subset \reals^n \mapsto \reals$ is differentiable. Recall that $d$ is a descent direction at $\overline{x}$ if $\nabla f(\overline{x})^\top d < 0$. Thus, we can define the set $F_0$
+Although having a geometrical representation of such sets can be useful in solidifying the conditions for which a feasible solution is also optimal, we need to derive an \emph{algebraic} representation of such sets that can be used in computations. To reach that objective, let us start by defining an algebraic representation for $F$. For that, let us assume that $f : S \subset \reals^n \to \reals$ is differentiable. Recall that $d$ is a descent direction at $\overline{x}$ if $\nabla f(\overline{x})^\top d < 0$. Thus, we can define the set $F_0$
 %
 \begin{align*}
 	F_0 = \braces{d : \nabla f(\overline{x})^\top d < 0}	
@@ -64,7 +64,7 @@ In mathematical programming applications, the feasibility set $S$ is typically e
 	&x \in X,
 \end{align*}
 %
-where $g_i: \reals^n \mapsto \reals$, are differentiable functions for $i = 1, \dots, m$ and $X \subset \reals$ is an nonempty open set. The differentiability of $g_i$, $i=1, \dots, m$, allows for the definition of a proxy for $D$ using the gradients of the binding constraints $i \in I = \braces{i:g_i(\overline{x}) = 0}$ at $\overline{x}$. This set, denoted by $G_0$, is defined as
+where $g_i: \reals^n \to \reals$, are differentiable functions for $i = 1, \dots, m$ and $X \subset \reals$ is an nonempty open set. The differentiability of $g_i$, $i=1, \dots, m$, allows for the definition of a proxy for $D$ using the gradients of the binding constraints $i \in I = \braces{i:g_i(\overline{x}) = 0}$ at $\overline{x}$. This set, denoted by $G_0$, is defined as
 %
 \begin{align*}
 	G_0 = \braces{d : \nabla g_i(\overline{x})^\top d < 0, i \in I}.

@@ -9,7 +9,7 @@ In mathematical optimisation, we build upon concepts and techniques from calculu
     \text{s.t.}   &x \in X. \nonumber
 \end{align}
 %
-%where $x \in \reals^n$ is a vector of $n$ \emph{variables}, $f:\mathbb{R}^n \mapsto \reals$ is a \emph{function} to be optimised (minimised) and $X \subseteq \reals^n$ is a \emph{domain} containing acceptable values for $x$.
+%where $x \in \reals^n$ is a vector of $n$ \emph{variables}, $f:\mathbb{R}^n \to \reals$ is a \emph{function} to be optimised (minimised) and $X \subseteq \reals^n$ is a \emph{domain} containing acceptable values for $x$.
 
 In a general sense, these problems can be solved by employing the following strategy:
 %
@@ -49,7 +49,7 @@ Let us define some additional notation that we will use from now on. Consider a 
 	      & x \in X,  
 \end{align*}
 %
-where $f: \reals^n \mapsto \reals$ is the objective function, $g:\reals^m \mapsto \reals^m$ is a collection of $m$ inequality constraints and $h: \reals^n \mapsto \reals^l$ is a collection of $l$ equality constraints.
+where $f: \reals^n \to \reals$ is the objective function, $g:\reals^m \to \reals^m$ is a collection of $m$ inequality constraints and $h: \reals^n \to \reals^l$ is a collection of $l$ equality constraints.
 
 {\bf Remark:} in fact, every inequality constraint can be represented by an equality constraint by making $h_i(x) = g_i(x) + x_{n+1}$ and augmenting the decision variable vector $x \in \reals^n$ to include the slack variable $x_{n+1}$. However, since these constraints are of very different nature, we will explicitly represent both whenever necessary.
 
@@ -217,7 +217,7 @@ Figure \ref{fig:classified_observations} illustrates this situation for $n = 2$,
     \label{fig:classified_observations}
 \end{figure}
 
-Our task is to obtain a function $f:\reals^n \mapsto \reals$ from a given family of functions that is capable of, given an observed set of features $\hat{x}$, classify whether it belongs to $I^-$ or $I^+$. In other words, we want to calibrate $f$ such that
+Our task is to obtain a function $f:\reals^n \to \reals$ from a given family of functions that is capable of, given an observed set of features $\hat{x}$, classify whether it belongs to $I^-$ or $I^+$. In other words, we want to calibrate $f$ such that
 %
 \begin{align}
 	f(x_i) < 0, \ \forall x_i \in I^-, \text{ and } f(x_i) > 0, \ \forall x_i \in I^+.  
