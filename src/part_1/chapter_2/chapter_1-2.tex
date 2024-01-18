@@ -1,5 +1,8 @@
 \section{Basics of linear problems}
 
+
+%TODO: Chp2: It would be more natural to start with the convexity of polyhedral sets and then move on to the linear algebra definitions. We just need to be careful to define the elements needed (halfspaces, hyperplanes, etc) so the presentation of convexity elements make sense 
+
 As we have seen in the previous chapter, the feasible region of a linear programming problem can be represented as
 %
 \begin{equation} \label{p1c2:eq:feasible_region_inequality}
@@ -29,7 +32,7 @@ Another important concept is the notion of \emph{linear independence}. We formal
 
 In essence, for a collection of vectors to be linearly independent, it must be so that none of the vectors in the collection can be expressed as a linear combination (that is, multiplying the vectors by nonzero scalars and adding them) of the others. Analogously, they are said to be linearly dependent if one vector in the collection can be expressed as a linear combination of the others. 
 
-This is simpler to see in $\reals^2$. Two vectors are linearly independent if one cannot obtain one by multiplying the other by a constant, which effectively means that they are not parallel. If the two vectors are not parallel, then one of them must have a component in a direction that the other cannot achieve. The same idea can be generalised to any $n$-dimensional space. Also, that also implies why one can only have up to $n$ independent vectors in $\reals^n$. Figure \ref{p1c2:fig:linear_independence} illustrates this idea. 
+This is simpler to see in $\reals^2$. Two vectors are linearly independent if one cannot obtain one by multiplying the other by a constant, which effectively means that they are not parallel. If the two vectors are not parallel, then one of them must have a component in a direction that the other vector cannot ``reach''. The same idea can be generalised to any $n$-dimensional space. Also, that explains why one can only have up to $n$ independent vectors in $\reals^n$. Figure \ref{p1c2:fig:linear_independence} illustrates this idea. 
 
 \begin{figure}[h]
 	\centering
@@ -123,7 +126,7 @@ Theorem \ref{p1c2:thm:LI_and_bases} builds upon the previous points to guarantee
 
 Our interest in subspaces and bases spans (pun intended!) from their usefulness in explaining how the simplex method works under a purely algebraic (as opposed to geometric) perspective. For now, we can use the opportunity to define some ``famous'' subspaces which will often appear in our derivations. 
 
-Let $A$ be a $m \times n$ matrix as before. The \emph{column space} of $A$ consists of the subspace spanned by the $n$ columns of $A$ and has dimension $m$ (recall that each column has as many components as the number of rows and is thus a $m$-dimensional vector). Likewise, the \emph{row space} of $A$ is the subspace in $\reals^n$ spanned by the rows of $A$. Finally, the \emph{null space} of $A$, often denoted as $\nulls(A) = \braces{x \in \reals^n : Ax = 0}$, consist of the vectors that are perpendicular to the row space of $A$. 
+Let $A$ be a $m \times n$ matrix. The \emph{column space} of $A$ consists of the subspace spanned by the $n$ columns of $A$ and has dimension $m$ (recall that each column has as many components as the number of rows and is thus a $m$-dimensional vector). Likewise, the \emph{row space} of $A$ is the subspace in $\reals^n$ spanned by the rows of $A$. Finally, the \emph{null space} of $A$, often denoted as $\nulls(A) = \braces{x \in \reals^n : Ax = 0}$, consist of the vectors that are perpendicular to the row space of $A$. 
 
 One important notion related to those subspaces is their size. Both the row and the column space have the same size, which is the \emph{rank} of $A$. If $A$ is \emph{full rank}, than it means that 
 %
@@ -162,7 +165,7 @@ Thus, $x \in S$ if and only if the vector $(x - x_0)$ belongs to $\nulls(A)$, th
 	S = \braces{x + x_0 : x \in \nulls(A)},	
 \end{equation*}
 %
-being thus an affine subspace with dimension $n-m$, if $A$ has $m$ linearly independent rows (i.e., $\rank(A)=m$). This will have important implications in the way we can define multiple bases for $S$ from the $n$ vectors in the column space by choosing $m$ to be removed and what this process means geometrically. Figure \ref{p1c2:fig:nill_space_a} illustrates this concept for a single-row matrix $a$. For multiple rows, one would see $S$ as being represented by the intersection of multiple hyperplanes.
+being thus an affine subspace with dimension $n-m$, if $A$ has $m$ linearly independent rows (i.e., $\rank(A)=m$). This will have important implications in the way we can define multiple bases for $S$ from the $n$ vectors in the column space and what implications it has for the feasibility of the whole problem. Figure \ref{p1c2:fig:nill_space_a} illustrates this concept for a single-row matrix $a$. For a multiple-row matrix $A$, $S$ becomes the intersection of multiple hyperplanes.
 
 \begin{figure}
 	\begin{tikzpicture}
@@ -264,12 +267,12 @@ Definition \ref{p1c2:def:convex_set} leads to a simple geometrical intuition: fo
 	\caption{Two convex sets (left and middle) and one nonconvex set (right)} \label{p1c2:fig:convex_sets}
 \end{figure}
 
-Associated with the notion of convex sets are two important elements we will refer to later, when we discuss linear problems that embed \emph{integrality requirements}. The first is the notion of a convex combination, which is already contained in Definition \ref{p1c2:def:convex_set}, but can be generalised for an arbitrary number of points. The second consists of \emph{convex hulls}, which are sets formed by combining the convex combinations of all elements within a given set. As one might suspect, convex hulls are always convex sets, regardless whether the original set from which the points are drawn from is convex or not. These are formalised in Definition \ref{p1c2:def:convex_combination_hull} and illustrated in Figure \ref{p1c2:fig:convex_hulls}.
+Associated with the notion of convex sets are two important elements we will refer to later when we discuss linear problems that embed \emph{integrality requirements}. The first is the notion of a \emph{convex combination}, which is already contained in Definition \ref{p1c2:def:convex_set}, but can be generalised for an arbitrary number of points. The second consists of \emph{convex hulls}, which are sets formed by combining the convex combinations of all elements within a given set. As one might suspect, convex hulls are always convex sets, regardless of whether the original set from which the points are drawn from is convex or not. These are formalised in Definition \ref{p1c2:def:convex_combination_hull} and illustrated in Figure \ref{p1c2:fig:convex_hulls}.
 
 \begin{definition}[Convex combinations and convex hulls] \label{p1c2:def:convex_combination_hull}
 	Let $x_1, \dots, x_k \in \reals^n$ and $\lambda_1,\dots, \lambda_k \in \reals$ such that $\lambda_i \geq 0$ for $i = 1, \dots, k$ and $\sum_{i=1}^k \lambda_i = 1$. Then
 	\begin{enumerate}
-		\item $x = \sum_{i=1}^k \lambda_i x_i$ is a \emph{convex combination} of $\braces{x_i}_{i=1}^k \in \reals^n$.
+		\item $x = \sum_{i=1}^k \lambda_i x_i$ is a \emph{convex combination} of $\braces{x_i}_{i=1}^k \in \reals^n$;
 		\item The \emph{convex hull} of $\braces{x_i}_{i=1}^k \in \reals^n$, denoted $\conv(x_1, \dots, x_k)$, is the set of all convex combinations of $\braces{x_i}_{i=1}^k \in \reals^n$.
 	\end{enumerate}		
 \end{definition}
@@ -348,7 +351,7 @@ Figure \ref{p1c2:fig:convexity_theorem_examples} illustrates some of the stateme
 We will halt our discussion about convexity for now and return to it in deeper detail in Part 2. We finish by showing a simple yet very powerful result, which states that the presence of convexity is what allows us to conclude that a locally optimal solution returned by an optimisation algorithm applied to a linear programming problem is indeed optimal for the problem at hand. It so turns out that, in the context of linear programming, convexity is a given since linear functions are convex by definition and the feasibility set of linear programming is also convex (as we have just shown in \ref{p1c2:thm:convexity}).
 
 \begin{theorem}[Global optimality for convex problems]
- Let $f: \reals^n \to \reals$ be a convex function, that is, $f(\lambda x_1 + (1-\lambda)x_2) \le \lambda f(x_1) + (1-\lambda)f(x_2), \ \lambda \in [0,1]$, and let $S \subset \reals^n$ be a convex set. Let $\textbf{x}^{*}$ be an element of $S$. Suppose that $\textbf{x}^{*}$ is a local optimum for the problem of minimising $f(\textbf{x})$ over $S$. That is, there exists some $\epsilon > 0$ such that $f(\textbf{x}^{*}) \leq f(\textbf{x})$ for all $\textbf{x} \in S$ for which $\|\textbf{x} - \textbf{x}^{*}\| \leq \epsilon$. Then, $\textbf{x}^{*}$ is globally optimal, meaning that $f(\textbf{x}^{*}) \leq f(\textbf{x})$ for all $\textbf{x} \in S$. 
+ Let $f: \reals^n \to \reals$ be a convex function, that is, $f(\lambda x_1 + (1-\lambda)x_2) \le \lambda f(x_1) + (1-\lambda)f(x_2), \ \lambda \in [0,1]$, and let $S \subset \reals^n$ be a convex set. Let $x^*$ be an element of $S$. Suppose that $x^*$ is a local optimum for the problem of minimising $f(x)$ over $S$. That is, there exists some $\epsilon > 0$ such that $f(x^*) \leq f(x)$ for all $x \in S$ for which $\|x - x^*\| \leq \epsilon$. Then, $x^*$ is globally optimal, meaning that $f(x^*) \leq f(x)$ for all $x \in S$. 
 \end{theorem}
 
 \begin{proof}
@@ -495,7 +498,7 @@ We finalise stating the main result of this chapter, which formally confirms the
 	\begin{enumerate}
 		\item (Vertex $\Rightarrow$ Extreme point) Suppose $\overline{x}$ is a vertex. Then, there exists some $c \in \reals^n$ such that $c^\top\overline{x} < c^\top x$, for every $x \in P$ with $x \neq \overline{x}$ (cf. Definition \ref{p1c2:def:vertex}). Take $y,z \in P$ with $y,z \neq \overline{x}$. Thus $c^\top\overline{x} < c^\top y$ and $c^\top\overline{x} < c^\top z$. For $\lambda \in [0,1]$, $c^\top \overline{x} < c^\top(\lambda y + (1-\lambda)z)$ implying that $\overline{x} \neq \lambda y + (1-\lambda)z$, and is thus an extreme point (cf. Definition \ref{p1c2:def:extreme_point}).
 		
-		\item (Extreme point $\Rightarrow$ BFS) suppose $\overline{x} \in P$ is not a BFS. Then, there are no $n$ linearly independent vectors within $\braces{a_i}_{i \in I}$. Thus $\braces{a_i}_{i \in I}$ lie in a proper subspace of $\reals^n$. Let the nonzero vector $d \in \reals^n$ be such that $a_i^\top d = 0$, for all $i \in I$.
+		\item (Extreme point $\Rightarrow$ BFS) suppose $\overline{x} \in P$ is not a BFS. Then, there are no $n$ linearly independent vectors within $\braces{a_i}_{i \in I}$. Thus the vectors  $\braces{a_i}_{i \in I}$ lie in a proper subspace of $\reals^n$. Let the nonzero vector $d \in \reals^n$ be such that $a_i^\top d = 0$, for all $i \in I$.
 			
 			Let $\epsilon > 0$, $y = \overline{x} + \epsilon d$, and $z = \overline{x} - \epsilon d$. Notice that $a_i^\top y = a_i^\top z = b_i$, for all $i \in I$. Moreover, for $i \neq I$, $a_i^\top x > b_i$ and, provided that $\epsilon$ is sufficiently small (such that $\epsilon|a_i^\top d| < a_i ^\top \overline{x} - b_i $), we have that $a_i ^\top x \geq b_i$ for all $i \in I$. Thus $y \in P$, and by a similar argument, $z \in P$. Now, by noticing that $\overline{x} = \frac{1}{2}y + \frac{1}{2}z$, we see that $\overline{x}$ is not an extreme point. 			 
 		\item (BFS $\Rightarrow$ Vertex) Let $\overline{x}$ be a BFS. Define $c = \sum_{i \in I} a_i$. Then
@@ -510,7 +513,7 @@ We finalise stating the main result of this chapter, which formally confirms the
 	\end{enumerate} 	
 \end{proof}
 
-Some interesting insights emerge from the proof of Theorem \ref{p1c2:thm:BFS_vertex_extreme_point}, upon which we will build our next developments. Once the relationship between being a vertex/ extreme point and a BFS is made, it means that $\overline{x}$ can be recovered as the unique solution of a system of linear equations, these equations being the active constraints at that vertex. This means that the list of all optimal solution candidate points can be obtained by simply looking at all possible combinations of $n$ active constraints, discarding those that are infeasible. This means that the number of candidates for optimal solution is \emph{finite} and can be bounded by $\binom{m}{n}$, where $m=| M_1 \cup M_2 |$. 
+Some interesting insights emerge from the proof of Theorem \ref{p1c2:thm:BFS_vertex_extreme_point}, upon which we will build our next developments. Once the relationship between being a vertex/extreme point and a BFS is made, it means that $\overline{x}$ can be recovered as the unique solution of a system of linear equations, these equations being the active constraints at that vertex. This means that the list of all optimal solution candidate points can be obtained by simply looking at all possible combinations of $n$ active constraints, discarding those that are infeasible. This means that the number of candidates for optimal solution is \emph{finite} and can be bounded by $\binom{m}{n}$, where $m=| M_1 \cup M_2 |$. 
 
 \vfill
 \pagebreak
