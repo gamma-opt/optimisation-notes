@@ -93,7 +93,7 @@ Theorem \ref{p1c3:thm:LI_and_bases} provides us with a way to develop a simple p
 
 You might have noticed that in the proof of Theorem \ref{p1c3:thm:LI_and_bases}, the focus shifted to the columns of $A$ rather than its rows. The reason for that is because, when we think of solving the system $Ax = b$, what we are truly doing is finding a vector $x$ representing the linear combination of the columns of $A$ that yield the vector $b$. This creates an association between the columns of $A$ and the components of $x$ (i.e., the variables). Notice, however, that the columns of $A$ are not \emph{the} variables per se, as they have dimension $m$ (while $x \in \reals^n$). 
 
-One important interpretation for Theorem \ref{p1c3:thm:LI_and_bases} is that we will form bases for the column space of $A$ by choosing $m$ components to be nonzero in a vector of dimension $n$. Since $m < n$ by definition, $A$ can only have rank $\rank(A) = \min{m,n} = m$, which happens to be the size of the row space of $A$ (as the rows are assumed LI). This, in turn, means that both the column and the row spaces have dimension $m$. Thus, these bases are bases for the column space of $A$. Finally, finding the vector $x$ is the same as finding how the vector $b$ can be expressed as a linear combination of that basis. Notice that this is always possible when the basis spans $\reals^m$ (as we have $m$ LI column vectors) and $b \in \reals^m$.
+One important interpretation for Theorem \ref{p1c3:thm:LI_and_bases} is that we will form bases for the column space of $A$ by choosing $m$ components to be nonzero in a vector of dimension $n$. Since $m < n$ by definition, $A$ can only have rank $\rank(A) = \min\{m,n\} = m$, which happens to be the size of the row space of $A$ (as the rows are assumed LI). This, in turn, means that both the column and the row spaces have dimension $m$. Thus, these bases are bases for the column space of $A$. Finally, finding the vector $x$ is the same as finding how the vector $b$ can be expressed as a linear combination of that basis. Notice that this is always possible when the basis spans $\reals^m$ (as we have $m$ LI column vectors) and $b \in \reals^m$.
 
 You will notice that from here onwards, we will implicitly refer to the columns of $A$ as variables (although we actually mean the weight associated with that column, represented by the respective component in the variable $x$). Then, when we say that we are setting some ($n-m$) of the variables to be zero, it means that we are ignoring the respective columns of $A$ (the mapping between variables and columns being their indices: $x_1$ referring to the first column, $x_2$ to the second, and so forth), while using the remainder to form a (unique) combination that yields the vector $b$, being the weights of this combination precisely the solution $x$, which in turn represent the coordinates in $\reals^n$ of the vertex formed by the $n$ ($m$ equality constraints plus $n-m$ variables set to zero) active constraints.   
 
@@ -116,7 +116,7 @@ We say that $B = \braces{A_{B(i)}}_{i \in I_B}$ is a \emph{basis} (or, perhaps m
 \end{equation*}
 %
 
-Let us consider the following numerical example. If we consider the following set $P$
+Let us consider the following numerical example. Let us consider the following set $P$
 %
 \begin{equation}  \label{p1c3:eq:example_P}
 	P = \left\{x \in \reals^3 :  
@@ -219,7 +219,7 @@ Notice that, while in the figure on the left, the constraint causing degeneracy 
 
 In practice, degeneracy might cause issues related to the way we identify vertices. Because more than $n$ active constraints form the vertex, and yet, we identify vertices by groups of $n$ constraints to be active, it means that we might be have a collection of adjacent bases that, in fact, are representing the same vertex in space, meaning that we might be ``stuck'' for a while in the same position while scanning through adjacent bases. The numerical example below illustrates this phenomenon. 
 
-Let us consider again the same example as before. 
+Let us consider again the example in \eqref{p1c3:eq:example_P}. 
 %
 \begin{equation*}
 	\begin{bmatrix}
@@ -244,7 +244,7 @@ Observe the following,
 	\item Now, let = $I_B = \braces{1,3,4,7}$. This also implies that $x = (4,0,2,0,0,0,6)$. The two bases are adjacent yet represent the same point in $\reals^7$.	
 \end{itemize}
 %
-As we will see, there are mechanisms that prevent the simplex method from being stuck on such vertices forever, an issue that is referred to as \emph{cycling}. One final point to observe about degeneracy is that it can be caused by the chosen representation of the problem. For example, consider the two equivalent sets:
+As we will see, there are mechanisms that prevent the simplex method from becoming stuck on such vertices forever, an issue that is referred to as \emph{cycling}. One final point to observe about degeneracy is that it can be caused by the chosen representation of the problem. For example, consider the two equivalent sets:
 %
 \begin{equation*}
 	P_1 = \braces{(x_1, x_2,x_3) : x_1 - x_2 = 0, x_1 + x_2 + 2x_3 = 2, x_1, x_3 \geq 0} \text { and } P_2 = P_1 \cap \braces{x_2 \geq 0}. 
@@ -299,7 +299,7 @@ We are now ready to pose the result that utilises Definition \ref{p1c3:def:line_
 
 % TODO: Chp3: add a proof.
 
-It turns out that linear programming problems in the standard form do not contain a line, meaning that they will always provide at least one extreme point (or a basic feasible solution). More generally, bounded polyhedral sets do not contain a line, and neither does the positive orthant.
+It turns out that linear programming problems in the standard form do not contain a line, meaning that they will always provide at least one extreme point (and, consequently, a basic feasible solution, cf. Theorem \ref{p1c2:thm:BFS_vertex_extreme_point}). More generally, bounded polyhedral sets do not contain a line, and neither does the positive orthant.
 
 We are now to state the result that proves the intuition we had when analysing the plots in Chapter \ref{chapter_1}, which states that if a polyhedral set has at least one extreme point and at least one optimal solution, then there must be an optimal solution that is an extreme point.
 
@@ -321,11 +321,11 @@ We are now to state the result that proves the intuition we had when analysing t
 
 Theorem \ref{p1c3:thm:opt_extreme} is posed in a somewhat general way, which might be a source for confusion. First, recall that in the example in Chapter \ref{chapter_1}, we considered the possibility of the objective function level curve associated with the optimal value to be parallel to one of the edges of the feasible region, meaning that instead of a single optimal solution (a vertex), we would observe a line segment containing an infinite number of optimal solutions, of which exactly two would be extreme points. 
 
-In a more general case (with $n > 2$) it might be so that a whole facet of optimal solutions is obtained. That is precisely the polyhedral set of all optimal solutions $Q$ in the proof. Clearly, this polyhedral set will not contain a line and, therefore (cf. Theorem \ref{p1c3:thm:exist_extreme_point}), have at least one extreme point. 
+This is important because we intend to design an algorithm that only inspects extreme points. This discussion guarantees that, even for the cases in which a whole set of optimal solutions exists, some elements in that set will be extreme points anyway and thus identifiable by our method.
 
-Perhaps another important point is to notice that the result is posed assuming a minimisation problem, but it naturally holds for maximisation problems as well. In fact, maximising a function $f(x)$ is the same as minimising $-f(x)$, with the caveat that, although the optimal value $x^*$ is the same in both cases, the optimal values are symmetric in sign (because of the additional minus we included in the problem being originally maximised).
+In a more general case (with $n > 2$) it might be so that a whole facet of optimal solutions is obtained. That is precisely the polyhedral set of all optimal solutions $Q$ in the proof. This polyhedral set will not contain a line and, therefore (cf. Theorem \ref{p1c3:thm:exist_extreme_point}), have at least one extreme point. 
 
-This is important because we intend to design an algorithm that only inspects extreme points. This discussion guarantees that, even for the cases in which a whole set of optimal solution exists, some elements in that set will be extreme points anyway and thus identifiable by our method.
+Perhaps another important point is to notice that the result is posed assuming a minimisation problem, but it naturally holds for maximisation problems as well. Maximising a function $f(x)$ is the same as minimising $-f(x)$, with the caveat that, although the optimal value $x^*$ is the same in both cases, the optimal values are symmetric in sign (because of the additional minus we included in the problem being originally maximised).
 
 
 \subsection{Finding optimal solutions}
@@ -442,7 +442,7 @@ First, let us formally define this quantity, which is known as the \emph{reduced
 	\end{equation*}
 \end{definition}
 
-The name reduced cost is motivated by the fact that it quantifies a cost change onto the reduced space of the basic variables. In fact, the reduced cost is calculating the change in the objective function caused by the increase in one unit of the nonbasic variable $x_j$ elected to become basic (represented by the $c_j$ component) and the associated change caused by the accommodation in the basic variable values to retain feasibility, as discussed in the previous section. Therefore, the reduced cost can be understood as a \emph{marginal value} of change in the objective function value associated with each nonbasic variable.
+The name reduced cost is motivated by the fact that it quantifies a cost change onto the reduced space of the basic variables. In fact, the reduced cost is calculating the change in the objective function caused by the increase in one unit of the nonbasic variable $x_j$ elected to become basic (represented by the $c_j$ component) and the associated change caused by the accommodation in the basic variable values to retain feasibility ($-c_B^\top B^{-1}A_j$). Therefore, the reduced cost can be understood as a \emph{marginal value} of change in the objective function value associated with each nonbasic variable.
 
 Let us demonstrate this with a numerical example. Consider the following linear programming problem
 %
@@ -512,9 +512,7 @@ One interesting thing to notice is what is the reduced cost associated with basi
 
 \subsection{Optimality conditions}
 
-Now that we have seen how to identify promising directions for improvement, we have incidentally developed a framework for identifying the optimality of a given basic feasible solution (BFS). That is, a BFS from which no direction of improvement can be found must be locally optimal. And, since local optimality implies global optimality in the presence of convexity (the convexity of linear programming problems was attested in Chapter \ref{chapter_2}; the global optimality in the presence of convexity is a result discussed in detail in Part \ref{part_2}), we can declare this BFS as an optimal solution. 
-
-%TODO: Chp3: connect this with the new result of convexity removed from HW2 
+Now that we have seen how to identify promising directions for improvement, we have incidentally developed a framework for identifying the optimality of a given basic feasible solution (BFS). That is, a BFS from which no direction of improvement can be found must be locally optimal. And, since local optimality implies global optimality in the presence of convexity (cf. Theorems \ref{p1c2:thm:convexity} and \ref{p1c2:thm:convexity_and_optimality}), we can declare this BFS as an optimal solution. 
 
 Theorem \ref{p1c3:thm:opt_conditions} establishes the optimality of a BFS from which no improving feasible direction can be found without explicitly relying on the notion of convexity.
 
@@ -529,18 +527,23 @@ Theorem \ref{p1c3:thm:opt_conditions} establishes the optimality of a BFS from w
 \begin{proof}
 To prove (1), assume that $\overline{c}_j \geq 0$, let $y$ be a feasible solution to $P$, and $d = y - x$. We have that $Ax = Ay = b$ and thus $Ad = 0$. Equivalently:
 %
-\begin{align}
-	&B d_B + \sum_{j \in I_N}A_j d_j = 0 \Rightarrow d_B = - \sum_{j \in I_N}B^{-1}A_jd_j, \text{ implying that } \nonumber \\
-	&c^\top d = c_B^\top d_B + \sum_{j \in I_N}c_jd_j= \sum_{j \in I_N} (c_j - c_B^\top B^{-1}A_j)d_j = \sum_{j \in I_N}\overline{c}_jd_j \label{p1c3:eq:red_cost_opt_cond}
-\end{align}
+\begin{equation*}
+	B d_B + \sum_{j \in I_N}A_j d_j = 0 \Rightarrow d_B = - \sum_{j \in I_N}B^{-1}A_jd_j,
+\end{equation*}
+%	
+implying that	
+%
+\begin{equation} \label{p1c3:eq:red_cost_opt_cond}
+	c^\top d = c_B^\top d_B + \sum_{j \in I_N}c_jd_j= \sum_{j \in I_N} (c_j - c_B^\top B^{-1}A_j)d_j = \sum_{j \in I_N}\overline{c}_jd_j. 
+\end{equation}
 %
 We have that $x_j = 0$ and $y_j \geq 0$	for $j \in I_N$. Thus, $d_j \geq 0$ and $\overline{c}_jd_j \geq 0$ for $j \in I_N$, which implies that $c^\top d \geq 0$ (cf. \eqref{p1c3:eq:red_cost_opt_cond}). Consequently,
 %
 \begin{equation*}
-	c^\top d \geq 0 \Rightarrow	c^\top (y - x) \geq 0 \Rightarrow c^\top y \geq c^\top x, \text{ i.e., $x$ is optimal.}
+	c^\top d \geq 0 \Rightarrow	c^\top (y - x) \geq 0 \Rightarrow c^\top y \geq c^\top x,
 \end{equation*}
 %
-To prove (2) by contradiction, assume that $x$ is optimal with $\overline{c}_j < 0$ for some $j \in I_N$. Thus, we could improve on $x$ moving along this $j^\text{th}$ direction $d$, contradicting the optimality of $x$.
+i.e., $x$ is optimal. To prove (2) by contradiction, assume that $x$ is optimal with $\overline{c}_j < 0$ for some $j \in I_N$. Thus, we could improve on $x$ moving along this $j^\text{th}$ direction $d$, contradicting the optimality of $x$.
 \end{proof}
 
 A couple of remarks are worth making at this point. First, notice that, in the presence of degeneracy, it might be that $x$ is optimal with $\overline{c}_j < 0$ for some $j \in I_N$. This is mostly caused by problems with multiple optima (i.e., the set of optimal solutions not being empty nor a singleton). Luckily, the simplex method manages to get around this issue in an effective manner, as we will see in the next chapter. Another point to notice is that, if $\overline{c}_j > 0$, $\forall j \in I_N$, then $x$ is a \emph{unique optimal}. Analogously, if $\overline{c} \geq 0$ with $c_j =0$ for some $j \in I_N$, then it means that moving in that direction will cause no change in the objective function value, implying that both BFS are ``equally optimal'' and that the problem has multiple optimal solutions. 

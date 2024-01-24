@@ -228,7 +228,7 @@ which represents exactly the intersection of the half-spaces $a_i^\top x \geq b_
 
 You might find authors referring to bounded polyhedral sets as polytopes. However, this is not used consistently across references, sometimes with switched meanings (for example, using polytope to refer to a set defined as in Definition \ref{p1c2:def:polyhedral_sets} and using polyhedron to refer to a bounded version of $S$). In this text, we will only use the term polyhedral set to refer to sets defined as in Definition \ref{p1c2:def:polyhedral_sets} and use the term bounded whenever applicable.
 
-Also, it may be useful to formally define some elements in polyhedral sets. For that, let us consider a hyperplane $H = \braces{x \in \reals^{n} : a^\top x = b}$. Now consider the set $F = H \cap S$. This set is known as a \emph{face} of a polyhedral set. If the face $F$ has dimension zero, then $F$ is called a vertex. Analogously, if $\dim(F)=1$, then $F$ is called an edge. Finally, if $\dim(F) = dim(S)-1$, then $F$ is called a facet. Notice that in $\reals^3$, facets and faces are the same, whenever the face is not an edge or a vertex. 
+Also, it may be useful to formally define some elements in polyhedral sets. For that, let us consider a hyperplane $H = \braces{x \in \reals^{n} : a^\top x = b}$, with $a \in \reals^n$ and $b \in \reals$. Now consider the set $F = H \cap S$. This set is known as a \emph{face} of a polyhedral set. If the face $F$ has dimension zero, then $F$ is called a vertex. Analogously, if $\dim(F)=1$, then $F$ is called an edge. Finally, if $\dim(F) = dim(S)-1$, then $F$ is called a facet. Notice that in $\reals^3$, facets and faces are the same, whenever the face is not an edge or a vertex. 
 
 
 \subsection{Convexity of polyhedral sets}
@@ -350,7 +350,7 @@ Figure \ref{p1c2:fig:convexity_theorem_examples} illustrates some of the stateme
 
 We will halt our discussion about convexity for now and return to it in deeper detail in Part 2. We finish by showing a simple yet very powerful result, which states that the presence of convexity is what allows us to conclude that a locally optimal solution returned by an optimisation algorithm applied to a linear programming problem is indeed optimal for the problem at hand. It so turns out that, in the context of linear programming, convexity is a given since linear functions are convex by definition and the feasibility set of linear programming is also convex (as we have just shown in \ref{p1c2:thm:convexity}).
 
-\begin{theorem}[Global optimality for convex problems]
+\begin{theorem}[Global optimality for convex problems] \label{p1c2:thm:convexity_and_optimality}
  Let $f: \reals^n \to \reals$ be a convex function, that is, $f(\lambda x_1 + (1-\lambda)x_2) \le \lambda f(x_1) + (1-\lambda)f(x_2), \ \lambda \in [0,1]$, and let $S \subset \reals^n$ be a convex set. Let $x^*$ be an element of $S$. Suppose that $x^*$ is a local optimum for the problem of minimising $f(x)$ over $S$. That is, there exists some $\epsilon > 0$ such that $f(x^*) \leq f(x)$ for all $x \in S$ for which $\|x - x^*\| \leq \epsilon$. Then, $x^*$ is globally optimal, meaning that $f(x^*) \leq f(x)$ for all $x \in S$. 
 \end{theorem}
 
