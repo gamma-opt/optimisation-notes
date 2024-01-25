@@ -291,11 +291,30 @@ We are now ready to pose the result that utilises Definition \ref{p1c3:def:line_
 \begin{theorem}[Existence of extreme points]\label{p1c3:thm:exist_extreme_point}
 	Let $P = \braces{x \in \reals^n : a_i^\top x \geq b_i, i = 1, \dots, m} \neq \emptyset$ be a polyhedral set. Then the following are equivalent:
 	\begin{enumerate}
-		\item $P$ has at least one extreme point;
-		\item $P$ does not contain a line;
-		\item There exists $n$ LI vectors within $\braces{a_i}_{i=1}^m$.	
+		\item[(1)] $P$ has at least one extreme point;
+		\item[(2)] $P$ does not contain a line;
+		\item[(3)] There exists $n$ LI vectors within $\braces{a_i}_{i=1}^m$.	
 	\end{enumerate}	
 \end{theorem}	 
+
+\begin{proof}
+We start with $(2) \Rightarrow (1)$, i.e., if $P$ does not contain a line, then it must have a basic feasible solution and thus, cf. Theorem \ref{p1c2:thm:BFS_vertex_extreme_point}, an extreme point. Let $x \in \reals^n$ be an element of $P$ and let $I = \braces{i : a_i^\top x = b_is}$. If $n$ of the vectors $a_i$, $i \in I$, are linearly independent, then $x$ is a basic feasible solution, cf. Definition \ref{p1c2:def:basic_feasible_solution}. 
+
+If less than $n$ vectors are linearly independent, then all vectors $a_i$, $i \in I$, lie in a proper subspace of $\reals^n$ and, consequently, there exists a nonzero vector $d \in \reals^n$ such that $a_i^\top d = 0$ for every $i \in I$. Consider the line consisting of all points of the form $y = x + \lambda d$, with $\lambda \in reals$. For $i \in I$, we have that 
+	$$
+	a_i^\top y = a_i^\top x + \lambda a_i^\top d = a_i^\top x = b.
+	$$
+	Thus, the active constraints remain active at all points on the line. Now, by assumption, the polyhedral set contains no lines, and thus there will be values for $\lambda$ for which some constraint will eventually be violated. Let $\overline{\lambda}$ be the point at which this new constraint $j \not\in I$ becomes active, i.e., $a_j^\top x + \overline{\lambda}= b_j$.
+	
+	We must show that $a_j$ is not a linear combination of $\braces{a_i}_{i \in I}$. We know that $a_j^\top x \neq b_j$, as $j \not\in I$ and that $a_j^\top x + \overline{\lambda}= b_j$ by the definition of $\overline{\lambda}$. This implies that $a_j^\top d \neq 0$. Contrasting this with the fact that $a_i^\top d = 0$, $\forall i \in I$, we conclude that $a_j$ is linearly independent of $\braces{a_i}_{i \in I}$\footnote{To see that, notice that $d$ is orthogonal to any linear combination of vectors $\braces{a_i}_{i \in I}$ whilst it is not orthogonal to $a_j$ and, thus, $a_j$ cannot be expressed as a linear combination of $\braces{a_i}_{i \in I}$.}. 
+	
+	To conclude, we can see that by moving from $x$ to $x + \overline{\lambda}d$, the number of linearly independent active constraints is increased by one. Repeating the see procedure as many times as needed, we will eventually reach a point having $n$ linearly independent constraints, being thus a basic feasible solution, as we retain feasibility in the process.
+	
+	To show that $(1) \rightarrow (3)$, we simply need to notice that if $P$ has an extreme point $x$, then it is also a basic feasible solution (cf. Theorem \ref{p1c2:thm:BFS_vertex_extreme_point}) and there are $n$ active constraints corresponding to $\braces{a_i}_{i \in I}$ linearly independent vectors.
+
+	Finally, let us show that $(3) \Rightarrow (2)$ by contradiction. Assume, without loss of generality, that $a_1, \dots, a_n$ are the $n$ linearly independent vectors. Suppose that $P$ contains a line $x + \lambda d$ where $d \neq 0$. Therefore, we have that $a_i^\top x \ge b_i$, for all $i = 1, \dots, m$ and for any $\lambda$. The only way this is possible is if $a_i^\top d =0$ for all $i = 1, \dots, m$, which implies that $d=0$, reaching a contradiction that establishes that $P$ does not contain a line.
+\end{proof}
+
 
 % TODO: Chp3: add a proof.
 
@@ -370,7 +389,7 @@ Let $x$ be a basic feasible solution (BFS) with basis $B = [A_{B(1)}, \dots, A_{
 %
 and that the remaining nonbasic variables $x_N$ are such that $x_N = (x_j)_{j \in I_N} = 0$, with $I_N = J \setminus I_B$.
 
-Moving to a neighbouring solution can be achieved by simply moving between adjacent bases, which can be accomplished without significant computational burden. This entails selecting a nonbasic variable $x_j$, $j \in I_N$, and increasing it to a positive value $\theta$. 
+Moving to a neighbouring solution can be achieved by simply moving between adjacent bases, which can be accomplished without a significant computational burden. This entails selecting a nonbasic variable $x_j$, $j \in I_N$, and increasing it to a positive value $\theta$. 
 
 Equivalently, we can define a \emph{feasible direction} $d = [d_N, d_B]$, where $d_N$ represent the components associated with nonbasic variables and $d_B$ those associated with basic variables and move from the point $x$ to the point $x + \theta d$. The components $d_N$ associated with the nonbasic variables are thus defined as 
 %
