@@ -1,6 +1,6 @@
 \section{Developing the simplex method}
 
-In Chapter \ref{chapter_3}, we discussed all the necessary theoretical aspects required to develop the simplex method. In this chapter, we will concentrate on operationalising the method from a computational standpoint.
+In Chapter \ref{chapter_3}, we discussed all the necessary technical aspects required to develop the simplex method. In this chapter, we will concentrate on operationalising the method from a computational standpoint.
 
 \subsection{Calculating step sizes}
 
@@ -42,7 +42,7 @@ Therefore, the maximum value $\overline{\theta}$ is that that can be increased u
 %
 Notice that we only need to consider those basic variables with components $d_i$, $i \in I_B$, that are negative. This is because, if $d_i \ge 0$, then $x_i + \overline{\theta}d_i \geq 0$ holds for any value of $\overline{\theta} > 0$. This means that the constraints associated with these basic variables (referring to the representation in Figure \ref{p1c3:fig:adjacent_vertices}) do not limit the increase in value of the select nonbasic variable. Notice that this can lead to a pathological case in which none of the constraints limits the increase in value of the nonbasic variable, which indicates that the problem has an unbounded direction of decrease for the objective function. In this case, we say that the problem is \emph{unbounded}.
 
-Another important point is the assumption of a nondegenerate BFS. The nondegeneracy of the BFS implies that  $x_{B(i)} > 0$, $\forall i \in I_B$ and, thus, $\overline{\theta} > 0$. In the presence of degeneracy, one can infer that the definition of the step size $\overline{\theta}$ must be done more carefully.
+Another important point is the assumption of a nondegenerate BFS. The nondegeneracy of the BFS implies that  $x_{B(i)} > 0$, $\forall i \in I_B$, and, thus, $\overline{\theta} > 0$. In the presence of degeneracy, one can infer that the definition of the step size $\overline{\theta}$ must be done more carefully.
 
 Let us consider the numerical example we used in Chapter \ref{chapter_3} with a generic objective function. 
 %
@@ -118,7 +118,7 @@ Theorem \ref{p1c4:thm:adjacent_basis} provides the technical result that formali
 
 	Now, $B^{-1}A_j = -d_B$, with component $d_{B(l)} \neq 0$, is linearly independent from $B^{-1}A_{B(i)} = B^{-1}A_{\overline{B}(i)}$. Thus, $\big\{A_{\overline{B}(i)}\big\}_{i \in I_{\overline{B}}} = \braces{A_{B(i)}}_{i \in B \setminus \braces{l}} \cup \braces{A_j}$ are linearly independent, forming the contradiction.
 	
-	Now we focus on proving (2). We have that $\overline{x} \geq 0$, $A\overline{x} = b$ and $\overline{x}_j = 0$ for $j \in I_{\overline{N}} = J \setminus I_{\overline{B}}$. This, combined with $\braces{\overline{B}(i)}_{i \in I_{\overline{B}}}$ being linearly independent (cf. 1), completes the proof.	
+	Now we focus on proving (2). We have that $\overline{x} \geq 0$, $A\overline{x} = b$ and $\overline{x}_j = 0$ for $j \in I_{\overline{N}} = J \setminus I_{\overline{B}}$. This, combined with $\braces{\overline{B}(i)}_{i \in I_{\overline{B}}}$ being linearly independent (cf. (1)), completes the proof.	
 \end{proof}
 
 We have finally compiled all the elements we need to state the simplex method pseudocode, which is presented in Algorithm \ref{p1c4:alg:simplex}. One minor detail in the presentation of the algorithm is the use of the auxiliary vector $u$. This allows for the precalculation of the components of $d_B = -B^{-1}A_j$ (notice the changed sign) to test for unboundedness, that is, the lack of a constraint (and associated basic variable) that can limit the increase of the chosen nonbasic variable. 
@@ -518,7 +518,7 @@ This second formulation exposes one interesting interpretation of the problem. S
 %
 Definition \ref{p1c4:def:simplex} is precisely the inspiration for the name of the simplex method. We know that only $m+1$ components of $x$ will be different than zero since that is the number of constraints we have and, thus, the size of a basis in this case. Thus, a BFS is formed by $m+1$ $(A_i, 1)$ columns, which in turn are associated with $(A_i,c_i)$ basic points. 
 
-Figure \ref{p1c4:fig:column_geometry} provides an illustration of the concept. In this, we have that $m=2$, so each column $A_j$ can be represented in a two-dimensional plane. Notice that a basis requires three points $(A_i,c_i)$ and forms a 3-simplex. A BFS is a selection of three points $(A_i,c_i)$ such that $b$, also illustrated in the picture, can be formed by a convex combination of the $(A_i,c_i)$ forming the basis. This will be possible if $b$ happens to be inside the 3-simplex formed by these points. For example, in Figure \ref{p1c4:fig:column_geometry}, the basis formed by columns $\braces{2,3,4}$ is a BFS, while the basis $\braces{1,2,3}$ is not.
+Figure \ref{p1c4:fig:column_geometry} provides an illustration of the concept. In this, we have that $m=2$, so each column $A_j$ represents a point in a two-dimensional plane. Notice that a basis requires three points $(A_i,c_i)$ and forms a 3-simplex. A BFS is a selection of three points $(A_i,c_i)$ such that $b$, also illustrated in the picture, can be formed by a convex combination of the $(A_i,c_i)$ forming the basis. This will be possible if $b$ happens to be inside the 3-simplex formed by these points. For example, in Figure \ref{p1c4:fig:column_geometry}, the basis formed by columns $\braces{2,3,4}$ is a BFS, while the basis $\braces{1,2,3}$ is not.
 
 \begin{figure}[h]
 	\begin{tikzpicture}
@@ -537,7 +537,7 @@ Figure \ref{p1c4:fig:column_geometry} provides an illustration of the concept. I
 	\caption{A solution $x$ is a convex combinations of $(A_i,c_i)$ such that $Ax= b$.} \label{p1c4:fig:column_geometry}
 \end{figure}	 
 
-We now can add a third dimension to the analysis representing the value of $z$. For that, we will use Figure \ref{p1c4:fig:column_geometry_3d}. As can be seen, each selection of basis creates a tilt in the three-dimensional simplex, such that the point $b$ is met precisely at the high corresponding to its value in the $z$ axis. This allows to compare bases according to their objective function value. And, since we are minimising, we would like to find the basis that has its respective simplex crossing $b$ at the lowermost point.
+We now can add a third dimension to the analysis representing the value of $z$. For that, we will use Figure \ref{p1c4:fig:column_geometry_3d}. As can be seen, each selection of basis creates a tilt in the three-dimensional simplex, such that the point $b$ is met precisely at the height corresponding to its value in the $z$ axis. This allows us to compare bases according to their objective function value. And, since we are minimising, we would like to find the basis that has its respective simplex crossing $b$ at the lowermost point.
 
 \begin{figure}[H]
 	\begin{tikzpicture}
