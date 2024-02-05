@@ -1,8 +1,12 @@
-\section{Sensitivity analysis}
 
-We now consider further developments arising from the notion of duality in linear programming problems. We begin by focusing on the employment of the dual simplex method and the interpretation of the dual multipliers, as discussed in Chapter \ref{chapter_5}. 
+The most direct application of duality in linear programming problems is the interpretation of dual variable values as marginal values associated with constraints, with important economic implications. 
 
-Specifically, assume that we have solved to optimality the problem $P$ given as
+We will also consider the notion of solution stability and restarting the simplex method, once new variables or constraints are added to the problem post optimality. This will have an important consequence for the development of efficient solution methods for integer programming problems, which we will discuss in detail in later chapters.
+
+
+\section{Optimal dual variables as marginal costs}
+
+Assume that we have solved to optimality the problem $P$ given as
 %
 \begin{align*}
 	P : \mini \, &c^\top x \\
@@ -12,7 +16,64 @@ Specifically, assume that we have solved to optimality the problem $P$ given as
 %
 As we have seen in Chapter \ref{chapter_4}, the optimal solution $\overline{x}$ with associated basis $B$ satisfies the following optimality conditions: it is a \emph{basic feasible solution} and, therefore (i) $B^{-1}b \geq 0$; and (ii) all reduced costs are nonnegative, that is $c^\top - c_B^\top B^{-1}b \geq 0$.
 
-We are interested in analysing aspects associated with the \emph{stability} of the optimal solution $\overline{x}$ in terms of how it changes with the inclusion of new decision variables and constraints or in with changes in the input data. Both cases are somewhat motivated by the realisation that problems typically emerge from dynamic settings. Thus, one must assess how \emph{stable} a given plan (represented by $\overline{x}$) is or how it can be adapted in face of changes in the original problem setting. This kind of analysis is generally referred to as \emph{sensitivity analysis} in the context of linear programming.
+Now, assume that we cause a marginal perturbation on the vector $b$, represented by a vector $d$. That is, assume that we have $B^{-1}(b + d) > 0$, noticing that nondegenerate feasibility holds.
+
+Recall that the optimality condition $\overline{c} = c^\top - c_B ^\top B^{-1}A \geq 0$ is not influenced by such a marginal perturbation. That is, for a small change $d$, the optimal basis (i.e., the selection of basic variables) is not disturbed. On the other hand, the optimal value of the basic variables, and consequently, the optimal value, becomes
+%
+\begin{equation*}
+	c_B^\top B^{-1}(b + d) = p^\top(b + d). 
+\end{equation*}
+%
+Notice that $p^\top = c_B^\top B^{-1}$ is optimal for the (respective) dual problem. Thus, a change $d$ causes a change of $p^\top d$ in the optimal value, meaning that the components $p_i$ represent a \emph{marginal value/cost} associated with the independent term $b_i$, for $i \in I$. 
+
+This has important implications in practice, as it allows for pricing the values of the resources associated with constraints. For example, suppose the dual value (or price) $p_i$ is associated with a resource whose requirement is given by $b_i$. In that case, any opportunity to remove units of $b_i$ for less than $p_i$ should be seized since it costs $p_i$ to satisfy any additional unit in the requirement $b_i$. A similar interpretation can be made in the context of less-or-equal-than constraints, in which $p_i$ would indicate benefits (or losses, if $p_i > 0$) in increasing the availability of $b_i$. 
+
+For a numerical example, let us consider our paint factory problem once again. 
+
+
+The following tableau represents the optimal solution
+%
+\begin{center}
+	\begin{tabular}{c|cccccc|c}
+		     & $x_1$ & $x_2$ & $x_3$ & $x_4$ & $x_5$ & $x_6$ & RHS \\ \hline 
+		$z$  & 0  & 0 & 3/4 & 1/2 & 0 & 0 & 21   \\ \hline
+	   $x_1$ & 1  & 0 & 1/4 & -1/2 & 0 & 0 & 3 \\
+	   $x_2$ & 0  & 1 &-1/8 & 3/4 & 0 & 0 & 3/2  \\
+	   $x_5$ & 0  & 0 & 3/8 &-5/4 & 1 & 0 & 5/2  \\
+	   $x_6$ & 0  & 0 & 1/8 &-3/4 & 0 & 1 & 1/2  \\ \hline
+	\end{tabular}
+\end{center}
+%
+where $x_3$ and $x_4$ were the slack variables associated with raw material M1 and M2, respectively. In this case, we have that 
+$$
+B^{-1} = \begin{bmatrix}
+ 		   1/4 & -1/2 & 0 & 0 \\
+		  -1/8 & 3/4 & 0 & 0 \\
+		   3/8 &-5/4 & 1 & 0 \\
+		   1/8 &-3/4 & 0 & 1
+ 		 \end{bmatrix} \text{ and } p = c_B^\top B^{-1} =  
+ 		 \begin{bmatrix}
+ 		 	-5 \\
+ 		 	-4 \\
+ 		 	0 \\
+ 		 	0
+ 		 \end{bmatrix}^\top
+ 		 \begin{bmatrix}
+ 		   1/4 & -1/2 & 0 & 0 \\
+		  -1/8 & 3/4 & 0 & 0 \\
+		   3/8 &-5/4 & 1 & 0 \\
+		   1/8 &-3/4 & 0 & 1
+ 		 \end{bmatrix}  = 
+ 		 \begin{bmatrix}
+ 		 	-3/4 \\ -1/2 \\ 0 \\ 0
+ 		 \end{bmatrix}
+$$
+Notice that these are values of the entries in the $z$-row below the slack variables $x_3, \dots, x_6$, except the minus sign. This is because the $z$-rows contain the entries for $c - p^\top B^{-1}$ and for all slack variables we have that $c_j = 0$, for $j = 3,\dots,6$. Also, recall that the paint factory problem is a maximisation problem, so $p$ represents the decrease in the objective function value. In this, we see that removing one unit of M1 would decrease the objective function by 3/4 and removing one unit of M2 would similarly decrease the objective value by 1/2. Analogous, increasing M1 or M2 availability by one unit would increase the objective function value by 3/4 and 1/2, respectively. 
+
+
+\section{Sensitivity analysis}
+
+We are interested in analysing aspects associated with the \emph{stability} of the optimal solution $\overline{x}$ in terms of how it changes with the inclusion of new decision variables and constraints or with changes in the input data. Both cases are somewhat motivated by the realisation that problems typically emerge from dynamic settings. Thus, one must assess how \emph{stable} a given plan (represented by $\overline{x}$) is or how it can be adapted in the face of changes in the original problem setting. This kind of analysis is generally referred to as \emph{sensitivity analysis} in the context of linear programming.
 
 First, we will consider the inclusion of new variables or new constraints \emph{after} the optimal solution $\overline{x}$ is obtained. This setting represents, for example, the inclusion of a new product or a new production plant (referring to the context of resource allocation and transportation problems, as discussed in Chapter \ref{chapter_1}) or the consideration of additional constraints imposing new (or previously disregarded) requirements or conditions. The techniques we will consider here will also be relevant in the following chapters. We will then discuss specialised methods for large-scale problems and solution techniques for integer programming problems, both topics that heavily rely on the idea of iteratively incrementing linear programming problems with additional constraints (or variables).
 
