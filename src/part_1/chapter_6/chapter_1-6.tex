@@ -4,7 +4,16 @@ The most direct application of duality in linear programming problems is the int
 We will also consider the notion of solution stability and restarting the simplex method, once new variables or constraints are added to the problem post optimality. This will have an important consequence for the development of efficient solution methods for integer programming problems, which we will discuss in detail in later chapters.
 
 
-\section{Optimal dual variables as marginal costs}
+\section{Sensitivity analysis}
+
+We are interested in analysing aspects associated with the \emph{stability} of the optimal solution $\overline{x}$ in terms of how it changes with the inclusion of new decision variables and constraints or with changes in the input data. Both cases are somewhat motivated by the realisation that problems typically emerge from dynamic settings. Thus, one must assess how \emph{stable} a given plan (represented by $\overline{x}$) is or how it can be adapted in the face of changes in the original problem setting. This kind of analysis is generally referred to as \emph{sensitivity analysis} in the context of linear programming.
+
+First, we will consider the inclusion of new variables or new constraints \emph{after} the optimal solution $\overline{x}$ is obtained. This setting represents, for example, the inclusion of a new product or a new production plant (referring to the context of resource allocation and transportation problems, as discussed in Chapter \ref{chapter_1}) or the consideration of additional constraints imposing new (or previously disregarded) requirements or conditions. The techniques we consider here will also be relevant in the following chapters. We will then discuss specialised methods for large-scale problems and solution techniques for integer programming problems, both topics that heavily rely on the idea of iteratively incrementing linear programming problems with additional constraints (or variables).
+
+The second group of cases relates to changes in the input data. When utilising linear programming models to optimise systems performance, one must bear in mind that there is inherent uncertainty associated with the input data. Be it due to measurement errors or a lack of complete knowledge about the future, one must accept that the input data of these models will, by definition, embed some measure of error. One way of taking this into account is to try to understand the consequences to the optimality of $\overline{x}$ in case of eventual changes in the input data, represented by the matrix $A$, and the vectors $c$ and $b$. We will achieve this by studying the ranges within which variations in these terms do not compromise the optimality of $\overline{x}$. 
+
+
+\subsection{Adding a new variable} \label{section_611}
 
 Assume that we have solved to optimality the problem $P$ given as
 %
@@ -13,10 +22,166 @@ Assume that we have solved to optimality the problem $P$ given as
 	\st \, & Ax = b \\
 	& x \geq 0. 	
 \end{align*}
-%
-As we have seen in Chapter \ref{chapter_4}, the optimal solution $\overline{x}$ with associated basis $B$ satisfies the following optimality conditions: it is a \emph{basic feasible solution} and, therefore (i) $B^{-1}b \geq 0$; and (ii) all reduced costs are nonnegative, that is $c^\top - c_B^\top B^{-1}b \geq 0$.
 
-Now, assume that we cause a marginal perturbation on the vector $b$, represented by a vector $d$. That is, assume that we have $B^{-1}(b + d) > 0$, noticing that nondegenerate feasibility holds.
+Let us consider that a new variable $x_{n+1}$ with associated column (that is, respective objective function and constraint coefficients) $(c_{n+1}, A_{n+1})$ is added to $P$. This leads to a new augmented problem $P'$ of the form
+%
+\begin{align*}
+	P': \mini \, &c^\top x + c_{n+1}x_{n+1}\\
+	\st \, & Ax + A_{n+1}x_{n+1}= b \\
+	& x \geq 0, x_{n+1} \geq 0. 	
+\end{align*}
+%
+We need to determine if, after the inclusion of this new variable, the current basis $B$ is still optimal. Making the newly added variable nonbasic yields the basic feasible solution (BFS) $x = (\overline{x}, 0)$. Moreover, we know that the optimality condition $c^\top - c_B^\top B^{-1}b \geq 0$ held before the inclusion of the variable, so we know that all the other reduced costs associated with the nonbasic variables $j \in I_N$ were nonnegative. 
+
+Therefore, the only check that needs to be done is whether the reduced cost associated with $x_{n+1}$ also satisfies the optimality condition, i.e., if
+%
+\begin{equation*}
+	\overline{c}_{n+1} = c_{n+1} - c_B^\top B^{-1}A_{n+1} \geq 0.	
+\end{equation*}
+%
+If the optimality condition is satisfied, the new variable does not change the optimal basis, and the solution $x = (\overline{x}, 0)$ is optimal. Otherwise, one must perform a new simplex iteration, using $B$ as a starting BFS. Notice that in this case, primal feasibility is trivially satisfied, while dual feasibility is not observed (that is, $\overline{c}_{n+1} < 0$). Therefore, primal simplex can be employed, \emph{warm started} by $B$. This is often a far more efficient strategy than resolving $P'$ from scratch.
+
+%TODO: Chp6: Change this to the paint example
+Let us consider a numerical example. Consider the problem
+%
+\begin{align*}
+	\mini & -5x_1 -x_2 + 12 x_3 \\
+	\st   & 3x_1 + 2x_2 + x_3 = 10 \\
+	& 5x_1 + 3x_2 + x_4 = 16 \\
+	& x_1, \dots, x_4 \geq 0.
+\end{align*}
+%
+The tableau associated with its optimal solution is given by
+
+\begin{center}
+	\begin{tabular}{r|cccc|c} 
+	   &$x_1$ & $x_2$ & $x_3$ & $x_4$& RHS \\ \hline	
+	   $z$ & 0 & 0 & 2 & 7 & 12\\ \hline
+	   $x_1$ & 1 & 0 & -3 & 2 & 2\\
+	   $x_2$ & 0 & 1 & 5 & -3 & 2            
+	\end{tabular}
+\end{center}
+
+Suppose we include a variable $x_5$, for which $c_5 = -1$ and $A_5 = (1,1)$. The modified problem then becomes
+%
+\begin{align*}
+	\mini & -5x_1 -x_2 + 12 x_3 -x_5 	 \\
+	\st   & 3x_1 + 2x_2 + x_3 + x_5 = 10 \\
+	& 5x_1 + 3x_2 + x_4 + x_5 = 16 \\
+	& x_1, \dots, x_5 \geq 0.
+\end{align*}
+%
+We have that the reduced cost of the new variable is given by $\overline{c}_5 = c_5 - c_B^\top B^{-1}A_5 = -4$ and $B^{-1}A_5 = (-1,2)$. The tableau for the optimal basis $B$ considering the new column associated with $x_5$ is thus
+
+\begin{center}
+	\begin{tabular}{r|ccccc|c} 
+	   &$x_1$ & $x_2$ & $x_3$ & $x_4$& $x_5$ & RHS \\ \hline	
+	   $z$ & 0 & 0 & 2 & 7 & -4 & 12   \\ \hline
+	   $x_1$ & 1 & 0 & -3 & 2 & -1 & 2 \\
+	   $x_2$ & 0 & 1 & 5 & -3 & 2 & 2	            
+	\end{tabular}
+\end{center}
+
+Notice that this tableau now shows a primal feasible solution that is not optimal and can be further iterated using primal simplex.
+
+
+\subsection{Adding a new constraint} \label{section_612}
+
+We now focus on the inclusion of additional constraints. Let us assume that a general constraint of the form ${a_{m+1}}^\top x \geq b_{m+1}$ is added to $P$ after it has been solved. We assume it to be an inequality, but notice that $P$ was originally in the standard form.
+
+The first thing to observe is that, if the optimal solution $\overline{x}$ to $P$ satisfy ${a_{m+1}}^\top \overline{x} \geq b_{m+1}$, then nothing changes. Otherwise, we need to rewrite the new constraint accordingly by including a slack variable, obtaining 
+%
+\begin{equation*}
+	{a_{m+1}}^\top x - x_{n+1} = b_{m+1}.
+\end{equation*}
+%
+Notice that doing so changes the matrix $A$ of the original problem $P$, which becomes
+%
+\begin{equation*}
+	\overline{A} = \begin{bmatrix}
+				   A & 0 \\ a^\top_{m+1} & -1 
+				   \end{bmatrix}.
+\end{equation*}
+
+We can reuse the optimal basis $B$ to form a new basis $\overline{B}$ for the problem. This will have the form
+%
+\begin{equation*}
+	\overline{B} = \begin{bmatrix}
+		B & 0 \\ a^\top & -1 
+	\end{bmatrix},	
+\end{equation*}
+%
+where $a$ are the respective components of $a_{m+1}$ associated with the columns from $A$ that formed $B$. Now, since we have that $\overline{B}^{-1}\overline{B} = I$, we must have that 
+%
+\begin{equation*}
+	\overline{B}^{-1} = \begin{bmatrix}
+		B^{-1} & 0 \\ a^\top B^{-1} & -1 
+	\end{bmatrix}.	
+\end{equation*}
+%
+Notice however, that the basic solution $(\overline{x}, {a_{m+1}}^\top \overline{x} -  b_{m+1})$ associated with $\overline{B}$ is not feasible, since we assumed that $\overline{x}$ did not satisfy the newly added constraint, i.e., ${a_{m+1}}^\top \overline{x} < b_{m+1}$.
+
+The reduced costs considering the new basis $\overline{B}$ then become
+%
+\begin{equation*}
+	[c^\top ~~ 0] - [c_B^\top ~~ 0]\begin{bmatrix} B^{-1} & 0 \\ a^\top B^{-1} & -1 \end{bmatrix}\begin{bmatrix} A & 0 \\ a_{m+1}^\top & -1 \end{bmatrix} = [c^\top - c^\top_B B^{-1}A ~~ 0].
+\end{equation*}
+  	
+Notice that the new slack variable has a null component as a reduced cost, meaning that it does not violate dual feasibility conditions. Thus, after adding a constraint that makes $\overline{x}$ infeasible, we still have a dual feasible solution that can be immediately used by the dual simplex method, again allowing for warm starting the solution of the new problem.
+
+To build an initial solution in terms of the tableau representation of the simplex method, we must simply add an extra new row, which leads to a new tableau with the following structure
+%
+\begin{equation*}
+	\overline{B}^{-1}A = \begin{bmatrix} B^{-1}A & 0 \\ a^\top B^{-1}A - a_{m+1}^\top & 1 \end{bmatrix}.
+\end{equation*}
+%		
+Let us consider a numerical example again. Consider the same problem as the previous example, but that we instead include the additional constraint $x_1 + x_2 \geq 5$, which is violated by the optimal solution $(2,2,0,0)$. In this case, we have that $a_{m+1} = (1,1,0,0)$ and $a^\top B^{-1} A - a^\top_{m+1} = [0, 0, 2, -1]$. This modified problem then looks like
+%
+%TODO: Chp6: Change this to the paint example
+\begin{align*}
+	\mini & -5x_1 -x_2 + 12 x_3 \\
+	\st   & 3x_1 + 2x_2 + x_3  = 10 \\
+	& 5x_1 + 3x_2 + x_4 = 16 \\
+	& -x_1 - x_2 + x_5 = -5  \\
+	& x_1, \dots, x_5 \geq 0
+\end{align*}
+%
+with associated tableau
+
+\begin{center}
+	\begin{tabular}{r|ccccc|c} 
+	   &$x_1$ & $x_2$ & $x_3$ & $x_4$ & $x_5$ & RHS \\ \hline	
+	   $z$ & 0 & 0 & 2 & 7 & 0 & 12                 \\ \hline
+	   $x_1$ & 1 & 0 & -3 & 2 & 0 & 2 				\\
+	   $x_2$ & 0 & 1 & 5 & -3 & 0 & 2 				\\
+	   $x_5$ &  0 &  0 &  2 & -1 & 1 & -1           
+	\end{tabular}
+\end{center}
+
+Notice that this tableau indicates that we have a dual feasible solution that is not primal feasible and thus suitable to be solved using dual simplex.
+	
+A final point to note is that these operations are related to each other in terms of equivalent primal-dual formulations. That is, consider dual of $P$, which is given by
+%
+\begin{align*}
+	D : \maxi   & p^\top b \\
+	\st 			& p^\top A \le c.
+\end{align*}
+%
+Then, adding a constraint of the form $p^\top A_{n+1} \leq c_{n+1}$ is equivalent to adding a variable to $P$, exactly as discussed in Section \ref{section_611}.
+
+
+\subsection{Changing input data} \label{section_613}
+
+We now consider how changes in the input data can influence the optimality of a given basis. Specifically, we consider how to predict whether changes in the vector of independent terms $b$ and objective coefficients $c$ will affect the optimality of the problem. Notice that variations in the coefficient matrix $A$ are left aside.
+
+%TODO: Chp6: include a discussion on variations on the coefficients of A.
+
+
+\subsubsection{Optimal dual variables as marginal costs}
+
+As before, assume that we have solved $P$ to optimality. As we have seen in Chapter \ref{chapter_4}, the optimal solution $\overline{x}$ with associated basis $B$ satisfies the following optimality conditions: it is a BFS and, therefore (i) $B^{-1}b \geq 0$; and (ii) all reduced costs are nonnegative, that is $c^\top - c_B^\top B^{-1}b \geq 0$.
+
+Now, assume that we cause a marginal perturbation on the vector $b$, represented by a vector $d$. That is, assume that we have $B^{-1}(b + d) > 0$, assuming that nondegeneracy is retained.
 
 Recall that the optimality condition $\overline{c} = c^\top - c_B ^\top B^{-1}A \geq 0$ is not influenced by such a marginal perturbation. That is, for a small change $d$, the optimal basis (i.e., the selection of basic variables) is not disturbed. On the other hand, the optimal value of the basic variables, and consequently, the optimal value, becomes
 %
@@ -71,172 +236,6 @@ $$
 Notice that these are values of the entries in the $z$-row below the slack variables $x_3, \dots, x_6$, except the minus sign. This is because the $z$-rows contain the entries for $c - p^\top B^{-1}$ and for all slack variables we have that $c_j = 0$, for $j = 3,\dots,6$. Also, recall that the paint factory problem is a maximisation problem, so $p$ represents the decrease in the objective function value. In this, we see that removing one unit of M1 would decrease the objective function by 3/4 and removing one unit of M2 would similarly decrease the objective value by 1/2. Analogous, increasing M1 or M2 availability by one unit would increase the objective function value by 3/4 and 1/2, respectively. 
 
 
-\section{Sensitivity analysis}
-
-We are interested in analysing aspects associated with the \emph{stability} of the optimal solution $\overline{x}$ in terms of how it changes with the inclusion of new decision variables and constraints or with changes in the input data. Both cases are somewhat motivated by the realisation that problems typically emerge from dynamic settings. Thus, one must assess how \emph{stable} a given plan (represented by $\overline{x}$) is or how it can be adapted in the face of changes in the original problem setting. This kind of analysis is generally referred to as \emph{sensitivity analysis} in the context of linear programming.
-
-First, we will consider the inclusion of new variables or new constraints \emph{after} the optimal solution $\overline{x}$ is obtained. This setting represents, for example, the inclusion of a new product or a new production plant (referring to the context of resource allocation and transportation problems, as discussed in Chapter \ref{chapter_1}) or the consideration of additional constraints imposing new (or previously disregarded) requirements or conditions. The techniques we will consider here will also be relevant in the following chapters. We will then discuss specialised methods for large-scale problems and solution techniques for integer programming problems, both topics that heavily rely on the idea of iteratively incrementing linear programming problems with additional constraints (or variables).
-
-The second group of cases relates to changes in the input data. When utilising linear programming models to optimise systems performance, one must bear in mind that there is inherent uncertainty associated with the input data. Be it due to measurement errors or a lack of complete knowledge about the future, one must accept that the input data of these models will, by definition, embed some measure of error. One way of taking this into account is to try to understand the consequences to the optimality of $\overline{x}$ in case of eventual changes in the input data, represented by the matrix $A$, and the vectors $c$ and $b$. We will achieve this by studying the ranges within which variations in these terms do not compromise the optimality of $\overline{x}$. 
-
-
-\subsection{Adding a new variable} \label{section_611}
-
-Let us consider that a new variable $x_{n+1}$ with associated column (that is, respective objective function and constraint coefficients) $(c_{n+1}, A_{n+1})$ is added to $P$. This leads to a new augmented problem $P'$ of the form
-%
-\begin{align*}
-	P': \mini \, &c^\top x + c_{n+1}x_{n+1}\\
-	\st \, & Ax + A_{n+1}x_{n+1}= b \\
-	& x \geq 0, x_{n+1} \geq 0. 	
-\end{align*}
-%
-We need to determine if, after the inclusion of this new variable, the current basis $B$ is still optimal. Making the newly added variable nonbasic yields the basic feasible solution (BFS) $x = (\overline{x}, 0)$. Moreover, we know that the optimality condition $c^\top - c_B^\top B^{-1}b \geq 0$ held before the inclusion of the variable, so we know that all the other reduced costs associated with the nonbasic variables $j \in I_N$ were nonnegative. 
-
-Therefore, the only check that needs to be done is whether the reduced cost associated with $x_{n+1}$ also satisfies the optimality condition, i.e., if
-%
-\begin{equation*}
-	\overline{c}_{n+1} = c_{n+1} - c_B^\top B^{-1}A_{n+1} \geq 0.	
-\end{equation*}
-%
-If the optimality condition is satisfied, the new variable does not change the optimal basis, and the solution $x = (\overline{x}, 0)$ is optimal. Otherwise, one must perform a new simplex iteration, using $B$ as a starting BFS. Notice that in this case, primal feasibility is trivially satisfied, while dual feasibility is not observed (that is, $\overline{c}_{n+1} < 0$). Therefore, primal simplex can be employed, \emph{warm started} by $B$. This is often a far more efficient strategy than resolving $P'$ from scratch.
-
-
-%TODO: Chp6: Change this to the paint example
-Let us consider a numerical example. Consider the problem
-%
-\begin{align*}
-	\mini & -5x_1 -x_2 + 12 x_3 \\
-	\st   & 3x_1 + 2x_2 + x_3 = 10 \\
-	& 5x_1 + 3x_2 + x_4 = 16 \\
-	& x_1, \dots, x_4 \geq 0.
-\end{align*}
-%
-The tableau associated with its optimal solution is given by
-
-\begin{center}
-	\begin{tabular}{r|cccc|c} 
-	   &$x_1$ & $x_2$ & $x_3$ & $x_4$& RHS \\ \hline	
-	   $z$ & 0 & 0 & 2 & 7 & 12\\ \hline
-	   $x_1$ & 1 & 0 & -3 & 2 & 2\\
-	   $x_2$ & 0 & 1 & 5 & -3 & 2            
-	\end{tabular}
-\end{center}
-
-Suppose we include a variable $x_5$, for which $c_5 = -1$ and $A_5 = (1,1)$. The modified problem then becomes
-%
-\begin{align*}
-	\mini & -5x_1 -x_2 + 12 x_3 -x_5 	 \\
-	\st   & 3x_1 + 2x_2 + x_3 + x_5 = 10 \\
-	& 5x_1 + 3x_2 + x_4 + x_5 = 16 \\
-	& x_1, \dots, x_5 \geq 0.
-\end{align*}
-%
-We have that the reduced cost of the new variable is given by $\overline{c}_5 = c_5 - c_B^\top B^{-1}A_5 = -4$ and $B^{-1}A_5 = (-1,2)$. The tableau for the optimal basis $B$ considering the new column associated with $x_5$ is thus
-
-\begin{center}
-	\begin{tabular}{r|ccccc|c} 
-	   &$x_1$ & $x_2$ & $x_3$ & $x_4$& $x_5$ & RHS \\ \hline	
-	   $z$ & 0 & 0 & 2 & 7 & -4 & 12   \\ \hline
-	   $x_1$ & 1 & 0 & -3 & 2 & -1 & 2 \\
-	   $x_2$ & 0 & 1 & 5 & -3 & 2 & 2	            
-	\end{tabular}
-\end{center}
-
-Notice that this tableau now shows a primal feasible solution that is not optimal and can be further iterated using primal simplex.
-
-
-\subsection{Adding a new constraint} \label{section_612}
-
-We now focus on the inclusion of additional constraints. Let us assume that a general constraint of the form ${a_{m+1}}^\top x \geq b_{m+1}$ is added to $P$. We assume it to be an inequality that has been applied to problem $P$, which was originally in the standard form, after it was solved.
-
-The first thing to notice is that, if the optimal solution $\overline{x}$ to $P$ satisfy ${a_{m+1}}^\top \overline{x} \geq b_{m+1}$, then nothing changes. Otherwise, we need to rewrite the new constraint accordingly by including a slack variable, obtaining 
-%
-\begin{equation*}
-	{a_{m+1}}^\top x - x_{n+1} = b_{m+1}.
-\end{equation*}
-%
-Notice that doing so changes the matrix $A$ of the original problem $P$, which becomes
-%
-\begin{equation*}
-	\overline{A} = \begin{bmatrix}
-				   A & 0 \\ a^\top_{m+1} & -1 
-				   \end{bmatrix}.
-\end{equation*}
-
-We can reuse the optimal basis $B$ to form a new basis $\overline{B}$ for the problem. This will have the form
-%
-\begin{equation*}
-	\overline{B} = \begin{bmatrix}
-		B & 0 \\ a^\top & -1 
-	\end{bmatrix},	
-\end{equation*}
-%
-where $a$ are the respective components of $a_{m+1}$ associated with the columns from $A$ that formed $B$. Now, since we have that $\overline{B}^{-1}\overline{B} = I$, we must have that 
-%
-\begin{equation*}
-	\overline{B}^{-1} = \begin{bmatrix}
-		B^{-1} & 0 \\ a^\top B^{-1} & -1 
-	\end{bmatrix}.	
-\end{equation*}
-%
-Notice however, that the basic solution $(\overline{x}, {a_{m+1}}^\top \overline{x} -  b_{m+1})$ associated with $\overline{B}$ is not feasible, since we assumed that $\overline{x}$ did not satisfy the newly added constraint, i.e., ${a_{m+1}}^\top \overline{x} < b_{m+1}$.
-
-The reduced costs considering the new basis $\overline{B}$ then become
-%
-\begin{equation*}
-	[c^\top ~~ 0] - [c_B^\top ~~ 0]\begin{bmatrix} B^{-1} & 0 \\ a^\top B^{-1} & -1 \end{bmatrix}\begin{bmatrix} A & 0 \\ a_{m+1}^\top & -1 \end{bmatrix} = [c^\top - c^\top_B B^{-1}A ~~ 0].
-\end{equation*}
-  	
-Notice that the new slack variable has a null component as a reduced cost, meaning that it does not violate dual feasibility conditions. Thus, after adding a constraint that makes $\overline{x}$ infeasible, we still have a dual feasible solution that can be immediately used by the dual simplex method, again allowing for warm starting the solution of the new problem.
-
-To build an initial solution in terms of the tableau representation of the simplex method, we must simply add an additional row, which leads to a new tableau with the following structure
-%
-\begin{equation*}
-	\overline{B}^{-1}A = \begin{bmatrix} B^{-1}A & 0 \\ a^\top B^{-1}A - a_{m+1}^\top & 1 \end{bmatrix}.
-\end{equation*}
-%		
-
-Let us consider a numerical example again. Consider the same problem as the previous example, but that we instead include the additional constraint $x_1 + x_2 \geq 5$, which is violated by the optimal solution $(2,2,0,0)$. In this case, we have that $a_{m+1} = (1,1,0,0)$ and $a^\top B^{-1} A - a^\top_{m+1} = [0, 0, 2, -1]$. This modified problem then looks like
-%
-%TODO: Chp6: Change this to the paint example
-\begin{align*}
-	\mini & -5x_1 -x_2 + 12 x_3 \\
-	\st   & 3x_1 + 2x_2 + x_3  = 10 \\
-	& 5x_1 + 3x_2 + x_4 = 16 \\
-	& -x_1 - x_2 + x_5 = -5  \\
-	& x_1, \dots, x_5 \geq 0
-\end{align*}
-%
-with associated tableau
-
-\begin{center}
-	\begin{tabular}{r|ccccc|c} 
-	   &$x_1$ & $x_2$ & $x_3$ & $x_4$ & $x_5$ & RHS \\ \hline	
-	   $z$ & 0 & 0 & 2 & 7 & 0 & 12                 \\ \hline
-	   $x_1$ & 1 & 0 & -3 & 2 & 0 & 2 				\\
-	   $x_2$ & 0 & 1 & 5 & -3 & 0 & 2 				\\
-	   $x_5$ &  0 &  0 &  2 & -1 & 1 & -1           
-	\end{tabular}
-\end{center}
-
-Notice that this tableau indicates that we have a dual feasible solution that is not primal feasible and thus suitable to be solved using dual simplex.
-	
-A final point to note is that these operations are related to each other in terms of equivalent primal-dual formulations. That is, consider dual of $P$, which is given by
-%
-\begin{align*}
-	D : \maxi   & p^\top b \\
-	\st 			& p^\top A \le c.
-\end{align*}
-%
-Then, adding a constraint of the form $p^\top A_{n+1} \leq c_{n+1}$ is equivalent to adding a variable to $P$, exactly as discussed in Section \ref{section_611}.
-
-
-\subsection{Changing input data} \label{section_613}
-
-We now consider how changes in the input data can influence the optimality of a given basis. Specifically, we consider how to predict whether changes in the vector of independent terms $b$ and objective coefficients $c$ will affect the optimality of the problem. Notice that variations in the coefficient matrix $A$ are left aside.
-
-%TODO: Chp6: include a discussion on variations on the coefficients of A.
-
 \subsubsection{Changes in the vector $b$}
 
 Suppose that some component $b_i$ changes and becomes $b_i + \delta$, with $\delta \in \reals$. We are interested in the range for $\delta$ within which the basis $B$ remains optimal.
@@ -250,7 +249,7 @@ First, we must notice that optimality conditions $\overline{c} = c^\top - c^\top
 Let $g = (g_{1i}, \dots, g_{mi})$ be the $i\nth$ column of $B^{-1}$. Thus
 %
 \begin{equation*}
-	B^{-1}(b + \delta e_i) \geq 0 \Rightarrow x_B + \delta g \geq 0 \Rightarrow x_{B(j)} + \delta g_{ji} \geq 0, j = 1,\dots, m.  
+	B^{-1}(b + \delta e_i) \geq 0 \Rightarrow x_B + \delta g \geq 0 \Rightarrow x_{B(j)} + \delta g_{ji} \geq 0, \ j = 1,\dots, m.  
 \end{equation*}
 %
 Notice that this is equivalent to having $\delta$ within the range
@@ -323,7 +322,7 @@ First, let us consider variations in the objective function coefficients of vari
     \delta_4 \geq -\overline{c}_4 = -7. 	
 \end{equation*}
 %
-Two points to notice. First, notice that both intervals are one-sided. This means that one should only be concerned with variations that decrease the reduced cost value, since increases in their value can never cause any changes in the optimality conditions. Second, notice that the allowed variation is trivially the negative value of the reduced cost. For variations that turn the reduced costs negative, the current basis can be utilised as a starting point for the primal simplex.
+Two points to notice. First, notice that both intervals are one-sided. This means that one should only be concerned with variations that decrease the reduced cost value since increases in their value can never cause any changes in the optimality conditions. Second, notice that the allowed variation is trivially the negative value of the reduced cost. For variations that turn the reduced costs negative, the current basis can be utilised as a starting point for the primal simplex.
 
 Now, let us consider a variation in the basic variable $x_1$. Notice that in this case we have to analyse the impact in all reduced costs, with exception of $x_1$ itself. Using the tableau, we have that $q_l = [1, 0, -3, 2]$ and thus
 %
@@ -338,13 +337,13 @@ implying that $-2/3 \leq \delta_1 \leq 7/2$. Like before, for a change outside t
 
 \section{Cones and extreme rays}
 
-We now change the course of our discussion towards some results that will be useful in identifying two non-ordinary situations when employing the simplex method: unboundedness and infeasibility. Typically, these are consequences of issues related to the data and/or with modelling assumptions and are challenging in that they prevent us from obtaining a solution from the model. As we will see, they also rely on duality in their derivations and are all connected by the notion of cones, which we formally give in Definition \ref{p1c6:def:cone}.
+We now change the course of our discussion towards some results that will be useful in identifying two non-ordinary situations when employing the simplex method: unboundedness and infeasibility. Typically, these are consequences of issues related to the data and/or with modelling assumptions and are challenging in that they prevent us from obtaining a solution from the model. As we will see, infeasibility and unboundedness can be identified using duality and are all connected by the notion of cones, which we formally give in Definition \ref{p1c6:def:cone}.
 
 \begin{definition}[Cones]\label{p1c6:def:cone}
 	A set $C \subset \reals^n$ is a cone if $\lambda x \in C$ for all $\lambda \geq 0$ and all $x \in C$.	
 \end{definition}
 
-A cone $C$ can be understood as a set formed by the nonnegative scaling  of a collection of vectors $x \in C$. Notice that it implies that $ 0 \in C$. Often, it will be the case that $ 0 \in C$ is an extreme point of $C$ and in that case, we say that $C$ is \emph{pointed}. As one might suspect, in the context of linear programming, we will be mostly interested in a specific type of cone, those known are \emph{polyhedral cones}. Polyhedral cones are sets of the form 
+A cone $C$ can be understood as a set formed by the nonnegative scaling of a collection of vectors $x \in C$. Notice that it implies that $ 0 \in C$. Often, it will be the case that $ 0 \in C$ is an extreme point of $C$ and in that case, we say that $C$ is \emph{pointed}. As one might suspect, in the context of linear programming, we will be mostly interested in a specific type of cone, those known are \emph{polyhedral cones}. Polyhedral cones are sets of the form 
 %
 \begin{equation*}
 	P = \braces{x \in \reals^n : Ax \geq 0}.
@@ -365,7 +364,7 @@ Figure \ref{p1c6:fig:poly_cone} illustrates a polyhedral cone in $\reals^3$ form
 \end{figure}
 %
 
-Some interesting properties can be immediately concluded regarding polyhedral cones. First, they are convex sets, since they are polyhedral sets (cf. Theorem \ref{p1c2:thm:convexity}). Also, the origin is an extreme point, and thus, polyhedral cones are always pointed. Furthermore, just like general polyhedral sets, a cone $C \in \reals^n$ will always be associated with a collection of $n$ linearly independent vectors. Corollary \ref{p1c6:cor:polyhedral_cones} summarises these points. Notice we pose it as a Corollary because these are immediate consequences of Theorem \ref{p1c3:thm:exist_extreme_point}. 
+Some interesting properties can be immediately concluded regarding polyhedral cones. First, they are convex sets, since they are polyhedral sets (cf. Theorem \ref{p1c2:thm:convexity}). Also, the origin is an extreme point, and thus, polyhedral cones are always pointed. Furthermore, just like general polyhedral sets, a cone $C \in \reals^n$ will always be associated with a collection of $n$ linearly independent vectors. Corollary \ref{p1c6:cor:polyhedral_cones} summarises these points. Notice we pose it as a corollary because these are immediate consequences of Theorem \ref{p1c3:thm:exist_extreme_point}. 
 
 \begin{corollary}\label{p1c6:cor:polyhedral_cones} 
 	Let $C \subset \reals^n$ be a polyhedral cone defined by constraints $\braces{a_i^\top x \geq 0}_{i =1,\dots,m}$. Then the following are equivalent
@@ -377,7 +376,7 @@ Some interesting properties can be immediately concluded regarding polyhedral co
 \end{corollary}
 
 \begin{proof}
-	Theorem \ref{p1c3:thm:exist_extreme_point} proof verbatim, with $P = C$.	
+	The proof of Theorem \ref{p1c3:thm:exist_extreme_point} verbatim, with $P = C$.	
 \end{proof}
 
 Notice that $0 \in C$ is the unique extreme point of the polyhedral cone $C$. To see that, let $0 \neq x \in C$, $x_1 = (1/2) x$ and $x_2 = (3/2)x$. Note that $x_1, x_2 \in C$, and $x \neq x_1 \neq x_2$. Setting $\lambda_1 = \lambda_2 = 1/2$, we have that $\lambda_1x_1  + \lambda_2x_2 = x$ and thus, $x$ is not an extreme point (cf. Definition \ref{p1c2:def:extreme_point}). 
