@@ -1,736 +1,439 @@
-\section{Large-scale problems} \label{section_71}
+\section{Barrier methods} \label{section_71}
 
-In this chapter, we consider the notion of \emph{decomposition}, which consists of a general term used in the context of mathematical programming to refer to solution methods that utilise some separability mechanism to more efficiently solve large-scale problems.
+In this chapter, we look into barrier methods as an alternative for solving linear programming problems. Barrier methods stem from early developments of methods for solving constrained nonlinear programming problems which had as main characteristic the \emph{strict} satisfaction of the constraints throughout the method. Because of this feature, these methods became generally known as interior point methods. This is however not the case anymore, and most implementations of interior point methods benefit from features that allow the search to ``leave the interior'' of the feasible region. Hence, it became common to refer to these methods with the more general name of barrier methods.
 
-In general, decomposition methods are based on the premise that it is more efficient, under a computational standpoint, to repeatedly resolve a (collection of) smaller instances of a problem than to solve the full-scale original problem. More recently, with the widespread adoption of multithreaded processors and computing clusters with multiple nodes, decomposition methods have become attractive as parallelisation strategies, which can yield considerable computational savings. 
+A subclass of barrier methods called \emph{primal-dual methods} distinguishes itself as an efficient method, with practical performance surpassing in many cases that of the simplex method. Currently, most professional-grade solvers have built-in implementations of barrier methods.
 
-There are mainly two classes of decomposition methods. The first class utilises the explicit representation of polyhedral sets, as stated in Theorem \ref{p1c6:thm:resolution_theorem}, to iteratively reconstruct the full-scale problem, with the hope that the structure containing the optimal vertex will be successfully reconstructed before all of the problem itself is reconstructed. It turns out that this is the case in many applications, which is precisely the feature that renders these methods very efficient in some contexts. This is the class of methods we are going to analyse in this chapter, first the Dantzig-Wolfe decomposition and related column generation, and then its equivalent dual method, generally known as Benders' decomposition.
+In essence, barrier methods are the method of choice of many nonlinear \emph{local solver}, which are targeted towards nonlinear optimisation problems. The term local refers to the fact that solutions found can only be guaranteed to be locally optimal. Of course, for convex optimisation problems, this is not an issue, as a local solution is globally optimal.
 
-%TODO: Chp7: Add appropriate references.
-
-The second class of methods utilises Lagrangian duality for obtaining separability. We will delay the presentation of this sort of approach to Part \ref{part_2}, when we discuss Lagrangian duality under the more general context of nonlinear programming problems.
-
-In either case, decomposition methods are designed in a way that they seek to break problems into easier parts by removing linking elements. Specifically, let 
-%
-\begin{equation*}
-	(P) : \mini \braces{c^\top x : x \in X},
-\end{equation*}
-%
-where $X = \bigcap_{k=1}^K X_k,$ for some $K > 0$, and 
-%
-\begin{equation*}
-	X_k = \braces{x^k \in \reals_+^{n_k} : D_kx_k = d_k}, \forall k \in \braces{1,\dots,K}.	
-\end{equation*}
-%
-That is, $X$ is the intersection of $K$ standard-form polyhedral sets. Our objective is to devise a way to break into $K$ separable parts that can be solved separately and recombined as a solution for $P$. In this case, this can be straightforwardly achieved by noticing that $P$ can be equivalently stated as 
-%
-\begin{center}
-    \begin{tabular}{rcccc}
-	$(P): \maxi_x$ & $c_1^\top x_1$ & $+\dots+$ & $c_K^\top x_K$ & \\
-	        $\st$  & $D_1x_1$ &           &          & $= d_1$ \\
-	               &          & $\ddots$  &          & $\vdots$ \\
-	               &          &           & $D_Kx_K$ & $= d_K$ \\
-	               &  $x_1$,  & $\dots$,  & $x_K$    & $\in \reals^n_+$ 
-	\end{tabular}
-\end{center}
-%
-has a structure that immediately allows for separation. That is, $P$ could be solved as $K$ independent problems 
-%
-\begin{equation*}
-	P_k : \mini \braces{c_k^\top x_k : x_k \in X_k}	
-\end{equation*}
-%
-in parallel and then combine their individual solutions onto a solution for $P$, simply by making $\overline{x} = [x_k]_{k=1}^K$ and $c^\top \overline{x} = \sum_{i=1}^K c_k^\top \overline{x}_k$. Notice that, if we were to assume that the solution time scales linearly (it does not; it grows faster than linear) and $K=10$, then solving $P$ as $K$ separated problems would be ten times faster (that is not true; there are bottlenecks and other considerations to take into account, but the point stands). 
-
-Unfortunately, \emph{complicating structures} often compromise this natural separability, preventing one from being able to directly exploit this idea. Specifically, two types of complicating structures can be observed. The first is of the form of \emph{complicating constraint}. That is, we observe that a constraint is such that it connects variables from (some of) the subsets $X_k$. In this case, we would notice that $P$ has an additional constraint of the form
-%
-\begin{equation*}
-	A_1x_1 + \dots + A_Kx_K = b,
-\end{equation*}
-%
-which precludes separability, since the problem structure becomes
-% 
-\begin{center}
-	\begin{tabular}{rcccc}
-	    $P':  \maxi_x$ & $c_1^\top x_1$ & $+\dots+$ & $c_K^\top x_K$ & \\
-	            $\st$  & $A_1x_1$ & $+\dots+$ & $A_Kx_K$ & $=b$ \\
-	                   & $D_1x_1$ &           &          & $= d_1$ \\
-	                   &          & $\ddots$  &          & $\vdots$ \\
-	                   &          &           & $D_Kx_K$ & $= d_K$ \\
-	                   &  $x_1$,  & $\dots$,  & $x_K$ & $\in \reals^n_+$. 
-	\end{tabular}
-\end{center}
-
-The other type of complicating structure is the case in which the same set of decision variable is present in multiple constraints, or multiple subsets $X_k$. In this case, we observe that variables of a subproblem $k \in \braces{1,\dots,K}$ has nonzero coefficient in another subproblem $k' \neq k$, $k' \in \braces{1,\dots,K}$. Hence, problem $P$ takes the form of
-%
-\begin{center}
-	\begin{tabular}{rccccc}
-	$P''$ : $\maxi_x$ & $c_0^\top x_0 +$ &  $c_1^\top x_1$ & $+\dots+$ & $c_K^\top x_K$ & \\
-        $\st$  & $A_1x_0+$ & $D_1x_1$ &           &          & $= d_1$ \\
-               & $\vdots$  &          & $\ddots$  &          & $\vdots$ \\
-               & $A_Kx_0+$ &          &           & $D_Kx_K$ & $= d_K$ \\
-               & $x_0,$    &  $x_1$,  & $\dots$,  & $x_K$    & $\in \reals^n_+$. 
-	\end{tabular}
-\end{center}
-%
-The challenging aspect is that a specific method becomes more suitable depending on the complicating structure. Therefore, being able to identify these structures is one of the key success factors in terms of the chosen method's performance. As a general rule, problems with complicating constraints (as $P'$) are suitable to be solved by a delayed variable generation method such as column generation. Analogously, problems with complicating variables ($P''$) are better suited for employing delayed constraint generation methods such as Benders decomposition. 
-
-The development of professional-grade code employing decomposition methods is a somewhat recent occurrence. The commercial solver CPLEX offers a Benders decomposition implementation that requires the user to specify the separable structure. On the other hand, although there are some available frameworks for implementing column generation-based methods, these tend to be more ad hoc occurrences yet often reap impressive results.  
+In general, the simplex methods often perform better in small and medium problems, whilst barrier methods typically perform better on large-scale problems. This is largely because, as we will see, the main operation in a barrier method is the solution of (large) linear systems of equations, which can be done rather efficiently and in ways that explore the structure of the problem (e.g., matrix sparsity can be exploited by factorisation techniques) to reap computational performance improvements.
 
 
-\section{Dantzig-Wolfe decomposition and column generation*} \label{section_72}
-
-Before we move forward, we need to discuss some technical results that will be useful for describing the Dantzig-Wolfe and Benders decomposition methods. Those are results mostly based on the notion of linear duality from Chapters \ref{chapter_5} and \ref{chapter_6}.
-
-\subsection{Resolution theorem}
-
-%Lastly, we present a result that will be the foundation for our discussion in the next chapter. Specifically, we will see how we can use a presentation of the polyhedral set $P$ purely based on extreme points and extreme rays to devise solution strategies that can be more efficient for large-scale linear programming problems. 
-
-%For now, let us concentrate on this alternative representation. 
-%Basically, p
-A polyhedral set $P$ in standard form can be represented in two manners: either by (i) a finite set of linear constraints; or (ii) by combinations of its extreme points and extreme rays. Clearly, the first representation is far more practical than the second. That is, the second representation is an \emph{explicit} representation that would require knowing beforehand each extreme point and extreme ray forming the polyhedral set. 
-
-Notice that the first representation, which we have relied on so far, has extreme points and extreme rays only implicitly represented. However, we will see that this explicit representation has an important application in the devising of alternative solution methods for large-scale linear programming problems. This fundamental result is stated in Theorem \ref{p1c7:thm:resolution_theorem}. 
-
-\begin{theorem}[Resolution theorem]\label{p1c7:thm:resolution_theorem}
-	Let $P = \braces{x \in \reals^n : Ax \geq b}$ be a nonempty polyhedral set with at least one extreme point. Let $\braces{x_i}_{i=1}^k$ be the set with all extreme points, and $\braces{w}_{j=1}^r$ be the set of all extreme rays of $P$. Then $P = Q$, where 
-	\begin{equation*}
-		Q = \braces{\sum_{i=1}^k \lambda_i x^i + \sum_{j=1}^r \theta_jw^j : \lambda_i \geq 0, \ \theta_j \geq 0, \ \sum_{i=1}^k \lambda_i =1}.
-	\end{equation*}
-\end{theorem}
-
-%TODO: Chp7: Include proof for the resolution theorem
-
-Theorem \ref{p1c7:thm:resolution_theorem} has an important consequence, as it states that bounded polyhedra, i.e., a polyhedral set that has no extreme rays, can be represented by the convex hull of its extreme points. For now, let us look at an example that illustrates the concept.
-
-Consider the polyhedral set $P$ given by
-%
-\begin{equation*}
-	P = \braces{x_1 - x_2 \geq -2; x_1 + x_2 \geq 1, x_1,x_2 \geq 0}.
-\end{equation*}
-%
-The recession cone $C = {\bf recc}(P)$ is described by $d_1 - d_2 \geq 0$, $d_1 + d_2 \geq 0$ (from $Ad =0$), and $d_1, d_2 \geq 0$, which can be simplified as 
-%
-\begin{equation*}
-	C = \braces{(d_1, d_2) \in \reals^2 : 0 \leq d_2 \leq d_1}.
-\end{equation*}
-%
-We can then conclude that the two vectors $w^1 = (1,1)$ and $w_2 = (1,0)$ are extreme rays of $P$. Moreover, $P$ has three extreme points: $x_1 = (0,2)$, $x_2 = (0,1)$, and $x_3 = (1,0)$.
-
-Figure \ref{p1c7:fig:resolution_example} illustrates what is stated in Theorem \ref{p1c7:thm:resolution_theorem}. For example,  a representation for the point $y = (2,2) \in P$ is given by
-%
-\begin{equation*}
-	y = \begin{bmatrix} 2 \\ 2
-		\end{bmatrix}= \begin{bmatrix} 0 \\ 1
-		\end{bmatrix} + \begin{bmatrix} 1 \\ 1
-		\end{bmatrix} + \begin{bmatrix} 1 \\ 0
-		\end{bmatrix}, 	
-\end{equation*}
-%
-that is, $y = x^2 + w^1 + w^2$. Notice, however, that $y$ could also be represented as 
-%
-\begin{equation*}
-	y = \begin{bmatrix} 2 \\ 2
-		\end{bmatrix}= \frac{1}{2}\begin{bmatrix} 0 \\ 1
-		\end{bmatrix} + \frac{1}{2}\begin{bmatrix} 1 \\ 0
-		\end{bmatrix} + \frac{3}{2}\begin{bmatrix} 1 \\ 1
-		\end{bmatrix}, 	
-\end{equation*}
-%
-with then $y = \frac{1}{2}x^2 + \frac{1}{2}x^3 + \frac{3}{2}w^1$. Notice that this imply that the representation of each point is not unique.
-
-\begin{figure}[h]
-	\includegraphics{part_1/chapter_7/figures/Figure1.pdf}
-	\caption{Example showing that every point of $P = \braces{x_1 - x_2 \geq -2; x_1 + x_2 \geq 1, x_1,x_2 \geq 0}$ can be represented as a convex combination of its extreme point and a linear combination of its extreme rays} \label{p1c7:fig:resolution_example}
-\end{figure}
+\section{Newton's method with equality constraints} 
 
 
-\subsection{Dantzig-Wolfe decomposition}
+In essence, barrier methods consist of the employment of a variant of Newton's method to solve the optimality conditions of optimisation problems. In the context of linear programming problems, this is equivalent to finding solutions that are both primal and dual feasible.
 
-We start with the Dantzig-Wolfe decomposition, which consists of an alternative approach for reducing memory requirements when solving large-scale linear programming problems. Then, we show how this can be expanded further with the notion of delayed variable generation to yield a truly decomposed problem.
+We consider a version of Newton's method called the Newton-Raphson (NR) method, which was originally designed for finding roots of vector functions. Let $f: \reals^n \to \reals^n$, with $f_i : \reals^n \to \reals$ differentiable for $i = 1,\dots,n$.
 
-As before, let $P_k = \braces{x_k \geq 0 : D_kx_k = d}$, with $P_k \neq \emptyset$ for $k \in \braces{1,\dots,K}$. Then, the problem $P$ can be reformulated as:
-%
-\begin{align*}
-	\mini \ & \sum_{k = 1}^K c_k ^\top x_k 	\\
-	\st & \sum_{k=1}^K A_k x_k = b \\
-	& x_k \in P_k, \ \forall k \in \braces{1,\dots,K}. 
-\end{align*}
-%
-Notice that $P$ has a complicating constraint structure, due to the constraints $\sum_{k=1}^K A_k x_k = b$. In order to devise a decomposition method for this setting, let us first assume that we have available for each of the sets $P_k$, $k \in \braces{1,\dots,K}$, (i) all extreme points, represented by $x_k^j$, $\forall j \in J_k$; and (ii) all extreme rays $w_k^r$, $\forall r \in R_k$. As one might suspect, this is in principle a demanding assumption, but one that we will be able to drop later on.
-
-Using the Resolution theorem (Theorem \ref{p1c7:thm:resolution_theorem}), we know that any element of $P_k$ can be represented as 
-%
-\begin{equation} \label{p1c7:eq:resolution_representation}
-	x_k = \sum_{j \in J_k} \lambda_k^j x_k^j + \sum_{r \in R_k} \theta_k^r w_k^r, 	
-\end{equation}
-%
-where $\lambda_k^j \geq 0$, $\forall j \in J_k$, are the coefficients of the convex combination of extreme points, meaning that we also observe $\sum_{j \in J_k} \lambda_k^j = 1$, and $\theta_k^r \geq 0$, $\forall r \in R_k$, are the coefficients of the conic combination of the extreme rays.
-
-Using the identity represented in \eqref{p1c7:eq:resolution_representation}, we can reformulate $P$ onto the \emph{main problem} $P_M$ as follows.
-%
-\begin{align} 
-	(P_M) : \mini \ & \sum_{k =1}^K \left(\sum_{j \in J_k} \lambda_k^jc_k ^\top x^j_k   + \sum_{r \in R_k} \theta_{k}^rc_k^\top w_k^r \right)	\nonumber\\
-	\st & \sum_{k = 1}^K \left(\sum_{j \in J_k}\lambda_k^j A_k x_k^j + \sum_{r \in R_k} \theta_k^r A_k w_k^r\right) = b \label{p1c7:eq:pm_const}\\
-	& \sum_{j \in J_k}\lambda_k^j = 1, \ \forall k \in \braces{1, \dots, K} \label{p1c7:eq:cc_const}\\
-	& \lambda_k^j \geq 0,  \theta_k^r \geq 0, \forall j \in J_k, r \in R_k, k \in \braces{1, \dots, K}. \nonumber 
-\end{align}
-%
-Notice that \eqref{p1c7:eq:pm_const} and \eqref{p1c7:eq:cc_const} can be equivalently represented as
-%
-\begin{equation*}
-	\sum_{k \in K}\left(\sum_{j \in J_k}\lambda_k^j \begin{bmatrix} A_kx_k^j \\ e_k\end{bmatrix} + \sum_{r \in R_k}\theta_k^r \begin{bmatrix} A_kw_k^r \\ 0\end{bmatrix}\right) = \begin{bmatrix} b \\ 1\end{bmatrix},
-\end{equation*}
-%	  	   
-where $e_k$ is the unit vector (i.e., with 1 in the $k^\text{th}$ component, and $0$ otherwise). Notice that $P_M$ has as many variables as the number of extreme points and extreme rays of $P$, which is likely to be prohibitively large.
-
-However, we can still solve it if we use a slightly modified version of the revised simplex method. To see that, let us consider that $b$ is a $m$-dimensional vector. Then, a basis for $P_M$ would be of size $m + K$, since we have the original $m$ constraints plus one for each convex combination (arising from each subproblem $k \in K$). This means that we are effectively working with $(m + K) \times (m + K)$ matrices, i.e., the basic matrix $B$ and its inverse $B^{-1}$. Another element we need is the vector of simplex multipliers $p$, which is a vector of dimension $(m + K)$.
-
-The issue with the representation adopted in $P_M$ arises when we are required to calculate the reduced costs of \emph{all} the nonbasic variables, since this is the critical issue for its tractability. That is where the method provides a clever solution. To see that, notice that the vector $p$ is formed by components $p^\top = (q, r_1, \dots, r_K)^\top$, where $q$ represent the $m$ dual variables associated with \eqref{p1c7:eq:pm_const}, and $r_k$, $\forall k \in \braces{1,\dots,K}$, are the dual variables associated with \eqref{p1c7:eq:cc_const}. 
-
-The reduced costs associated with the extreme-point variables $\lambda_k^j$, $j \in J_K$, is given by
-%
-\begin{equation}
-	c_k^\top x_k^j - [q^\top ~ r_1 ~ \dots ~ r_K]	\begin{bmatrix} A_k x_k^j \\ e_k \end{bmatrix} = (c_k^\top - q^\top A_k)x_k^j - r_k.
-\end{equation}
-%
-Analogously, the reduced cost associated with extreme-ray variables $\theta_k^r$, $r \in R_k$, is
-\begin{equation}
-	c_k^\top w_k^r - [q^\top ~ r_1 ~ \dots ~ r_K]	\begin{bmatrix} A_k w_k^r \\ 0 \end{bmatrix} = (c_k^\top - q^\top A_k)w_k^r.
-\end{equation}
-%
-The main difference is how we assess the reduced costs of the non-basic variables. Instead of explicitly calculating the reduced costs of all variables, we instead rely on an optimisation-based approach to consider them only \emph{implicitly}. For that, we can use the subproblem 
-%
-\begin{align*}
-	(S_k):  \mini_x \overline{c}_k = \ & (c_k^\top - q^\top A_k)x_k \\
-	\st & x_k \in P_k,			
-\end{align*} 
-%
-which can be solved in parallel for each subproblem $k \in \braces{1,\dots,K}$. The subproblem $S_k$ is known as the \emph{pricing problem}. For each subproblem $k = 1, \dots, K$, we have the following cases.
-
- We might observe that $\overline{c}_k = -\infty$. In this case, we have found an \emph{extreme ray} $w_k^r$ satisfying $(c_k^\top - q^\top A_k)w_k^r < 0$. Thus, the reduced cost of the associated extreme-ray variable $\theta_k^r$ is negative. 
-
-If that is the case, we must generate the column
-%
-\begin{equation*}
-	\begin{pmatrix}
-		A_kw_k^r \\ 0
-	\end{pmatrix}
-\end{equation*}
-%
-associated with $\theta_k^r$ and make it enter the basis.		
-
-Otherwise, being $S_k$ bounded, i.e., $\overline{c}_k < \infty$, two other cases can occur. The first is the case in which $\overline{c}_k < r_k$. Therefore, we found an extreme point $x_k^j$ satisfying $(c_k^\top - q^\top A_k)x_k^j - r_k < 0$. Thus, the reduced cost associated with the extreme-point variable $\lambda_k^j$ is negative and, analogously, we must generate the column
-%
-\begin{equation*}
-	\begin{pmatrix}
-		A_kx_k^j \\ e_k
-	\end{pmatrix}
-\end{equation*}
-%
-associated with $\lambda_k^j$ and make it enter the basis.
-
-The last possible case is when we observe that $r_k < \overline{c}_k < \infty$. In this case, the pricing problem could not identify a beneficial variable to be made basic, and therefore there is not an extreme point or ray with negative reduced cost for subproblem $k$. If this condition holds for all $k = 1, dots, K$, then all necessary extreme points and rays to characterise the region where the optimal extreme point lies (or one of the extreme points, in the case of multiple solutions) have been found and the optimal solution can be recovered. 
-
-Algorithm \ref{p1c7:alg:DW} summarises the Dantzig-Wolfe method. The two most remarkable features of the method are (i) the fact that columns are not explicitly represented, but generated ``on demand'' and (ii) the fact that the pricing problem requires the solution of another linear programming problem. Analogously to the simplex method, it might be necessary to employ a ``Phase 1'' approach to obtain an initial basis to start the algorithm.
-
-\begin{algorithm}[h]
-\caption{Dantzig-Wolfe decomposition} \label{p1c7:alg:DW}
-\begin{algorithmic}[1] %line numbering frequency. 
-	\State {\bf initialise.} 
-	Let $B$ be a BFS for $P_M$ and set $l \gets 0$. 
-	\Repeat 
-	   \For {$k \in \braces{1,\dots,K}$} 
-	        \State solve $S_k$ and let $\overline{c}_k = \min_x \braces{S_k}$
-	        \If{$\overline{c}_k  = -\infty$} 
-	        	\State obtain extreme ray $w_k^r$ and make $R_k^l = R_k^l \cup \braces{w_k^r}$.
-	        	\State generate column $(A_kw_k^r, 0)$ to become basic.
-	        \ElsIf {$\overline{c}_k < r_k < \infty$}
-	        	\State obtain extreme point $x_k^j$ and make $J_k^l = J_k^l \cup \braces{x_k^j}$.
-	        	\State generate column $(A_kx_k^j, e_k)$ to become basic.
-	        \EndIf  
-	    \EndFor
-			\State select one of the generated columns to replace one of the columns of $B$ and update $B$ accordingly. 
-	    \State $l \gets l + 1$.            	
-		\Until{$\overline{c}_k  > r_k$ for all $k \in \braces{1,\dots,K}$} 
-	\State {\bf return} $B$
-\end{algorithmic}  
-\end{algorithm}
-
-Under a theoretical standpoint, the Dantzig-Wolfe method is equally efficient as the revised simplex method. There are however two settings where the decomposition is most favourable. The first, consists of applications in which the pricing problem can be solved in a closed-form, without invoking a method to solve an additional linear programming subproblem. There are a few examples in which this happens to be the case and certainly many others yet to be discovered.
-
-Secondly, the memory requirements of the Dantzig-Wolfe decomposition makes it an interesting approach for very large-scale problems. The original simplex method requires an amount of memory space that is $O((m + K \times m_0)^2)$, where $m_0$ is the number of rows of $D_k$, for $\forall k \in \braces{1,\dots, K}$. This is essentially the size of the inverse basic matrix $B^{-1}$. In contrast, the Dantzig-Wolfe reformulation requires $O((m + K)^2) + K \times O(m_0^2)$ of memory space, with the first term referring to the main problem inverse basic matrix and the second to the pricing problems basic matrices. For example, for a problem in which $m = m_0$ and much larger than, say, $K=10$, this implies that the memory space required by the Dantzig-Wolfe reformulation is 100 times smaller, which can substantially enlarge the range of large-scale problems that can be solved for the same amount of computational resources available.
-
-
-\subsection{Delayed column generation}
- 
-The term column generation can also refer to a related, and perhaps more widely known, variant of the Dantzig-Wolfe decomposition. In that, the main problem $P_M$ is also repeatedly solved, each time being incremented by an additional variable (or variables) associated with the column(s) identified with negative reduced costs in the pricing problem $S_k$, $k \in \braces{1,\dots,K}$. This is particularly useful for problems with exponentially increasing number of variables, or with a large number of variables associated with the complicating constraints (i.e., when $m$ is a large number).
-
-\begin{algorithm}[h]
-    \caption{Column generation algorithm} \label{p1c7:alg:CG}
-    \begin{algorithmic}[1] %line numbering frequency. 
-    \State {\bf initialise.} 
-    Let $\tilde{X}_k \subset X_k$, for $k \in \braces{1,\dots,K}$, and set
-    $l \gets 0$. 
-    	\Repeat \label{Alg2:loop}
-        \State solve $P_M^l$ to obtain $\lambda^{*l} = (\lambda_1^{*l},\dots, \lambda_K^{*l})$ and duals $(q^{*l}, \braces{r_k^{*l}}_{k=1}^K)$.
-        \For {$k \in \braces{1,\dots,K}$} 
-            \State solve the pricing problem
-            $$\overline{x}^{*l}_k \gets \argmin \braces{c_k^\top x_k - q^{*l}(A_kx_k) - r^{*l}_k : x_k \in P_k}.
-            $$
-            \If{$\overline{c}_k = c_k^\top \overline{x}^{*l}_k - q^{*l}(A_k\overline{x}^{*l}_k) < r^{*l}_k$} $\tilde{X}_k \gets \tilde{X}_k \cup \braces{\overline{x}^{*l}_k}$ \label{p1c7:alg:CGcolgen}
-            \EndIf  
-        \EndFor
-        \State $l \gets l + 1$.
-    	\Until{$\overline{c}_k  > r_k$ for all $k \in \braces{1,\dots,K}$} 
-    \State {\bf return} $\lambda^{*l}$.
-    \end{algorithmic}
-\end{algorithm}
-
-The (delayed) column generation method is presented in Algorithm \ref{p1c7:alg:CG}. Notice in Line \ref{p1c7:alg:CGcolgen} the step that is generating new columns in the main problem $P_M$, represented in the statement $\tilde{X}_k \gets \tilde{X}_k \cup \braces{\overline{x}^{*l}_k}$. That is precisely when new variables $\lambda_k^{t}$ are introduced in the $P_M$ with coefficients represented by the column
-%
-\begin{equation*}
-	\begin{pmatrix}
-            c_k\overline{x}_k^{*l}\\
-            A_k\overline{x}_k^{*l}\\
-            e_k
-    \end{pmatrix}.
-\end{equation*}
-
-Notice that the unbounded case is not treated to simplify the pseudocode, but could be trivially adapted to return extreme rays to be used in $P_M$, like the previous variant presented in Algorithm \ref{p1c7:alg:DW}. Also, notice that the method is assumed to be initialised with a collection of columns (i.e., extreme points) $\tilde{X}_k$, which can normally be obtained from inspection or using a heuristic method.
-
-We finalise showing that the Dantzig-Wolfe and column generation methods can provide information related to its own convergence. This means that we have access to an optimality bound that can be used to monitor the convergence of the method and allow for a preemptive termination given an acceptable tolerance. This bounding property is stated in Theorem \ref{p1c7:thm:CG_bound}.
-
-\begin{theorem} \label{p1c7:thm:CG_bound}
-	Suppose $P$ is feasible with finite optimal value $z$. Let $\overline{z}$ be the optimal cost associated with $P_M$ at a given iteration $l$ of the Dantzig-Wolfe method. Also, let $r_k$ be the dual variable associated with the convex combination of the $k^\text{th}$ subproblem and $z_k$ its optimal cost. Then
-		%
-		\begin{equation*}
-			z + \sum_{k=1}^K (z_k - r_k) \leq z \leq \overline{z}.	
-		\end{equation*}
-\end{theorem}
-
-\begin{proof}
+We wish to find a solution $x^*$ that is a root for $f$, i.e., $f(x^*) = 0$. For that, we must solve the system of equations given by
+	$$ 
+	f(x) = \begin{bmatrix} f_1(x) \\ \vdots \\ f_n(x) \end{bmatrix} = \begin{bmatrix} 0 \\ \vdots \\ 0 \end{bmatrix}.
+	$$
 	
-	We know that $z \leq \overline{z}$, because a solution for $P_M$ is primal feasible and thus feasible for $P$.
+The NR method starts from an initial guess $x^k$ for $x^*$ and iterates by finding the root for a \emph{linear} (i.e., first-order Taylor) approximation of $f$ at $x^k$. Under suitable conditions, including having a starting point $x^0$ that is within a neighbourhood of the root of $f$, the sequence $\braces{x^k}_{k\to\infty}$ converges to $x^*$.
+
+Let us clearly state how the method iterates. At a given $x^k$, the first-order approximation of $f(x)$ is given by
+	$$ 
+	f(x^k + d) = f(x^k) + \nabla f(x^k)^\top d,
+	$$
+	where $\nabla f(x^k)$ is the \emph{Jacobian} of $f(x)$, which is defined as
+	$$ 
+	\nabla f(x^k) = \begin{bmatrix} \nabla f_1(x^k)^\top \\ \vdots \\ \nabla f_n(x^k)^\top \end{bmatrix}. 
+	$$
 	
-	Now, consider the dual of $P_M$
+The algorithm proceeds by finding the step to be taken from $x^k$ to reach the root of the first-order approximation of $f$ at $x^k$. This means that we want to obtain $d$ such it solves the first-order approximation of $f(x^k + d) = 0$. Thus, we must solve
 	%
+	\begin{equation*}
+		f(x^k) + \nabla f(x^k)^\top d = 0 \Rightarrow
+		d = -\nabla f(x^k)^{-1}f(x^k).
+	\end{equation*}
+	
+Consider the following numerical example. Suppose we would like to find the root of $f$ with $x^0 = (1,0,1)$, where $f$ is given by 
+	$$
+	f(x) = \begin{bmatrix}f_1(x) \\ f_2(x) \\ f_3(x) \end{bmatrix} = \begin{bmatrix} x_1^2 + x_2^2 + x_3^2 -3 \\ x_1^2 + x_2^2 - x_3 - 1 \\ x_1 + x_2 + x_3 - 3 \end{bmatrix}
+	$$
+	The Jacobian of $f$ is given by 
+	$$
+	\nabla f(x)=\begin{bmatrix} 2x_1 & 2x_2 & 2x_3 \\ 2x_1 & 2x_2 & -1 \\ 1 & 1 & 1\end{bmatrix}.
+	$$
+	
+	The algorithm starts by calculating $d^0$, which is given by
+	$$
+	d^0 = -[\nabla f(x^0)]^{-1}f(x^0) = - \begin{bmatrix} 2 & 0 & 2 \\ 2 & 0 & -1 \\ 1 & 1 & 1\end{bmatrix}^{-1}\begin{bmatrix} -1 \\ -1 \\ -1 \end{bmatrix} = \begin{bmatrix} 1/2 \\ 1/2 \\ 0 \end{bmatrix}.
+	$$ 
+	%
+	Thus, the first point is 
+	$$
+	x^1 = x^0 + d^0 = \begin{bmatrix} 3/2 & 1/2 & 1\end{bmatrix}.
+	$$ 
+	%
+	To infer that the method has converged, we can either check whether $f(x^k) \approx 0$ or whether if $||x^{k+1} - x^{k}||_2 = || d^{k} ||_2 \approx 0$. As $||x^1 - x^0||_2 = || d^0 ||_2 \approx 0.7$, the method carries on until we find that $|| d^k|| < \epsilon$. If we adopt a numerical tolerance of $\epsilon = 0.01$, meaning that any number below this threshold is deemed acceptably close to zero, then $x^* = (1, 1, 1)$ is reached after approximately 20 iterations.	
+
+\section{Interior point methods linear programming problems}
+	
+We start by focusing on the primal-dual interior point method, as originally proposed. Then, we will focus on the modifications that turn it capable of iterating through some not necessarily interior solutions in a strict sense. 	
+
+We start by considering our linear programming problem in standard form 
 	\begin{align*}
-		(D_M): ~\maxi \ & q^\top b + \sum_{k=1}^K r_k \\
-		\st & q^\top A_k x_k^j + r_k \leq c_k^\top x_k^j, \ \forall j \in J_k, \forall k \in \braces{1,\dots, K} \\
-		& q^\top A_kw_k^r \leq c_k^\top w_k^r, \ \forall r \in R_k, \forall k \in \braces{1,\dots, K} \\ 
+		(P) :~ \mini \ &c^\top x \\
+		\st &Ax = b,  \\
+		&x \ge 0 
 	\end{align*}
 	%
-	We know that strong duality holds, and thus $z = q^\top b + \sum_{k=1}^K r_k $ for dual variables $(q, r_1, \dots, r_K)$. 
+	and its associated dual, which is stated as
+	%
+	\begin{align*}
+		(D) :~ \maxi \ &b^\top p \\
+		\st &A^\top p + u = c, \\
+		&u \ge 0. 
+	\end{align*}
+	%
+	Notice that the dual is also posed in a form where the inequalities (originally $A^\top p \le c$) are converted to equalities requiring the additional variable $u$. An alternative way to think about $u$ is as it were the dual variable associated with the nonnegativity constraints $x \ge 0$. 
 	
-	Now, since $z_k$ are finite, we have $\min_{j \in J_k}(c_k^\top x_k^j - q^\top A_k x_k^j) = z_k$ and $\min_{r \in R_k}(c_k^\top w_k^r - q^\top D_k w_k^r) \geq 0$, meaning that $(q, z_1, \dots, z_K)$ is feasible to $D_M$. By weak duality, we have that
+Recall that the optimality conditions for problem $P$ can be expressed as
+	%
+	\begin{align} 
+		& Ax = b, \ \ x \ge 0, \label{p1c7:eq:optimality_conditions_primal} \\
+		& A^\top p + u = c, \ \ u \ge 0, \label{p1c7:eq:optimality_conditions_dual} \\
+		& u^\top x = 0. \label{p1c7:eq:optimality_conditions_cc}  
+	\end{align}
+	%
+	The first two conditions are primal \eqref{p1c7:eq:optimality_conditions_primal} and dual \eqref{p1c7:eq:optimality_conditions_dual} feasibility conditions, while \eqref{p1c7:eq:optimality_conditions_cc} is an alternative way of stating complementarity conditions on the nonnegativity constraints $x \ge 0$.
+	
+One initial idea could be simply, from a purely methodological standpoint, to employ NR to solve the above system of equations. The caveat, however, is that one must observe and retain the nonnegativity conditions $x > 0$ and $s >0$, which are an important complicating factor in this setting. Indeed, one could, departing from a feasible solution $(x,p,u)$, employ NR to find a solution for \eqref{p1c7:eq:optimality_conditions_primal}-\eqref{p1c7:eq:optimality_conditions_cc} while controlling the steps taken using each Newton direction such that the nonnegativity conditions $x > 0$ and $s >0$ are retained, in a similar fashion to how it is done in the simplex method. However, it turns out that Newton directions obtained from successive iterations considering \eqref{p1c7:eq:optimality_conditions_primal}- \eqref{p1c7:eq:optimality_conditions_cc} typically require considerably small steps to be taken such that the nonnegativity conditions are retained, which renders the algorithm less useful from a practical standpoint.
+	   
+	
+This is precisely when the notion of an interior solution plays a role. An \emph{interior point} is defined as a point that satisfies primal feasibility conditions strictly, that is $Ax = b$ with $x > 0$, and has also $s >0$, implying that the complementarity conditions \eqref{p1c7:eq:optimality_conditions_cc} are \emph{violated}. This notion of interior points is useful in that it allows for the definition of less ``aggressive'' Newton directions, which aim towards directions that instead can reduce the amount of violation in the complementarity conditions. Thus, we can alternatively consider the system with \emph{relaxed} complementarity conditions 	
+	%
+	\begin{align*}
+		& Ax = b, \ \ x \geq 0,\\ 
+		& A^\top p + u = c, \ \ u \geq 0, \\
+		& u_j x_j = \mu, \ \forall j \in J 
+	\end{align*}
+	%
+	to provide Newton directions, while, simultaneously, gradually making $\mu \to 0$. By doing so, one can obtain not only directions which can be explored with larger step sizes, thus making more progress per iteration but also yield methods with better numerical properties.
+	
+To see how that can be made operational, let us first define some helpful notation. Let $X\in \reals^{n\times n}$ and $U \in \reals^{n \times n}$ be defined as
+	%
+	$$
+	X = \diag(x) = \begin{bmatrix} \ddots & & \\   
+	                                        & x_i & \\
+	                                        & & \ddots     
+	                 \end{bmatrix}
+	                 \text{ and }
+	U = \diag(u) = \begin{bmatrix} \ddots & & \\   
+	                                        & u_i & \\
+	                                        & & \ddots     
+	                 \end{bmatrix}               
+	$$
+	%
+	and let $e = [1,\dots,1]^\top$ be a vector of ones of suitable dimension. We can rewrite the optimality conditions \eqref{p1c7:eq:optimality_conditions_primal}- \eqref{p1c7:eq:optimality_conditions_cc} in matrix form as 
+	%
+	\begin{align*}
+		&Ax = b, \ x > 0, \\ 
+		&A^\top p + u = c, \ u > 0,\\ 
+		&XUe = 0, 
+	\end{align*}
+	%
+ 	and, analogously, state their relaxed version (i.e., with relaxed complementarity conditions) as
+ 	%
+ 	\begin{align}
+		&Ax = b, \ x > 0, \label{p1c7:eq:optimality_conditions_matrix_primal}\\ 
+		&A^\top p + u = c, \ u > 0, \label{p1c7:eq:optimality_conditions_matrix_dual}\\ 
+		&XUe = \mu e. \label{p1c7:eq:optimality_conditions_matrix_relaxed_cc}
+	\end{align}
+
+We start from a feasible solution $(x^{k}, u^{k}, p^{k})$. We can then employ NR to solve the system \eqref{p1c7:eq:optimality_conditions_matrix_primal}-\eqref{p1c7:eq:optimality_conditions_matrix_relaxed_cc} for a given value of $\mu$. That amounts to finding the Newton direction $d$ that solves $f(x^k) + \nabla f(x^k)^\top d = 0$, in which
 	%
 	\begin{equation*}
-		z \geq q^\top b + \sum_{k=1}^K	z_k = q^\top b + \sum_{k=1}^K r_k + \sum_{k=1}^K (z_k - r_k) = z + \sum_{k=1}^K (z_k - r_k). \qedhere	
-	\end{equation*}
-\end{proof}
-
-
-\section{Benders decomposition}
-
-Benders decomposition is an alternative decomposition method, suitable for settings in which \emph{complicating variables} are present. Differently than the Dantzig-Wolfe decomposition, the method presumes from the get-go the employment of delayed constraint generation. 
-
-Benders decomposition has made significant inroads into practical applications. Not only is it extensively used in problems related to multi-period decision-making under uncertainty, but it is also available in the commercial solver CPLEX to be used directly, only requiring the user to indicate (or annotate) which are the complicating variables. 
-
-
-\subsection{Parametric optimisation problems} \label{section_731}
-
-Before we proceed, let us develop the idea of having optimisation problems stated as functions of the input data. Specifically, let 
-%
-\begin{equation*}
-	P(b) = \braces{x \in \reals^n : Ax = b, x \geq 0}
-\end{equation*}
-%
-be defined as a function of the input vector $b \in \reals^m$. That is, $P(b)$ is the set of feasible solutions when the right-hand side is set to $b$. Then, let $S = \braces{b \in \reals^m : P(b) \neq \emptyset}$ be the set of all vectors $b$ for which $P$ has at least one feasible solution. Being so, we can restate the set $S$ as 
-%
-\begin{equation*}
-	S = \braces{Ax : x \ge 0}.
-\end{equation*}
-%
-That is, the set $S$ is formed by the conic combination of the columns of $A$ for which $x$ is nonnegative (or, in other words, that $P(b)$ is feasible). Also, notice that this is a convex set, as discussed in Section \ref{section_621}. For any $b \in S$, we can define the function
-%
-\begin{equation}
-	F(b) = \min_x \braces{c^\top x : x  \in P(b)},	
-\end{equation}
-%
-which takes as an argument $b$ and returns the optimal value of the parametrised optimisation problem. Notice that evaluating $F$ requires that an optimisation problem is solved.
-
-Now, let us assume that the dual feasibility set 
-%
-\begin{equation*}
-	S_D = \braces{p \in \reals^m : p^\top A \le c}	
-\end{equation*}
-% 
-is not empty. That implies that $F(b)$ is finite for every $b \in S$ since different $b$'s simply imply that different objective functions $p^\top b$ over $S_D$ are considered. Our main objective here is to understand the structure of the function $F: S \to \reals$. 
-
-Let $\overline{b} \in S$ be a particular $b$. Suppose that there exists a nondegenerate optimal BFS $x_B$ with basis $B$. Then, we have that $x_B = B^{-1}\overline{b}$, $F(\overline{b}) = c_B^\top x_B =  c_B^\top B^{-1}\overline{b}$ and that all reduced costs are nonnegative. 
-
-Now, if we change $\overline{b}$ to $b$ such that the difference is sufficiently small, $B^{-1}\overline{b}$ remains positive and, consequently, $x_B$ remains a basic feasible solution. Furthermore, since $b$ does not affect the reduced costs (recall that our optimality condition is given by $\overline{c} = c^\top - c_B ^\top B^{-1}A \ge 0$), they remain nonnegative. Notice that this is the same argument we used in Section \ref{section_613} when we discussed changes in the input data in the context of sensitivity analysis.
-
-The optimal value $F(b)$ associated with this new $b$ sufficiently close to $\overline{b}$   
-%
-\begin{equation*}
-	F(b) - F(\overline{b})= c_B B^{-1}(b - \overline{b}) = p^\top (b - \overline{b}) 
-\end{equation*}
-%
-where $p = c_B B^{-1}$ is the optimal solution of the dual problem 
-%
-\begin{align*}
-	\maxi & p^\top b \\
-	\st   & p^\top A \le c.
-\end{align*}
-%
-This allows us to observe two important characteristics of $F$. First, in the vicinity of $\overline{b}$, $F(b)$ is a linear function of $b$, Also, $p$ represents a \emph{gradient} of $F$. This, again, is an alternative view to the conclusions we drew earlier in Section \ref{section_613}, and, in a way, further strengthens the idea of the optimal dual variables $p$ representing marginal values regarding changes in the components of $b$.
-
-With the above, we can formalise an important result regarding the convexity of the function $F(b)$.
-
-\begin{theorem}[Convexity of $F(b)$]
-	The optimal value function $F(b)$ is convex in $b$ on the set $S$.
-\end{theorem}
-
-\begin{proof}
-
-	Let $b^i \in S$ and $x^i$ be their associated optimal solution, for $i = 1,2$. Thus, $F(b^i) = c^\top x^i$, for $i=1,2$. Let $\lambda \in [0,1]$. The vector $\overline{x} = \lambda x^1 + (1-\lambda)x^2$ is nonnegative, and $A\overline{x} = \lambda b^1 + (1-\lambda)b^2$. Thus, $\overline{x}$ is a feasible solution when $b$ is set to $\lambda b^1 + (1-\lambda)b^2$. Therefore,
+	f(x^k) = \begin{bmatrix}
+				Ax^k - b \\
+				A^\top p^k + u^k - c \\
+				X^k U^k e - \mu e 
+			   \end{bmatrix},	   
+		\ \nabla f(x^k) = \begin{bmatrix}
+					   A & 0 & 0 \\
+					   0 & A^\top & I \\
+					   U^k & 0 & X^k	
+					  \end{bmatrix}
+		 \text{ and } d = (d_x^k, d_p^k, d_u^k) = 
+			\begin{bmatrix}
+			x - x^k \\ 
+			p - p^k \\
+			u - u^k
+		\end{bmatrix}.
+	\end{equation*}	
+	
+Once the direction $d^k = (d_x^k, d_p^k, d_u^k)$ is obtained, we must calculate step sizes that can be taken in the direction $d^k$ that also retain feasibility conditions, meaning that they do not violate $x >0$ and $u > 0$ at the new point. One simple idea is to follow the same procedure as the simplex method. That is, let $\theta_p^k$ and $\theta_d^k$ be the iteration $k$ step sizes for $x$ and $(p,u)$, respectively. Then they can be set as
 	%
 	\begin{equation*}
-		F(\lambda b^1 + (1-\lambda)b^2) \le c^\top \overline{x}	= \lambda c^\top x^1 + (1-\lambda) c^\top x^2 = \lambda F(b^1) + (1-\lambda) F(b^2),
+		\theta_p^k = \min_{i:d_{x_i}^k < 0} - \frac{x_i^k}{d_{x_i}^k} \text{ and }	\theta_d^k = \min_{i:d_{u_i}^k < 0} - \frac{u_i^k}{d_{u_i}^k},
+	\end{equation*}
+		%
+		where $d_{x_i}^k$ and $d_{u_i}$ are the $i$-th component of the vectors $d_x^k$ and $d_u^k$, respectively, and $i = 1, \dots, n$. In practice, there are alternative, and arguably more efficient, ways to set step sizes, but they all are such that their maximum sizes are $\theta_p$ and $\theta_d$ as above and always strictly smaller than one (notice that our constraints are such that $x$ and $u$ are strictly positive).
+		
+		Once we calculated appropriate step sizes, we can then make 
+		$$
+		(x^{k+1}, p^{k+1}, u^{k+1}) = (x^{k} + \theta_{p}^kd_x^k, p^{k} + \theta_d^k d_p^{k}, u^{k} + \theta_d^k d_u^k).
+	$$
+	Then, we proceed by updating $\mu$ as $\mu = \beta \mu$, with $\beta \in (0,1)$ and repeat the same procedure until convergence, i.e., until $\mu$ is sufficiently small.  
+		
+Before discussing in more detail the practicalities of the method, let us take an alternative perspective on showing how the notion of interior plays a role in the design of the algorithm, which requires us to consider the notion of barrier functions. This will also serve as a justification for the name ``barrier methods''. 
+	
+	
+\section{Barrier methods for linear programming problems}
+
+
+Barrier methods are a class of optimisation methods designed to handle inequality-constrained problems of the form
+	%
+	\begin{align*}
+	(P) : \mini \ & f(x) \\
+	\st & g_i(x) \leq 0, \ i = 1,\dots,m \\
+	& Ax = b. 
+	\end{align*}
+	%
+	These methods use the notion of \emph{barrier functions} to remove inequality constraints and have them represented implicitly as an objective function term. This in turn allows for the use of NR as an underpinning numerical method. 
+	
+To see how it works, we can think of a barrier function as a surrogate for a feasibility indicator function $I$ that reacts to infeasibility in $g_i(x) \leq 0$, $\forall i \in  \braces{1,\dots, m}$. That is, $I : \reals \to \reals$ is such that
+	%
+	\begin{equation*}
+	I(u) = \begin{cases} 0, &\text{if } u \leq 0 \\
+	                     \infty, &\text{if } u > 0.  
+	       \end{cases}
+	\end{equation*} 
+
+With that definition for $I$ at hand, we can then reformulate our problem as	
+	%
+	\begin{align*}
+		\mini \ & f(x) + \sum_{i=1}^m I(g_i(x)) \\
+		\st &Ax = b. 
+	\end{align*}
+	
+The issue however is that $I$ is not numerically favourable, due to its nature of ``shooting to infinity'' (including the discontinuity it creates) whenever a solution $x$ is infeasible to the original problem. To circumvent that, we can use barrier functions instead, which are chosen to mimic the behaviour of $I$, whilst retaining more favourable numerical properties. The most widespread choice for barrier functions is the logarithmic barrier, which is given by
+	%
+	\begin{equation*}
+		B_\mu(u) = -\mu \ln(-u)
 	\end{equation*}
 	%
-	which is the definition of a convex function. The first inequality is valid because $\overline{x}$ is a feasible solution for when $b$ is set to $\lambda b^1 + (1-\lambda)b^2$.
-\end{proof}
+	where $\mu > 0$ sets the accuracy of the barrier term $B_\mu(u)$. Figure \ref{p1c7:fig:barrier_function} illustrates the influence of $\mu$ in the shape of the barrier function for the unidimensional case. Notice how, as $\mu$ decreases, the logarithmic barrier more closely resembles the indicator function $I$.
+	
+\begin{figure}
+	\includegraphics[width=0.8\textwidth]{part_1/chapter_7/figures/different_mu.pdf}
+	\caption{Alternative barrier functions for different values of $\mu$. The dashed line represents the indicator function $I$ going to infinity when $u > 0$} \label{p1c7:fig:barrier_function}
+\end{figure}
 
+Using $B_\mu$ as the barrier function, the \emph{barrier problem} $P_\mu$ can be formulated as
+	%
+	\begin{align*}
+		(P_\mu) : \mini \ &f(x) - \mu \sum_{i=1}^m\ln(-g_i(x)) \\
+		\st & Ax = b.
+	\end{align*}
+	%
+	This formulation has a number of important benefits. First, notice how this problem is such that, if one were to apply NR to solve its optimality conditions, one would be faced with solving linear systems of equations, regardless of the nature of the constraints $g_i(x) \le 0$, $i = 1,\dots, m$ (recall that NR solves first-order approximations of the original system of equations). This creates a bridge between linear algebra techniques and a wide range of nonlinear optimisation problems. 
+	
+Moreover, as discussed earlier, one can here also gradually decrease $\mu$ by making $\mu^{k+1} = \beta\mu$ with $\beta \in (0,1)$. This method is an idea generally known as Sequential Unconstrained Minimisation Technique (SUMT).As one may suspect, as $\mu \rightarrow 0$, we have that $x^*(\mu) \rightarrow x^*$, where $x^*(\mu)$ and $x^*$ are the optimal values for problems $P_\mu$ and $P$, respectively. However, for small values of $\mu$, the barrier problem becomes challenging numerically., which does not come as a surprise as the barrier resembles more and more the indicator function $I$ and all its associated numerical issues. 
 
-\subsection{Properties of the optimal value function $F(b)$} \label{section_732}
-
-Let us again consider the dual problem $D$
-%
-\begin{align*}
-	D: \maxi & p^\top b \\
-	\st   & p^\top A \le c,
-\end{align*}
-%
-which is again assumed to be feasible. For any $b$ in $S$, $F(b)$ is finite, and by strong duality (cf. Theorem \ref{p1c5:thm:strong_duality}), we have that $F(b) = p^\top b$. Because of our outstanding assumption that $A$ has $m$ linearly independent rows (and therefore, $m$ linearly independent columns), Theorem \ref{p1c3:thm:exist_extreme_point} guarantees that the feasible region of $D$ has at least one extreme point.
-
-Let us suppose that we know all the extreme points $p^1, \dots, p^K$ of $D$. As the optimal solution for $D$ must be an extreme point, we can redefine $F$ as
-%
-\begin{equation} \label{p1c7:eq:function_F}
-	F(b) = \max_{i = 1, \dots, K} (p^i)^\top b, \forall b \in S.
-\end{equation}
-%
-Specifically, $F$ is the maximum of a finite collection of linear functions, and thus, piecewise linear. Furthermore, within the region where $F(b)$ is linear, or, as we have seen before, the change in $b$ is such that the corresponding optimal basis $B$ of the primal does not change, $F(b) = (p^i)^\top b$ where $p^i$ is the corresponding dual cost.
-
-Finally, we must consider the lack of differentiability of $F$. Notice that specific values of $b$ will indicate the point at which the optimal basis $B$ changes, which implies a change in $p$. These ``junctions'' represent the points in which $D$ has multiple (i.e., not unique) solutions, which, as we have also seen, implies that the primal problem becomes degenerate.
-
-Let us assume that we change $b$ in a particular way, i.e., $b = \overline{b} + \theta d$, where $\theta \in \reals$. We can then redefine $F$ by letting 
-%
-\begin{equation*}
-	f(\theta) = F(\overline{b} + \theta d).
-\end{equation*}
-%
-From \eqref{p1c7:eq:function_F}, we obtain
-%
-\begin{equation*}
-	f(\theta) = \max_{i = 1, \dots, K} (p^i)^\top (\overline{b} - \theta d), \overline{b} + \theta d \in S
-\end{equation*}
-%
-which represents the optimal cost as a function of the scalar $\theta$. In fact, $f(\theta)$ represents a section of the function $F$ in the direction given by the vector $d$, which is thus also piecewise linear and convex (and can be plotted). Figure \ref{p1c7:fig:b_function_theta} illustrates the function $f$ projected onto direction $d$ as a function of $\theta$.
+Let us illustrate the above with an example. Consider the nonlinear problem 
+	$$
+	P : \mini \braces{f(x) = (x + 1)^2 : x \geq 0}.
+	$$ 
+	Notice that the unconstrained optimum would be $x =-1$ but the constrained optimum is $x^* = 0$. For this example, the barrier problem $P_\mu$ is
+	%
+	$$P_\mu : \mini f(x) + B_\mu(x) = (x + 1)^2 - \mu \ln(x).$$
+	%
+	Because this is a univariate convex function, we know that the optimum is attained where $(f(x) + B_\mu(x))' =0$. Thus, we have that
+	%
+	\begin{align*}
+		& f^{~\prime}(x) + B_\mu^\prime(x) = 0 \\
+		& 2(x+1) - \frac{\mu}{x} = 2x^2 + 2x -\mu = 0.
+	\end{align*}
+	%
+	The positive solution (since we must have that $x > 0$) of $2x^2 + 2x -\mu = 0$ is given by
+	$$ x^*(\mu) = \frac{-2 + \sqrt{4 + 8\mu}}{4}.  
+	$$ 
+	Notice that $\lim_{\mu \rightarrow 0}x^*(\mu) = 0$, which is indeed the optimal $x^*$ for $P$. Figure \ref{p1c7:fig:example-barrier} plots the function $f(x) + B_\mu(x)$ for alternative values of $\mu$ indicating their minima (found by substituting the value of $\mu$ in the expression for $x^*(\mu)$). 
 
 \begin{figure}
-	\begin{tikzpicture}
-		\node (pic) at (0,0) {\includegraphics{part_1/chapter_7/figures/Figure2.pdf}};
-		\node[right] (p1) at (-1.75,-0.25) {$(p^1)^\top (\overline{b} + \theta d)$};
-		\node[right] (p2) at (0.5, -1.5) {$(p^2)^\top (\overline{b} + \theta d)$};
-		\node[right] (p3) at (1.25,-0.6) {$(p^3)^\top (\overline{b} + \theta d)$};
-		\node[below] (theta1) at (-1.4, -1.9) {$\theta_1$};
-		\node[below] (theta2) at (-0.125, -1.9) {$\theta_2$};
-		\node[below] (theta) at (2.7, -1.9) {$\theta$};
-		\node[right] (f_theta) at (-2.5, 2) {$f(\theta)$};
-	\end{tikzpicture}	
-	\caption{The optimal cost function $F$ as a function of $b$ in the direction $d$. The feasibility set $S_D$ has three extreme points $p^1$, $p^2$, and $p_3$, each associated with a hyperplane $(p^i)^\top(\overline{b} + \theta d)$} \label{p1c7:fig:b_function_theta}
+	\includegraphics[width=0.8\textwidth]{part_1/chapter_7/figures/ex-barrier.pdf}
+	\caption{The optimal values of $P_\mu$ for different values of $\mu$. Notice the trajectory formed by the points $x^*(\mu)$ as $\mu \to 0$.} \label{p1c7:fig:example-barrier} 	
 \end{figure}
 
-To finalise, we return to one remaining issue associated with differentiability. Although $p$ can be seen as a gradient of $F(b)$ at $b$, we know that $F$ is not differentiable everywhere. To circumvent that, we require a generalisation of the the concept of gradients, which is given by the notion of subgradients. 
 
-\begin{definition}
-	Let $F$ be a convex function on the convex set $S$. Let $\overline{b} \in S$ The vector $p$ is a subgradient of of $F$ at $\overline{b}$ if
-	\begin{equation}
-		F(\overline{b}) + p^\top (b - \overline{b}) \le F(b), \forall b \in S.
+\subsubsection{The notion of interiority}
+
+There is an interesting link between barrier methods and the notion of interior points, which is in a way, the reason why the two ideas are equivalent. Before we show they are indeed equivalent, let us explore this notion of interiority.
+
+For a large enough $\mu$, the solution of the barrier problem $P_\mu$ is close to the \emph{analytic centre} of the polyhedral feasibility set. The analytic centre of a polyhedral set is	the point at which the distance to all of the hyperplanes forming the set is maximal. More precisely, consider the polyhedral set $S = \braces{x \in \reals^n : Ax \leq b} $. The analytic centre of $S$ is given by the optimal solution $x^*$ of the following problem
+	%
+	\begin{align*}
+		\maxi_x & \prod_{i=1}^m (b_i - a_i ^\top x) \\
+		\st & x \in X, 	
+	\end{align*}
+	%	 
+	Notice that we obtain an equivalent problem, that is, a problem would return the same optimal solution $x^*$, if we take the logarithm of the objective function, this would lead to
+	%
+	\begin{align*}
+		\mini_x & \sum_{i=1}^m -\ln(b_i - a_i ^\top x) \\
+		\st & x \in S. 	
+	\end{align*}
+	%
+	This allows us to infer something about the behaviour of the barrier method. For larger values of $\mu$, the optimal solution of $x^*(\mu)$ will lie close to the analytical centre of the feasible region. On the other hand, as $\mu$ diminishes, the ``pull'' towards the centre slowly decays whilst the pull caused by the objective function (that is, by its gradient $-\nabla f(x)$) slowly becomes more prevalent and steers the solution towards $x^*$.
+
+
+\section{Barrier methods for linear programming problems}
+
+Let us consider again our linear programming problem in standard form 
+	$$
+	(P) : \mini\braces{c^\top x : Ax = b, x \ge 0}
+	$$ 
+	to which we want to devise a barrier problem. The barrier problem for $P$ is
+	%
+	\begin{align*}
+		(P_\mu) :~ \mini \ &c^\top x  - \mu\sum_{i=1}^n \ln(x_j)\\
+		\st &Ax = b \ \ ( \text{and} \ \ x > 0). 
+	\end{align*}
+	
+By looking at this formulation, and relating to the previous discussion, a barrier method for a linear programming problem operates such that in earlier iterations, or for larger $\mu$ values, the optimal solution $x(\mu)^*$ of $P_\mu$ tends to be pushed towards the centre of the feasible region, where $x >0$. As $\mu \to 0$, the influence of $c^\top x$ gradually takes over, steering the solution towards the optimal $x^*$ of $P$. 
+
+Now to the most remarking result, which ties together interior point methods and barrier methods for linear programming problems. If we derive the Karush-Kuhn-Tucker optimality conditions for $P_\mu$, we obtain the following set of conditions
+	% 
+	\begin{align*}
+		&Ax = b, \ x > 0\\ 
+		&A^\top p = c - \mu\left(\frac{1}{x_1},\dots,\frac{1}{x_n}\right).
+	\end{align*}
+	% 
+	Using the same notation as before (i.e., defining $X$ and $U$), these can be equivalently rewritten as 
+		\begin{align*}
+			&Ax = b, \ x > 0 \\ 
+			&A^\top p + u = c \\ 
+			&u = \mu X^{-1}e ~\Rightarrow~ XUe = \mu e, 
+		\end{align*}
+	which are exactly \eqref{p1c7:eq:optimality_conditions_matrix_primal}-\eqref{p1c7:eq:optimality_conditions_matrix_relaxed_cc}. Thus, it becomes clear that relaxing the complementarity conditions in the way that we have done before is equivalent to imposing logarithmic barriers to the nonnegativity constraints of $x$. 
+	
+There are many important consequences for the analysis of the method once this link is established. One immediate consequence relates to the convergence of the method, meaning that as primal and dual feasibility conditions are satisfied throughout the iterations of the method, as $\mu \to 0$, complementarity conditions are satisfied in the limit, thus converging to the solution of the original linear programming $P$. 
+
+Indeed, the trajectory formed by successive solutions $\braces{(x(\mu), p(\mu), u(\mu))_{k=1,2,\dots}}$ is called the \emph{central path}, which is a consequence of the interiority forced by the barrier function. This property is the reason why barrier methods are sometimes called ``path-following'' methods.
+
+It is interesting to also notice the information encoded in \eqref{p1c7:eq:optimality_conditions_matrix_relaxed_cc}. First, notice from \eqref{p1c7:eq:optimality_conditions_matrix_relaxed_dual} that 
+	%
+	\begin{align*}
+		& A^\top p + u = c \Leftrightarrow \\	
+		& p^\top (A^x) + u^\top x = c^\top x  \Leftrightarrow  \\
+		& u^\top x = c^\top x - p^\top b.
+	\end{align*}
+	%
+	That is, $u^\top x$ provides us with an estimate of the current \emph{duality gap}, which can be used to estimate how far we are from the optimal solution. Moreover, notice that
+	$$
+	u^\top x = \sum_{i =1}^n u(\mu)_i x(\mu)_i = n\mu 
+	$$
+	%
+	meaning that the term $\mu$ indicates the average amount of violation per $x$ and $u$ variable pairs at $(x^k, p^k, u^k)$. 
+
+
+\subsubsection{A practical implementation of the barrier method}
+
+The version of the barrier method most often used has a few additional ideas incorporated into the algorithm. One of the main ideas consists of the use of single Newton steps for each value of $\mu$. That effectively means that the iterates do not delineate exactly the central path formed by successively smaller values of $\mu$, but rather follow it only approximately. 
+
+More precisely, assume we start with $\mu_k > 0$ and a $(x^k, p^k, u^k)$ close to $(x(\mu)^k, p(\mu)^k, u(\mu)^k)$. Then, for a small $\beta \in (0,1)$, a Newton step with $\mu_{k+1} = \beta \mu_k$ leads to $(x^{k+1}, p^{k+1}, u^{k+1})$ close to $x(\mu)^{k+1}, p(\mu)^{k+1}, u(\mu)^{k+1}$. Now, to be more precise in terms of what is meant by close, we must refer to the notion of \emph{central paths neighbourhoods}.
+
+A common neighbourhood often used in convergence analysis of the barrier method is
+	%
+	\begin{equation*}
+		N_{\mu_k}(\alpha) =  \braces{(x, p, u) : \|X  U e - \mu_k e \|_2 \leq \alpha \mu_k},
+	\end{equation*} 
+	%
+	which essentially consists of a bound on the difference between the expected value of the complementarity condition violation $\mu$ and that observed by the current solution $(x^k, p^k, u^k)$. The parameter $\alpha \in (0,1]$ is an arbitrary scalar that dictates the amount of such difference tolerated and effectively controls how wide the neighbourhood is. Then, by setting values for $\beta$ and $\alpha$ that satisfy $\beta = 1 - \frac{\sigma}{\sqrt{n}}$ for some $\sigma \in (0,1)$ (e.g., $\alpha = \sigma = 0.1)$, one can guarantee that the complementarity violation of the next iteration to be bounded such that $(x^{k+1}, p^{k+1}, u^{k+1}) \in N_{\mu_{k+1}}(\alpha)$ \cite{gondzio2012interior}. Figure XX illustrate this idea, depicting two successive iterates of the method remaining within the shrinking neighbourhoods $N_{\mu_k}(\alpha)$. 
+	
+	\begin{figure}
+			\begin{tikzpicture}
+				\node at (0,0) {\includegraphics{part_1/chapter_7/figures/central_path_lp-eps-converted-to.pdf}};
+		%		\draw[help lines] (-4,-4) grid (4,4);
+				\node[below] at (-0.4,-1.2) {$x_{+\infty}$};
+				\node[right] at (-0.4,0.2) {$x_{\mu_k}$};		
+				\node[below] at (1.3,2.1) {$x_{\mu_{k+1}}$};
+				\node[right] at (-1.2,0.9) {$x^k$};
+				\node[above] at (0.8,2.05) {$x^{k+1}$};
+				\node[below] at (3.5,2.6) {$c$};
+				\node[below] at (0.4,-0.6) {$N_{\mu_1}(\alpha)$};
+				\node[below] at (1.1,1.7) {$N_{\mu_2}(\alpha)$};	
+			\end{tikzpicture}	
+			\caption{An illustrative representation of the central path and how the method follows it approximately}
+		
+	\end{figure}
+	
+Another important aspect related to the method consists of the feasibility requirements of each step. Current implementations of the method can be shown to converge under particular conditions even if the feasibility requirements are eased in the Newton system. In particular, it can be shown that the Newton direction is also such that the amount of infeasibility in the system decreases as the algorithm progresses. 
+	
+The infeasible version of the algorithm is such that, the perturbed system
+	%
+	\begin{equation*} 	
+		\begin{bmatrix} A  & 0 & 0 \\ 
+						0  & A^\top & I \\ 
+						U^k  & 0 & X^k 
+		\end{bmatrix} 
+		\begin{bmatrix} d_x^{k+1} \\ 
+					    d_p^{k+1} \\ 
+					    d_u^{k+1} 
+		\end{bmatrix} =  
+		\begin{bmatrix} 0 \\ 
+						0 \\ 
+						\mu_{k+1} e - X^k U^k e 
+		\end{bmatrix}. 
+	\end{equation*} 
+	%
+	becomes 
+	%
+	\begin{equation}\label{p1c7:eq:infeasible_perturbed_system}
+	\begin{bmatrix} A  & 0 & 0 \\ 
+					0  & A^\top & I \\ 
+					U^k & 0 & X^k 
+	\end{bmatrix} 
+	\begin{bmatrix}d_x^{k+1} \\ 
+				   d_p^{k+1} \\ 
+				   d_u^{k+1} 
+	\end{bmatrix} = - 
+	\begin{bmatrix} Ax^k - b \\ A^\top p^k + u^k - c \\ X^k U^ke -\mu_{k+1}e \end{bmatrix}. 
 	\end{equation}
-\end{definition}
+	where $\mu_{k+1} = \beta\mu_k$.
 
-Figure \ref{p1c7:fig:b_function} illustrates the notion of a subgradient. Notice that, in general, the subgradient is a singleton, composed only of the gradient (or normal vector) of the hyperplane, which is given by the vector $p$. At the nondifferentiable points (the junctions), the subgradient comprises all hyperplanes defined between the two hyperplanes intersecting (or all nonnegative linear combinations of the normal vectors of the intersecting hyperplanes). For these values of $b$, we notice that the dual problem has multiple solutions, implying that the referring BFS to the primal problem is denegerate.   
+The primal residual $r_p(x) = Ax - b$ and dual residual $r_d(p,u) = A^\top p + u - c$ allow the method to iterate through solutions $(x^k, p^k, u^k)$ that do not satisfy primal and/ or dual feasibility. A caveat thought is that the convergence analysis of this variant is more involved and requires additional assumptions on the parametrisation of the algorithm for convergence. 
 
+To see how the residuals decay a teach iteration, notice the following. Let $r(w) = r(x,p,u) = (r_p(x), r_d(p,u))$. The optimality conditions \eqref{p1c7:eq:optimality_conditions_primal}-\eqref{p1c7:eq:optimality_conditions_cc} require the residuals to vanish, that is, $r(w) = 0$. Now, let us consider the first-order approximation for $r$ at $w^k$ for a Newton step $d_w$. This amounts to the following:
+	$$
+	r(w^k + d_w) \approx r(w^k) + Dr(w^k)d_w,
+	$$
+	where $Dr(w^k)$ is the Jacobian of $r$ evaluated at $w^k$. One can notice that, in this notation, the solution $d_w^{k+1}$ to \eqref{p1c7:eq:infeasible_perturbed_system} is such that 
+		$$
+		Dr(w^k) d_w^{k+1} = -r(w^k).
+		$$
 
-The last result we need is to show that the optimal solution of the dual problem $p^*$ is in fact a subgradient of $F(\overline{b})$ at $\overline{b}$.
-
-\begin{theorem}
-	Suppose that the linear programming problem $P = \mini \braces{c^\top x : Ax = \overline{b}, x \ge 0}$ is feasible and the optimal cost is finite. Then, a vector $p \in \reals^m$ is an optimal solution to the dual problem if and only if it is a subgradient of the optimal value function $F$ at $\overline{b}$.
-\end{theorem}
-
-\begin{proof}
-	Recall that $F$ is defined on the set $S = \braces{b \in \reals^m : P(b) \neq \emptyset}$, and that $P(b) = \braces{x \in \reals^n : Ax = b, x \geq 0}$. Suppose $p$ is an optimal solution to the dual problem $D$. Then, strong duality implies that $p^\top \overline{b} = F(\overline{b})$. Consider now an arbitrary $b \in S$. For any feasible solution $x \in P(b)$, we have from weak duality that 
+Now, let us consider the directional derivative of the norm of the updated residues in the direction $d_w^{k+1}$. That leads to the following conclusion
+	%
 	\begin{equation*}
-		p^\top b \le c^\top x \Rightarrow p^\top b \le \min_{x \in P(b)} c^\top x = F(b).
+		\frac{d}{dt} \big\| r(w^k + td_w^{k+1}) \big\|_2^2 \Big|_{t = 0} = 2r(w^k)^\top Dr(w^k)d_w^{k+1} = -2 \| r(w^k) \|_2^2 < 0.
 	\end{equation*}
-	Notice that this implies that $p^\top b - p^\top \overline{b} \le F(b) - F(\overline{b})$, which in turn yields that $p$ is a subgradient of $F$ at $\overline{b}$ since it rearranges to
-	\begin{equation*}
-		F(\overline{b}) + p^\top (b - \overline{b}) \le F(b).
-	\end{equation*}
-	Let us consider the converse. Assume that $p$ is a subgradient of $F$ at $\overline{b}$. Thus, we have 
-	\begin{equation}
-		F(\overline{b}) + p^\top (b - \overline{b}) \le F(b), \ \forall b \in S. \label{p1c7:eq:subgradient_proof}
-	\end{equation}
-	Let choose an $x \ge 0$, and let $b = Ax$, meaning that $x \in P(b)$ and that $F(b) \le c^\top x$. Using \eqref{p1c7:eq:subgradient_proof}, we obtain
-	\begin{equation*}
-		p^\top Ax = p^\top b \le F(b) - F(\overline{b}) + p^\top \overline{b} \le c^\top x - F(\overline{b}) + p^\top \overline{b}.
-	\end{equation*}
-	Since $x \ge 0$, this implies that $p^\top A \le c$, showing that $p$ is a dual feasible solution. Also, for $x = 0$, we obtain $F(\overline{b}) \le p^\top \overline{b}$. Now, using weak duality, we have that a dual feasible solution $p'$ satisfies $(p')^\top \overline{b} \le F(\overline{b})$. Combining the two, we show that $p$ is dual optimal, since
-	\begin{equation*}
-		(p')^\top \overline{b} \le  p^\top \overline{b}.
-	\end{equation*}
-\end{proof}
+	%
+	This shows that the direction $d_w^{k+1}$ is a descent direction for the norm of the residues at $w^k$ which leads to their eventual vanishing.	
+	
+We are finally ready to pose the pseudocode of a working version of the barrier method, which is displayed in Algorithm \ref{p1c7:alg:barrier_method}.
+	%
+	\captionsetup[algorithm]{font=footnotesize}
+	\begin{algorithm}[H]
+	\caption{Barrier method for LP} \label{p1c7:alg:barrier_method}
+	\begin{algorithmic}[1] 
+	\State {\bf initialise.} \text{(primal-dual feasible)} $(x^0, p^0, u^0)$, $\epsilon > 0$, $\mu_0 = \mu_1>0$, $\beta \in (0,1)$, $k = 0$. 
+	\While {$n \mu_k > \epsilon$}
+	    \State compute $d^{k+1} = (d_x^{k+1}, d_p^{k+1}, d_u^{k+1})$ using \eqref{p1c7:eq:infeasible_perturbed_system} 
+	    \State compute appropriate step size $\theta^{k+1} = (\theta_p^{k+1}, \theta_d^{k+1}$)
+	    \State $(x^{k+1}, p^{k+1}, u^{k+1}) = (x^k, p^k, u^k) + \theta^{k+1}d^{k+1}$
+	    \State $k = k+1$
+	    \State $\mu_{k+1} = \beta\mu_k$
+	\EndWhile
+	\State {\bf return} $w^k$.
+	\end{algorithmic} 
+	\end{algorithm}
+	
+Some final remarks are worth making. Barrier methods are perhaps the only class of methods that are known for being strong contenders to the dominance of simplex method-based approaches for linear programming problems. This stems from both a theoretical and an experimental perspective. The analysis available in \cite{gondzio2012interior} shows that the number of iterations of the barrier method, for suitable parameterisation, is $O(\sqrt{n}\ln(1/\epsilon))$, whilst, for the simplex method, a similar analysis would bound the number of iterations to be of the order $O(2^n)$. A conclusion stemming from these results would be that barrier methods, being polynomial complexity algorithms, should outperform the simplex method.
 
-\begin{figure}[h]
-	\begin{tikzpicture}
-		\node (pic) at (0,0) {\includegraphics{part_1/chapter_7/figures/Figure3.pdf}};
-		\node[right] (Fb1) at (-3,-1.5) {$F(\overline{b}) + p^\top(b - \overline{b})$};
-		\node[right] (Fb2) at (4.6,-1) {$F(\overline{b}) + p^\top(b - \overline{b})$};
-		\node[below] (b1) at (-3.7, -2) {$\overline{b}$};
-		\node[below] (b2) at (3.4, -2) {$\overline{b}$};
-		\node[below] (b_axis1) at (-0.3, -2) {$b$};
-		\node[below] (b_axis2) at (5.9, -2) {$b$};
-		\node[right] (Fb_axis1) at (-5.65, 2) {$F(b)$};
-		\node[right] (Fb_axis1) at (0.55, 2) {$F(b)$};
-	\end{tikzpicture}	
-	\caption{The subgradients of the function $F$ at $\overline{b}$. On the left, the unique subgradient of $F$ at $\overline{b}$ is the gradient of the affine function $F(\overline{b}) + p^\top(b - \overline{b})$. On the right, the gradient of the affine function $F(\overline{b}) + p^\top(b - \overline{b})$ at $\overline{b}$ is contained in a subgradient for $F$ at $\overline{b}$.} \label{p1c7:fig:b_function}
-\end{figure}
+But in practice, this is not necessarily the case. Despite its complexity analysis, the simplex method in practice often requires $O(m)$ iterations (i.e., a typically modest multiple of $m$), where $m$ is the number of columns in the basis. On the other hand, practical observation has shown barrier methods to typically require $\sqrt{n}$ iterations or less and appear to be somewhat insensitive to growth in the number of variables further to a certain point. On the other hand, one iteration of the simplex method is rather inexpensive from a computational standpoint, while one iteration of a barrier method is a potentially computationally demanding operation (as it requires the solution of a large linear system of equations).
 
+In general, simplex-method-based solvers are faster on problems of small to medium dimensions, while barrier methods are competitive, and often faster, on large problems. However, this is not a rule, as the performance is dependent on the structure of the particular application. In the end, it all boils down to how effectively the underlying liner system solver can exploit particular structural features employing dedicated numerical algebra methods (e.g., sparsity and the use of Cholesky decomposition combined with triangular solves).
 
+Moreover, barrier methods are generally not able to take full advantage of any prior knowledge about the solution, such as an estimate of the solution itself or some suboptimal basis. Hence, barrier methods are less useful than simplex approaches in situations in which ``warm-start'' information is available. One situation of this type involves branch-and-bound algorithms for solving integer programs, where each node in the branch-and-bound tree requires the solution of a linear program that differs only slightly from one already solved in the parent node. In other situations, we may wish to solve a sequence of linear programs in which the data is perturbed slightly to investigate the sensitivity of the solutions to various perturbations, or in which we approximate a non-linear optimisation problem by a sequence of linear programs. In none of the above scenarios barrier methods can be used as efficiently as the simplex method (dual or primal, depending on the context).
 
-Therefore, more generally, we can say that at the breakpoints, $F$ has multiple subgradients while everywhere else, the subgradients are unique and correspond to the gradients of $F$.
-
-
-\subsection{Benders decomposition}
-
-Let us now return to the Benders decomposition method. Once again, let the problem $P$ be defined as
-%
-\begin{align*}
-	(P) :\mini_{x,y} & c^\top x + \sum_{k=1}^K f_k^\top y_k \\
-		  			 & Ax = b \\
-		  			 & C_k x + D_k y_k = e_k, \ k \in \braces{1, \dots, K} \\
-		  			 & x \geq 0, y_k \geq 0, \ k \in \braces{1,\dots, K}. 
-\end{align*}
-%
-Notice that this is equivalent to the problem $P'$ presented in Section \ref{section_71}, but with a notation modified to make it easier to track how the terms are separated in the process. We can see that $P$ has a set of complicating variables $x$, which becomes obvious when we recast the problem as
-%
-\begin{center}
-	\begin{tabular}{cccccccccc}
-		 $c^\top x$ & + & $f_1^\top y_1$ & + & $f_2^\top y_2$ & + & $\dots$ & + & $f_k^\top y_k$  &  \\
-	 	 $Ax$       &   &                &   &                &   &         &   &                 & = $b$ \\
-		 $C_1 x$    & + & $D_1 y_1$      &   &                &   &         &   &                 & = $e_1$  \\
-		 $C_2 x$    &   &                & + & $D_2 y_2$      &   &         &   &                 & = $e_2$    \\
-		 $\vdots$   &   &  $\vdots$      &   &                &   & $\ddots$&   &                 &  $\vdots$   \\
-		 $C_K x$    &   &                &   &                &   &         & + & $D_k y_k$       & = $e_K$  \\
-		 $x$        &   & $y_1$          &   &  $y_2$         &   & $\dots$ &   & $y_k$           & $\geq 0$  
-	\end{tabular}	
-\end{center}
- 
-This structure is sometimes referred to as block-angular, referring to the initial block of columns on the left (as many as there are components in $x$) and the diagonal structure representing the elements associated with the variables $y$. In this case, notice that if the variable $x$ were to be removed, or fixed to a value $x = \overline{x}$, the problem becomes separable in $K$ independent parts
-% 
-\begin{align*} 
-	(S_k) : \mini_y & f_k^\top y_k \\
-	\st & D_ky_k = e_k - C_k \overline{x} \\
-	& y_k \geq 0.
-\end{align*}
-%
-Notice that these subproblems $k \in \braces{1,\dots, K}$ can be solved in parallel and, in certain contexts, might even have analytical closed-form solutions. The part missing is the development of a coordination mechanism that would allow for iteratively updating the solution $\overline{x}$ based on information emerging from the solution of the subproblems $k \in \braces{1,\dots, K}$.
-
-To see how that can be achieved, let us reformulate $P$ as 
-%
-\begin{align*}
-	(P_R) : \mini_x & c^\top x + \sum_{k=1}^K z_k(x) \\
-	\st   & Ax = b \\
-	      & x \geq 0.
-\end{align*}
-%
-where, for $k \in \braces{1,\dots, K}$,  
-%
-\begin{equation*}
-	z_k(x) = \mini_y \braces{f_k^\top y_k : D_ky_k = e_k - C_k x}.	
-\end{equation*}
-%
-Notice the resemblance between $z_k(x)$ and the optimal value function $F(b)$ introduced in Section \ref{section_731}. This is because the subproblems become parametric optimisation problems but as a function of $x$. That is, in this case, the subproblems are assumed to have $x = \overline{x}$ set as a parameter. Analogously, evaluating $z_k(x)$ requires solving the subproblem $S_k$, which, in turn, depends on $x$. 
-
-The Benders decomposition works by iteratively constructing the optimal value function. Instead of assuming that all dual extreme points are known, we collect them iteratively, forming an approximation of the optimal value function $z_k(x)$ that becomes increasingly precise as we collect more such extreme points. And, to find new dual extreme points, we can use our current approximation of the optimal value function $z_k(x)$ in $P_R$, which, once solved, returns us a new $\overline{x}$ to be used for finding a new dual extreme point. Notice that this procedure is akin to iteratively finding the linear segments that form the optimal value functions $z_k(x)$.
-
-To formalise the discussion above, let us first consider the dual formulation of the subproblems $k \in \braces{1,\dots, K}$, which is given by
-%
-\begin{align*}
-	(S^D_k): z^D_k = \maxi \ & p_k^\top (e_k - C_k x) \\
-	\st   & p_k^\top D_k \leq f_k.	 
-\end{align*}
-%
-%The main advantage of utilising the equivalent dual formulation is to ``move'' the original decision variable $x$ to the objective function, a trick that will present its benefits shortly. 
-Next, let us denote the feasibility set of $S^D_k$ as 
-%
-\begin{equation}
-	P_k =\braces{p : p^\top D_k \leq f_k}, \forall k \in \braces{1,\dots,K}, 
-\end{equation}
-%
-and assume that each $P_k \neq \emptyset$ with at least one extreme point\footnote{We have discussed in Section \ref{section_732} why we can assume that $P_k$ has at least one extreme point}. Relying on the resolution theorem (Theorem \ref{p1c7:thm:resolution_theorem}), we know that $P_k$ can be represented by its extreme points $p_k^i$, $i \in I_k$ and extreme rays $w^r_k$, $r \in R_k$.
-
-As we assume that $P_k \neq \emptyset$, two cases can occur when we solve $S^D_k$, $k \in \braces{1,\dots, K}$. Either $S^D_k$ is unbounded, meaning that the relative primal subproblem is infeasible, or $S^D_k$ is bounded, meaning that $z^D_k < \infty$.
-
-From the first case, we can use Theorem \ref{p1c6:thm:unb_polyhedra} to conclude that primal feasibility (or a bounded dual value $z^D_k < \infty$) can only be attained if and only if
-%
-\begin{equation}
-	(w^r_k)^\top (e_k - C_k x) \leq 0, \ \forall r \in R_k. \label{p1c7:eq:feas_cut_all}	
-\end{equation}
-%
-Furthermore, we know that if $S^D_k$ has a solution, that must lie on a vertex of $P_k$. So, having  available the set of all extreme vertices $p_k^i$, $i \in I_k$, we have that if one can solve $S^D_k$, it can be equivalently represented as
-%
-\begin{equation} \label{p1c7:eq:optimal_value_function_z}
-	(S^D_k) : z_k(x) = \max_{i \in I_k}~ (p^i_k)^\top (e_k - C_k x),
-\end{equation}   
-%
-which can be equivalently reformulated as
-\begin{align}
-	\mini \ & \theta_k \label{p1c7:eq:opt_cut_all1} \\
-	\st & \theta_k \geq (p^i_k)^\top (e_k - C_k x), \ \forall i \in I_k. \label{p1c7:eq:opt_cut_all2}
-\end{align}
-
-Again, notice that \eqref{p1c7:eq:optimal_value_function_z} is equivalent to \eqref{p1c7:eq:function_F}. Combining \eqref{p1c7:eq:feas_cut_all}--\eqref{p1c7:eq:opt_cut_all2}, we can reformulate $P_R$ into a single-level equivalent form 
-%
-\begin{align}
-	(P_R) : & \mini_x c^\top x + \sum_{k=1}^K\theta_k \nonumber\\
-	\st   & Ax = b \nonumber \\
-		  & (p^i_k)^\top (e_k - C_k x) \leq  \theta_k, \ \forall i \in I_k, \forall k \in \braces{1,\dots, K}  \label{p1c7:eq:opt_cut} \\
-		  & 	(w^r_k)^\top (e_k - C_k x) \leq 0, \ \forall r \in R_k, \forall k \in \braces{1, \dots, K} \label{p1c7:eq:feas_cut} \\
-	      & x \geq 0. \nonumber
-\end{align}
-%
-Notice that, just like the reformulation used for the Dantzig-Wolfe method presented in Section \ref{section_72}, the formulation of $P_R$ is of little practical use since it requires the complete enumeration of (a typically prohibitive) number of extreme points and rays and is likely to be computationally intractable due to the large number of associated constraints. To address this issue, we can employ delayed constraint generation and iteratively generate only the constraints we observe to be violated. Notice that this can be alternatively interpreted as the idea of iteratively generating the segments of the optimal value function $z_k(x)$.
-
-Following this idea, at a given iteration $l$, we have at hand a \emph{relaxed main problem} $P_M^l$, which comprises only some of the constraints associated with the dual extreme points and rays obtained until iteration $l$. The relaxed main problem can be stated as
-%
-\begin{align*}
-	(P^l_M) : z_{P_M}^l = \mini_x & c^\top x + \sum_{k=1}^K\theta_k \\
-	\st   & Ax = b \nonumber \\
-		  & (p^i_k)^\top (e_k - C_k x) \leq  \theta_k, \ \forall i \in I_k^l, \forall k \in \braces{1, \dots, K}  \\
-		  & (w^r_k)^\top (e_k - C_k x) \leq 0, \ \forall r \in R_k^l, \forall k \in \braces{1, \dots, K}  \\
-	      & x \geq 0, 
-\end{align*}
-%
-where $I_k^l \subseteq I_k$, $\forall k \in \braces{1,\dots,K}$ represent subsets of extreme points $p^i_k$ of $P_k$, and $R^l_k \subseteq R_k$ subsets of extreme rays $w^r_k$ of $P_k$.
-
-We can iteratively obtain these extreme points and rays from the subproblems $S_k$, $k \in \braces{1, \dots, K}$. To see that, let us first define that, at iteration $l$, we solve the main problem $P_M^l$ and obtain a solution
-%
-\begin{equation*}
-	\argmin_{x, \theta} \braces{P_M^l} = (\overline{x}^l, \overline{\theta}^l_1, \dots \overline{\theta}^l_K). 
-\end{equation*}
-%
-We can then solve the subproblems $S_k^l$, $k \in \braces{1, \dots, K}$, for that fixed solution $\overline{x}^l$ and then observe if we can find additional constraints that were to be violated if they had been in the relaxed main problem in the first place. In other words, we can identify if the solution $\overline{x}^l$ allows for identifying additional extreme points $p^i_k$ or extreme rays $w^r_k$ of $P_k$ that were not yet included in $P_M^l$. 
-
-Another way to interpret this notion of violation is to again think of the optimal value function. When we solve $S_k^l$, for each $k \in \braces{1, \dots, K}$, we are obtaining a ``true`` (as opposed to approximate) evaluation of the optimal value function $z_k(\overline{x}^l)$ which, when compared against the working approximation of $z_k$ (valued as $\theta_k$) in the main problem, provides a value that is greater than that of $\theta_k$, that is,
-%
-\begin{equation}
-	\theta_k < (p^i_k)^\top (e_k - C_k \overline{x}^l).
-\end{equation}
-%
-This implies that the approximation of the optimal value function has a segment missing at $\overline{x}^l$, which is precisely the one given by $(p^i_k)^\top (e_k - C_k x)$. 
-
-Figure \ref{p1c7:fig:benders_iteration} illustrates how the optimal value function approximation is iteratively constructed.
-
-\begin{figure}[h]
-	\begin{tikzpicture}
-		\node (pic) at (0,0) {\includegraphics{part_1/chapter_7/figures/Figure4.pdf}};
-		\node[right] (zb1_left) at (-5.4, 1) {$(p_k^1)^\top(e_k - C_kx)$};
-		\node[left]  (zb2_left) at (0, 0.5) {$(p_k^2)^\top(e_k - C_kx)$};
-		\node[right] (zb1_right) at (0.8, 1) {$(p_k^1)^\top(e_k - C_kx)$};
-		\node[left]  (zb2_right) at (6.2, 0.5) {$(p_k^2)^\top(e_k - C_kx)$};
-		\node[right] (zb3_right) at (4, -1.5) {$(p_k^3)^\top(e_k - C_kx)$};
-		\node[right] (zb_opt) at (-2.6, -1.4) {$(p_k^*)^\top(e_k - C_kx)$};
-		\node[below] (x1) at (-3.1, -1.9) {$\overline{x}^3$};
-		\node[below] (x2) at (3.95, -1.9) {$\overline{x}^4$};
-		\node[left]  (theta1) at (-5.6, -1.3) {$\overline{\theta}^3$};
-		\node[left]  (theta2) at (0.6, -0.8) {$\overline{\theta}^4$};
-		\node[left]  (z_dual) at (-5.6, -0.6) {$z(\overline{x}^3)$};
-		\node[below] (x_axis1) at (-0.4, -2) {$x$};
-		\node[below] (x_axis2) at (5.8, -2) {$x$};
-		\node[right] (z_axis1) at (-5.6, 2) {$z_k(x)$};
-		\node[right] (z_axis2) at (0.6, 2) {$z_k(x)$};
-	\end{tikzpicture}	
-	\caption{$z_k(x)$ is described by 3 line segments. At iteration $l=3$, two are available. The solution to $P_M^3$ returns $\overline{\theta}^3$, which is lower than $z(\overline{x}^3)$, obtained solving $S_k^D$ for $\overline{x}^l$. The solution $p^*_k = p^3_k$ from $z(\overline{x}^l)$ defines the missing segment $(p^*_k)^\top(e_k - C_kx)$. A new optimality cut is added and in iteration $l=4$, $\overline{x}^4$ is obtained from solving $P_M^4$. Notice that we would have $\overline{\theta}^{4} = z(\overline{x}^{4})$, meaning that the algorithm terminates.} \label{p1c7:fig:benders_iteration}
-\end{figure}
-
-To identify those violated constraints, first recall that the subproblem (in its primal form) is given by
-%
-\begin{align*}
-	(S_k^l): \mini \ & f^\top y \\
-	\st & D_k y_k = e_k - C_k \overline{x}^l \\
-	& y_k \geq 0.
-\end{align*}
-%
-Then, two cases can lead to generating violated constraints that must be added to the relaxed primal problem to form $P_M^{l+1}$. The first is when $S_k^l$ is feasible. In that case, a dual optimal basic feasible solution $p^{il}_{k}$ is obtained. If $(p^{il}_k)^\top(e_k - C_k \overline{x}^l) > \overline{\theta}_k^l$, then we can conclude that we just formed a violated constraint of the form of \eqref{p1c7:eq:opt_cut}. The second case is when $S_k^l$ is infeasible, then an extreme ray $w^{rl}_k$ of $P_k$ is available, such that $(w^{rl}_k)^\top(e_k - C_k \overline{x}^l) > 0$, violating \eqref{p1c7:eq:feas_cut}. 
-
-Notice that the above can also be accomplished by solving the dual subproblems $S^D_k$, $k \in \braces{1, \dots, K}$, instead. In that case, the extreme point $p^{il}_k$ is immediately available and so are the extreme rays $w^{rl}_k$ in case of unboundedness.
-
-Algorithm \ref{p1c7:alg:benders} presents a pseudocode for the Benders decomposition. Notice that the method can benefit in terms of efficiency from the use of dual simplex, since we are iteratively adding violated constraints to the relaxed main problem $P_M^l$. Likewise, the dual of the subproblem $S_k^l$, $S_k^{Dl}$ has only the objective function coefficients being modified at each iteration and, in light of the discussion in Section \ref{section_613}, can also benefit from the use of dual simplex. Furthermore, the loop represented by Line \ref{p1c7:alg:benders-loop} can be parallelised to provide further computational performance improvements. 
-
-\begin{algorithm}[H]
-    \caption{Benders decomposition} \label{p1c7:alg:benders}
-    \begin{algorithmic}[1] %line numbering frequency. 
-    \State {\bf initialise.} 
-    Let $P_i^l = W_j^l = \emptyset$, for $k \in \braces{1,\dots,K}$, and set
-    $l \gets 0$. 
-    \Repeat 
-        \State solve $P_M^l$ to obtain $\left(\overline{x}^l, \braces{\overline{\theta}_k^l}_{k=1}^K\right)$. 
-        \For {$k \in \braces{1,\dots,K}$} \label{p1c7:alg:benders-loop}
-            \State solve $S_k^{Dl}$.
-            \If{$S_k^{Dl}$ is unbounded} 
-            	\State obtain extreme ray $w_j^k$ and make $W^l = W^l \cup \braces{w_j^k}$.
-            \Else
-            	\State obtain extreme point $p_i^k$ and $P^l = P^l \cup \braces{p_i^k}$
-            \EndIf  
-        \EndFor
- 
-        \State $l = l + 1$.        	
-    	\Until{$(p^i_k)^\top(e_k - C_k \overline{x}) \leq \overline{\theta}_k, \ \forall k \in \braces{1,\dots,K}$} 
-    \State {\bf return} $\left(\overline{x}^l, \braces{\overline{\theta}_k^l}_{k=1}^K\right)$
-  \end{algorithmic}
-\end{algorithm}
-
-Notice that the algorithm terminates if no violated constraint is found. This in practice implies that $(p^i_k)^\top(e_k - C_k \overline{x}) \leq \overline{\theta}_k$ for all $k \in \braces{1,\dots,K}$, and thus $(\overline{x}, \braces{\overline{\theta}_k}_{k=1}^K)$ is optimal for $P$. In a way, if one considers the dual version subproblem, $S_k^D$, one can notice that it is acting as an implicit search for values of $p^i_k$ that can make $(p^i_k)^\top(e_k - C_k \overline{x})$ larger than $\overline{\theta}_k$, meaning that the current solution $\overline{x}$ violates \eqref{p1c7:eq:opt_cut} and is thus not feasible to $P_M^l$. 
-
-Also, every time one solves $P_M^l$, a dual (lower for minimisation) bound $LB^l = z_{P_M}^l$ is obtained. This is simply because the relaxed main problem is a relaxation of the problem $P$, i.e., it contains less constraints than the original problem $P$. A primal (upper) bound can also be calculated at every iteration, which allows for keeping track of the progress of the algorithm in terms of convergence and preemptively terminate it at any arbitrary optimality tolerance. That can be achieved by setting
-%
-\begin{align*}
-	UB^l &= \min\braces{UB^{l-1}, c^\top \overline{x}^l + \sum_{k=1}^K f^\top \overline{y}_k^l} \\	
-	&= \min\braces{UB^{l-1}, z_{P_M}^l - \sum_{k=1}^K \overline{\theta}_k^l + \sum_{k=1}^K z^{Dl}_{k}},
-\end{align*}
-%
-where $(\overline{x}^l, \braces{\overline{\theta}^{l}_k}_{k=1}^K) = \argmin_{x, \theta} \braces{P_M^l}$, $\overline{y}_k^l = \argmin_y \braces{S_k^l}$, and $z^{Dl}_{k}$ is the objective function value of the dual subproblem $S_k^D$ at iteration $l$. Notice that, differently from the lower bound $LB^l$, there are no guarantees that the upper bound $UB^l$ will decrease monotonically. Therefore, one must compare the bound obtained at a given iteration $l$ using the solution $(\overline{x}^l, \overline{y}_1^l,\dots, \overline{y}^l_K)$ against an incumbent (or best-so-far) bound $UB^{l-1}$.
-
-\vfill 
-
+\vfill
 \pagebreak	
 
 \section{Exercises}
 
-\subsection*{Exercise 7.1: Dantzig-Wolfe decomposition}
-\input{part_1/chapter_7/exercises/E71-DW}
-
-%\subsection*{Exercise 7.2: Cutting stock (CS) problem}
-%\input{part_1/chapter_7/exercises/E72-CS}
-
-\subsection*{Exercise 7.2: Parametric optimization}
-\input{part_1/chapter_7/exercises/E72-parametric}
-
-\subsection*{Exercise 7.3: Benders decomposition}
-\input{part_1/chapter_7/exercises/E73-Benders}
 
