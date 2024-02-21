@@ -10,6 +10,11 @@ John~R Birge and Francois Louveaux.
 \newblock {\em Introduction to stochastic programming}.
 \newblock Springer Science \& Business Media, 2011.
 
+\bibitem{gondzio2012interior}
+Jacek Gondzio.
+\newblock Interior point methods 25 years later.
+\newblock {\em European Journal of Operational Research}, 218(3):587--601, 2012.
+
 \bibitem{kwon2019julia}
 Changhyun Kwon.
 \newblock {\em Julia Programming for Operations Research}.

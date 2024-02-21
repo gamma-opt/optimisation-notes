@@ -3,44 +3,44 @@ Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: /Users/pinheif2/Dropbox (Aalto)/Aalto/Courses/optimisation-notes/src/.texpadtmp/optimisation-notes.aux
 The style file: plain.bst
 Database file #1: ../optimization-notes-bib.bib
-You've used 5 entries,
+You've used 6 entries,
             2118 wiz_defined-function locations,
-            523 strings with 4755 characters,
-and the built_in function-call counts, 1178 in all, are:
-= -- 102
-> -- 47
+            531 strings with 4888 characters,
+and the built_in function-call counts, 1475 in all, are:
+= -- 134
+> -- 54
 < -- 1
-+ -- 19
-- -- 14
-* -- 53
-:= -- 212
-add.period$ -- 15
-call.type$ -- 5
-change.case$ -- 17
++ -- 22
+- -- 16
+* -- 75
+:= -- 261
+add.period$ -- 18
+call.type$ -- 6
+change.case$ -- 21
 chr.to.int$ -- 0
-cite$ -- 5
-duplicate$ -- 60
-empty$ -- 111
-format.name$ -- 14
-if$ -- 247
+cite$ -- 6
+duplicate$ -- 71
+empty$ -- 138
+format.name$ -- 16
+if$ -- 308
 int.to.chr$ -- 0
-int.to.str$ -- 5
-missing$ -- 10
-newline$ -- 28
-num.names$ -- 10
-pop$ -- 41
+int.to.str$ -- 6
+missing$ -- 11
+newline$ -- 33
+num.names$ -- 12
+pop$ -- 43
 preamble$ -- 1
-purify$ -- 17
+purify$ -- 20
 quote$ -- 0
-skip$ -- 33
+skip$ -- 40
 stack$ -- 0
-substring$ -- 25
-swap$ -- 6
+substring$ -- 55
+swap$ -- 7
 text.length$ -- 1
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 10
+type$ -- 14
 warning$ -- 0
-while$ -- 10
-width$ -- 6
-write$ -- 53
+while$ -- 14
+width$ -- 7
+write$ -- 64
