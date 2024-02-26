@@ -58,7 +58,7 @@ Consider the following numerical example. Suppose we would like to find the root
 	x^1 = x^0 + d^0 = \begin{bmatrix} 3/2 & 1/2 & 1\end{bmatrix}.
 	$$ 
 	%
-	To infer that the method has converged, we can either check whether $f(x^k) \approx 0$ or whether $||x^{k+1} - x^{k}||_2 = || d^{k} ||_2 \approx 0$. As $||x^1 - x^0||_2 = || d^0 ||_2 \approx 0.7$, the point $x^1$ is not a root, and thus the method carries on until we find that $|| d^k|| < \epsilon$. If we adopt a numerical tolerance of $\epsilon = 0.01$, meaning that any number below this threshold is deemed acceptably close to zero, then $x^* = (1, 1, 1)$ is reached after approximately 20 iterations.	
+	To infer that the method has converged, we can either check whether $f(x^k) \approx 0$ or whether $||x^{k+1} - x^{k}||_2 = || d^{k} ||_2 \approx 0$. As $||x^1 - x^0||_2 = || d^0 ||_2 \approx 0.7$, and $f(x^1) = \brackets{1/2, 1/2, 0}$, the point $x^1$ is not a root, and the method carries on until we find that $|| d^k|| < \epsilon$. If we adopt a numerical tolerance of $\epsilon = 0.01$, meaning that any number below this threshold is deemed acceptably close to zero, then $x^* = (1, 1, 1)$ is reached after approximately 20 iterations.	
 
 \section{Interior point methods linear programming problems}
 	
@@ -188,8 +188,8 @@ Barrier methods are a class of optimisation methods designed to handle inequalit
 To see how it works, we can think of a barrier function as a surrogate for a feasibility indicator function $I$ that reacts to infeasibility in $g_i(x) \leq 0$, $\forall i \in  \braces{1,\dots, m}$. That is, $I : \reals \to \reals$ is such that
 	%
 	\begin{equation*}
-	I(u) = \begin{cases} 0, &\text{if } u \leq 0 \\
-	                     \infty, &\text{if } u > 0.  
+	I(y) = \begin{cases} 0, &\text{if } y \leq 0 \\
+	                     \infty, &\text{if } y > 0.  
 	       \end{cases}
 	\end{equation*} 
 
@@ -203,14 +203,14 @@ With that definition for $I$ at hand, we can then reformulate our problem as
 The issue however is that $I$ is not numerically favourable, due to its nature of ``shooting to infinity'' (including the discontinuity it creates) whenever a solution $x$ is infeasible to the original problem. To circumvent that, we can use barrier functions instead, which are chosen to mimic the behaviour of $I$, whilst retaining more favourable numerical properties. The most widespread choice for barrier functions is the logarithmic barrier, which is given by
 	%
 	\begin{equation*}
-		B_\mu(u) = -\mu \ln(-u)
+		B_\mu(y) = -\mu \ln(-y)
 	\end{equation*}
 	%
-	where $\mu > 0$ sets the accuracy of the barrier term $B_\mu(u)$. Figure \ref{p1c7:fig:barrier_function} illustrates the influence of $\mu$ in the shape of the barrier function for the unidimensional case. Notice how, as $\mu$ decreases, the logarithmic barrier more closely resembles the indicator function $I$.
+	where $\mu > 0$ sets the accuracy of the barrier term $B_\mu(y)$. Figure \ref{p1c7:fig:barrier_function} illustrates the influence of $\mu$ in the shape of the barrier function for the unidimensional case. Notice how, as $\mu$ decreases, the logarithmic barrier more closely resembles the indicator function $I$.
 	
 \begin{figure}
 	\includegraphics[width=0.8\textwidth]{part_1/chapter_7/figures/different_mu.pdf}
-	\caption{Alternative barrier functions for different values of $\mu$. The dashed line represents the indicator function $I$ going to infinity when $u > 0$} \label{p1c7:fig:barrier_function}
+	\caption{Alternative barrier functions for different values of $\mu$. The dashed line represents the indicator function $I(x)$ going to infinity when $x > 0$} \label{p1c7:fig:barrier_function}
 \end{figure}
 
 Using $B_\mu$ as the barrier function, the \emph{barrier problem} $P_\mu$ can be formulated as
@@ -222,7 +222,7 @@ Using $B_\mu$ as the barrier function, the \emph{barrier problem} $P_\mu$ can be
 	%
 	This formulation has a number of important benefits. First, notice how this problem is such that, if one were to apply NR to solve its optimality conditions, one would be faced with solving linear systems of equations, regardless of the nature of the constraints $g_i(x) \le 0$, $i = 1,\dots, m$ (recall that NR solves first-order approximations of the original system of equations). This creates a bridge between linear algebra techniques and a wide range of nonlinear optimisation problems. 
 	
-Moreover, as discussed earlier, one can also gradually decrease $\mu$ by making $\mu^{k+1} = \beta\mu$ with $\beta \in (0,1)$. This method is an idea generally known as Sequential Unconstrained Minimisation Technique (SUMT). As one may suspect, as $\mu \rightarrow 0$, we have that $x^*(\mu) \rightarrow x^*$, where $x^*(\mu)$ and $x^*$ are the optimal values for problems $P_\mu$ and $P$, respectively. However, for small values of $\mu$, the barrier problem becomes challenging numerically., which does not come as a surprise as the barrier resembles more and more the indicator function $I$ and all its associated numerical issues. 
+Moreover, as discussed earlier, one can also gradually decrease $\mu$ by making $\mu^{k+1} = \beta\mu$ with $\beta \in (0,1)$. This method is an idea generally known as Sequential Unconstrained Minimisation Technique (SUMT). As one may suspect, as $\mu \rightarrow 0$, we have that $x^*(\mu) \rightarrow x^*$, where $x^*(\mu)$ and $x^*$ are the optimal values for problems $P_\mu$ and $P$, respectively. However, for small values of $\mu$, the barrier problem becomes challenging numerically, which does not come as a surprise as the barrier resembles more and more the indicator function $I$ and all its associated numerical issues. 
 
 Let us illustrate the above with an example. Consider the nonlinear problem 
 	$$
@@ -232,7 +232,7 @@ Let us illustrate the above with an example. Consider the nonlinear problem
 	%
 	$$P_\mu : \mini f(x) + B_\mu(x) = (x + 1)^2 - \mu \ln(x).$$
 	%
-	Because this is a univariate convex function, we know that the optimum is attained where $(f(x) + B_\mu(x))' =0$. Thus, we have that
+	Because this is a univariate convex function, we know that the optimum is attained where the derivative $(f(x) + B_\mu(x))' = 0$. Thus, we have that
 	%
 	\begin{align*}
 		& f^{~\prime}(x) + B_\mu^\prime(x) = 0 \\
@@ -252,13 +252,13 @@ Let us illustrate the above with an example. Consider the nonlinear problem
 
 \subsubsection{The notion of interiority}
 
-There is an interesting link between barrier methods and the notion of interior points, which is in a way, the reason why the two ideas are equivalent. Before we show they are indeed equivalent, let us explore this notion of interiority.
+There is an interesting link between barrier methods and the notion of interior points, which is, in a way, the reason why the two ideas are equivalent. Before we show they are indeed equivalent, let us explore this notion of interiority.
 
 For a large enough $\mu$, the solution of the barrier problem $P_\mu$ is close to the \emph{analytic centre} of the polyhedral feasibility set. The analytic centre of a polyhedral set is	the point at which the distance to all of the hyperplanes forming the set is maximal. More precisely, consider the polyhedral set $S = \braces{x \in \reals^n : Ax \leq b} $. The analytic centre of $S$ is given by the optimal solution $x^*$ of the following problem
 	%
 	\begin{align*}
 		\maxi_x & \prod_{i=1}^m (b_i - a_i ^\top x) \\
-		\st & x \in X, 	
+		\st & x \in S, 	
 	\end{align*}
 	%	 
 	Notice that we obtain an equivalent problem, that is, a problem would return the same optimal solution $x^*$, if we take the logarithm of the objective function, this would lead to
@@ -286,7 +286,7 @@ Let us consider again our linear programming problem in standard form
 	
 By looking at this formulation, and relating to the previous discussion, a barrier method for a linear programming problem operates such that in earlier iterations, or for larger $\mu$ values, the optimal solution $x(\mu)^*$ of $P_\mu$ tends to be pushed towards the centre of the feasible region, where $x >0$. As $\mu \to 0$, the influence of $c^\top x$ gradually takes over, steering the solution towards the optimal $x^*$ of $P$. 
 
-Now to the most remarking result, which ties together interior point methods and barrier methods for linear programming problems. If we derive the Karush-Kuhn-Tucker optimality conditions for $P_\mu$, we obtain the following set of conditions
+Now to the most remarking result, which ties together interior point methods and barrier methods for linear programming problems. If we derive the Karush-Kuhn-Tucker optimality conditions (Section \ref{p2c7:sec:KKT} in the nonlinear optimization section of these notes) for $P_\mu$, we obtain the following set of conditions
 	% 
 	\begin{align*}
 		&Ax = b, \ x > 0\\ 
@@ -301,7 +301,7 @@ Now to the most remarking result, which ties together interior point methods and
 		\end{align*}
 	which are exactly \eqref{p1c7:eq:optimality_conditions_matrix_primal}-\eqref{p1c7:eq:optimality_conditions_matrix_relaxed_cc}. Thus, it becomes clear that relaxing the complementarity conditions in the way that we have done before is equivalent to imposing logarithmic barriers to the nonnegativity constraints of $x$. 
 	
-There are many important consequences for the analysis of the method once this link is established. One immediate consequence relates to the convergence of the method, meaning that as primal and dual feasibility conditions are satisfied throughout the iterations of the method, as $\mu \to 0$, complementarity conditions are satisfied in the limit, thus converging to the solution of the original linear programming $P$. 
+There are many important consequences for the analysis of the method once this link is established. One immediate consequence relates to the convergence of the method, meaning that as primal and dual feasibility conditions are satisfied throughout the iterations of the method, as $\mu \to 0$, complementarity conditions are satisfied in the limit, thus converging to the solution of the original linear problem $P$. 
 
 Indeed, the trajectory formed by successive solutions $\braces{(x(\mu_k), p(\mu_k), u(\mu_k))}_{k=1,2,\dots}$ is called the \emph{central path}, which is a consequence of the interiority forced by the barrier function. This property is the reason why barrier methods are sometimes called ``path-following'' methods.
 
