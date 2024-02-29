@@ -12,9 +12,9 @@ In general, the simplex methods often perform better in small and medium problem
 \section{Newton's method with equality constraints} 
 
 
-In essence, barrier methods employ a variant of Newton's method to solve the optimality conditions of optimisation problems. In the context of linear programming problems, this is equivalent to finding solutions that are both primal and dual feasible.
+In essence, barrier methods employ a variant of Newton's method to solve the optimality conditions of optimisation problems. In the context of linear programming problems, this is equivalent to finding solutions that are both primal and dual feasible\footnote{Recall that the satisfaction of complementarity conditions in the linear case is a consequence of primal and dual feasibility, cf. Theorem \ref{p1c2:thm:complemetarity_slackness}.}.
 
-We consider a version of Newton's method called the Newton-Raphson (NR) method, which was originally designed for finding roots of vector functions. Let $f: \reals^n \to \reals^n$, with $f_i : \reals^n \to \reals$ differentiable for $i = 1,\dots,n$.
+We consider a version of Newton's method called the Newton-Raphson (NR) method, which was originally conceived for finding roots of vector functions. Let $f: \reals^n \to \reals^n$, with $f_i : \reals^n \to \reals$ differentiable for $i = 1,\dots,n$.
 
 We wish to find a solution $x^*$ that is a root for $f$, i.e., $f(x^*) = 0$. For that, we must solve the system of equations given by
 	$$ 
@@ -38,6 +38,8 @@ The algorithm proceeds by finding the step to be taken from $x^k$ to reach the r
 		f(x^k) + \nabla f(x^k)^\top d = 0 \Rightarrow
 		d = -\nabla f(x^k)^{-1}f(x^k).
 	\end{equation*}
+	
+%TODO Chp7: expand on this and explain the role of \epsilon in the process. It ends rather abruptly.	
 	
 Consider the following numerical example. Suppose we would like to find the root of $f$ with $x^0 = (1,0,1)$, where $f$ is given by 
 	$$
@@ -68,7 +70,7 @@ We start by considering our linear programming problem in standard form
 	\begin{align*}
 		(P) :~ \mini \ &c^\top x \\
 		\st &Ax = b,  \\
-		&x \ge 0 
+		&x \ge 0, 
 	\end{align*}
 	%
 	and its associated dual, which is stated as
@@ -94,15 +96,15 @@ Recall that the optimality conditions for problem $P$ can be expressed as
 One initial idea could be simply, from a purely methodological standpoint, to employ NR to solve the above system of equations. The caveat, however, is that one must observe and retain the nonnegativity conditions $x > 0$ and $u >0$, which are an important complicating factor in this setting. Indeed, departing from a feasible solution $(x,p,u)$, one could employ NR to find a solution for \eqref{p1c7:eq:optimality_conditions_primal}-\eqref{p1c7:eq:optimality_conditions_cc} while controlling the steps taken in each Newton direction such that the nonnegativity conditions $x > 0$ and $u >0$ are retained, in a similar fashion to how it is done in the simplex method. However, it turns out that Newton directions obtained from successive iterations of \eqref{p1c7:eq:optimality_conditions_primal}- \eqref{p1c7:eq:optimality_conditions_cc} typically require the steps to be considerably small so that the nonnegativity conditions are retained, which renders the algorithm less useful from a practical standpoint.
 	   
 	
-This is precisely when the notion of an interior solution plays a role. An \emph{interior point} is defined as a point that satisfies primal and dual feasibility conditions strictly, that is $Ax = b$ with $x > 0$, and $A^\top p + u = c$ with $u >0$, implying that the complementarity conditions \eqref{p1c7:eq:optimality_conditions_cc} are \emph{violated}. This notion of interior points is useful in that it allows for the definition of less ``aggressive'' Newton directions, which aim towards directions that reduce the amount of violation in the complementarity conditions. Thus, we can alternatively consider the system with \emph{relaxed} complementarity conditions 	
+This is precisely when the notion of an interior solution plays a role. An \emph{interior point} is defined as a point that satisfies primal and dual feasibility conditions strictly, that is $Ax = b$ with $x > 0$, and $A^\top p + u = c$ with $u >0$, implying that the complementarity conditions \eqref{p1c7:eq:optimality_conditions_cc} are \emph{violated}. This notion of interior points is useful in that it allows for the definition of less ``aggressive'' Newton directions, which aim towards directions that reduce the amount of violation in the complementarity conditions. Thus, we can alternatively consider the system with \emph{relaxed} complementarity conditions in which we define the scalar $\mu > 0$ and restate the optimality conditions as 	
 	%
 	\begin{align*}
 		& Ax = b, \ \ x \geq 0,\\ 
 		& A^\top p + u = c, \ \ u \geq 0, \\
-		& u_j x_j = \mu, \ \forall j \in J 
+		& u_j x_j = \mu, \ \forall j \in J. 
 	\end{align*}
 	%
-	to provide Newton directions, while, simultaneously, gradually making $\mu \to 0$. By doing so, one can obtain not only directions which can be explored with larger step sizes, thus making more progress per iteration, but also yield methods with better numerical properties.
+	Then, we use these relaxed optimality conditions to obtain Newton directions, while, simultaneously, gradually making $\mu \to 0$. By doing so, one can obtain not only directions that can be explored with larger step sizes, thus making more progress per iteration, but also yield methods with better numerical properties.
 	
 To see how that can be made operational, let us first define some helpful notation. Let $X\in \reals^{n\times n}$ and $U \in \reals^{n \times n}$ be defined as
 	%
@@ -161,7 +163,7 @@ Once the direction $d^k = (d_x^k, d_p^k, d_u^k)$ is obtained, we must calculate 
 		\theta_p^k = \min_{i:d_{x_i}^k < 0} - \frac{x_i^k}{d_{x_i}^k} \text{ and }	\theta_d^k = \min_{i:d_{u_i}^k < 0} - \frac{u_i^k}{d_{u_i}^k},
 	\end{equation*}
 		%
-		where $d_{x_i}^k$ and $d_{u_i}$ are the $i$-th component of the vectors $d_x^k$ and $d_u^k$, respectively, and $i = 1, \dots, n$. In practice, there are alternative, and arguably more efficient, ways to set step sizes, but they all are such that their maximum sizes are $\theta_p$ and $\theta_d$ as above and always strictly smaller than one (notice that our constraints are such that $x$ and $u$ are strictly positive).
+		where $d_{x_i}^k$ and $d_{u_i}^k$ are the $i$-th component of the vectors $d_x^k$ and $d_u^k$, respectively, and $i = 1, \dots, n$. In practice, there are alternative, and arguably more efficient, ways to set step sizes, but they all are such that their maximum sizes are $\theta_p$ and $\theta_d$ as above and always strictly smaller than one (notice that our constraints are such that $x$ and $u$ are strictly positive).
 		
 		Once we calculated appropriate step sizes, we can then make 
 		$$
@@ -183,9 +185,9 @@ Barrier methods are a class of optimisation methods designed to handle inequalit
 	& Ax = b. 
 	\end{align*}
 	%
-	These methods use the notion of \emph{barrier functions} to remove inequality constraints and have them represented implicitly as an objective function term. This allows for the use of NR as an underpinning numerical method. 
+	These methods use the notion of \emph{barrier functions} to remove inequality constraints and have them represented implicitly as an objective function term. This allows for the use of NR as the underpinning numerical method of a solution algorithm. 
 	
-To see how it works, we can think of a barrier function as a surrogate for a feasibility indicator function $I$ that reacts to infeasibility in $g_i(x) \leq 0$, $\forall i \in  \braces{1,\dots, m}$. That is, $I : \reals \to \reals$ is such that
+To see how the method works, we can think of a barrier function as a surrogate for a \emph{feasibility indicator function} $I$ that reacts to infeasibility in $g_i(x) \leq 0$, $\forall i \in  \braces{1,\dots, m}$\footnote{The technical name of this function is the \emph{characteristic function}, which is arguably a less informative name.}. That is, $I : \reals \to \reals$ is such that
 	%
 	\begin{equation*}
 	I(y) = \begin{cases} 0, &\text{if } y \leq 0 \\
@@ -258,7 +260,7 @@ For a large enough $\mu$, the solution of the barrier problem $P_\mu$ is close t
 	%
 	\begin{align*}
 		\maxi_x & \prod_{i=1}^m (b_i - a_i ^\top x) \\
-		\st & x \in S, 	
+		\st & x \in S. 	
 	\end{align*}
 	%	 
 	Notice that we obtain an equivalent problem, that is, a problem would return the same optimal solution $x^*$, if we take the logarithm of the objective function, this would lead to
@@ -286,7 +288,7 @@ Let us consider again our linear programming problem in standard form
 	
 By looking at this formulation, and relating to the previous discussion, a barrier method for a linear programming problem operates such that in earlier iterations, or for larger $\mu$ values, the optimal solution $x(\mu)^*$ of $P_\mu$ tends to be pushed towards the centre of the feasible region, where $x >0$. As $\mu \to 0$, the influence of $c^\top x$ gradually takes over, steering the solution towards the optimal $x^*$ of $P$. 
 
-Now to the most remarking result, which ties together interior point methods and barrier methods for linear programming problems. If we derive the Karush-Kuhn-Tucker optimality conditions (Section \ref{p2c7:sec:KKT} in the nonlinear optimization section of these notes) for $P_\mu$, we obtain the following set of conditions
+ The most remarkable result, which ties together interior point methods and barrier methods for linear programming problems, is the following. If we derive the Karush-Kuhn-Tucker optimality conditions (Section \ref{p2c7:sec:KKT} in the nonlinear optimization section of these notes) for $P_\mu$, we obtain the following set of conditions
 	% 
 	\begin{align*}
 		&Ax = b, \ x > 0\\ 
@@ -323,7 +325,7 @@ It is interesting to also notice the information encoded in \eqref{p1c7:eq:optim
 
 \subsubsection{A practical implementation of the barrier method}
 
-The version of the barrier method most often used has a few additional ideas incorporated into the algorithm. One of the main ideas is using a single Newton step for each value of $\mu$. That effectively means that the iterates do not delineate exactly the central path formed by successively smaller values of $\mu$, but rather follow it only approximately. 
+The version of the barrier method most often used has a few additional ideas incorporated into the algorithm. One of the main ideas is using a \emph{single Newton step} for each value of $\mu$. That effectively means that the iterates do not delineate exactly the central path formed by successively smaller values of $\mu$, but rather follow it only approximately. 
 
 More precisely, assume we start with $\mu_k > 0$ and a $(x^k, p^k, u^k)$ close to $(x(\mu_k), p(\mu_k), u(\mu_k))$. Then, for a small $\beta \in (0,1)$, a Newton step with $\mu_{k+1} = \beta \mu_k$ leads to $(x^{k+1}, p^{k+1}, u^{k+1})$ close to $x(\mu_{k+1}), p(\mu_{k+1}), u(\mu_{k+1})$. Now, to be more precise in terms of what is meant by close, we must refer to the notion of \emph{central paths neighbourhoods}.
 
@@ -354,7 +356,7 @@ A common neighbourhood often used in convergence analysis of the barrier method 
 	
 Another important aspect of the method relates to the feasibility requirements of each step. Current implementations of the method can be shown to converge under particular conditions even if the feasibility requirements are eased in the Newton system. In this case, it needs to be shown that the Newton direction is also such that the amount of infeasibility in the system decreases as the algorithm progresses. 
 	
-The infeasible version of the algorithm is such that the perturbed system
+The infeasible version of the algorithm is such that the so-called perturbed (or relaxed) system
 	%
 	\begin{equation*} 	
 		\begin{bmatrix} A  & 0 & 0 \\ 
@@ -386,7 +388,7 @@ The infeasible version of the algorithm is such that the perturbed system
 	\end{equation}
 	where $\mu_{k+1} = \beta\mu_k$.
 
-The primal residual $r_p(x) = Ax - b$ and dual residual $r_d(p,u) = A^\top p + u - c$ allow the method to iterate through solutions $(x^k, p^k, u^k)$ that do not satisfy primal and/ or dual feasibility. A caveat though is that the convergence analysis of this variant is more involved and requires additional assumptions on the parametrisation of the algorithm for convergence. 
+The primal residual $r_p(x) = Ax - b$ and dual residual $r_d(p,u) = A^\top p + u - c$ allow the method to iterate through solutions $(x^k, p^k, u^k)$ that do not satisfy primal and/ or dual feasibility. A caveat though is that the convergence analysis of this variant is more involved and requires additional assumptions on the parameterisation of the algorithm for convergence. 
 
 To see how the residuals decay at each iteration, notice the following. Let $r(w) = r(x,p,u) = (r_p(x), r_d(p,u))$. The optimality conditions \eqref{p1c7:eq:optimality_conditions_primal}-\eqref{p1c7:eq:optimality_conditions_cc} require the residuals to vanish, that is, $r(w) = 0$. Now, let us consider the first-order approximation for $r$ at $w^k$ for a Newton step $d_w$. This amounts to the following:
 	$$
@@ -423,7 +425,7 @@ We are finally ready to pose the pseudocode of a working version of the barrier 
 	\end{algorithmic} 
 	\end{algorithm}
 	
-Some final remarks are worth making. Barrier methods are perhaps the only class of methods that are known for being strong contenders to the dominance of simplex method-based approaches for linear programming problems. This stems from both a theoretical and an experimental perspective. The analysis available in \cite{gondzio2012interior} shows that the number of iterations of the barrier method, for suitable parameterisation, is $O(\sqrt{n}\ln(1/\epsilon))$, whilst, for the simplex method, a similar analysis would bound the number of iterations to be of the order $O(2^n)$. A conclusion stemming from these results would be that barrier methods, being polynomial complexity algorithms, should outperform the simplex method.
+Some final remarks are worth making. Barrier methods are perhaps the only class of methods that are known for being strong contenders to the dominance of simplex method-based approaches for linear programming problems. This stems from both a theoretical and an experimental perspective. The convergence analysis available in \cite{gondzio2012interior} shows that the number of iterations of the barrier method, for suitable parameterisation, is $O(\sqrt{n}\ln(1/\epsilon))$, whilst, for the simplex method, a similar analysis would bound the number of iterations to be of the order $O(2^n)$. A conclusion stemming from these results would be that barrier methods, being polynomial complexity algorithms, should outperform the simplex method.
 
 But in practice, this is not necessarily the case. Despite its complexity analysis, the simplex method in practice often requires $O(m)$ iterations (i.e., a typically modest multiple of $m$), where $m$ is the number of columns in the basis. On the other hand, practical observation has shown barrier methods to typically require $\sqrt{n}$ iterations or less and appear to be somewhat insensitive to growth in the number of variables further to a certain point. On the other hand, one iteration of the simplex method is rather inexpensive from a computational standpoint, while one iteration of a barrier method is a potentially computationally demanding operation (as it requires the solution of a large linear system of equations).
 
