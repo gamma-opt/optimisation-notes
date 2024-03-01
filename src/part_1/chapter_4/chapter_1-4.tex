@@ -143,17 +143,17 @@ The last missing element is proving that Algorithm \ref{p1c4:alg:simplex} eventu
 	\caption{Simplex method} \label{p1c4:alg:simplex}
 	\begin{algorithmic}[1] %line numbering frequency. 
 		\State {\bf initialise.} Initial basis $B$, associated BFS $x$, and reduced costs $\overline{c}$.
-		\While {$\overline{c}_j < 0$ for some $j \in N$} \label{p1c4:alg:opt_condition} 
+		\While {$\overline{c}_j < 0$ for some $j \in I_N$} \label{p1c4:alg:opt_condition} 
 		    \State Choose some $j$ for which $\overline{c_j} < 0$. Calculate $u = B^{-1}A_j$. 
 		    \If {$u \leq 0$} \label{p1c4:alg:unb_condition}
 				\State {\bf return} $z = -\infty$.		
 			\Else
-				\State $\overline{\theta} = \min_{i \in I_B : u_i > 0} \braces{\frac{x_{B(i)}}{u_i}}$ and $l = \argmin_{i \in B : u_i > 0} \braces{\frac{x_{B(i)}}{u_i}}$ 
-				\State Set $x_j = \overline{\theta}$ and $x_B = x - \overline{\theta}u$. Form new basis $B = B \setminus \braces{l} \cup \braces{j}$.  
-				\State Calculate $\overline{c}_j = c_j - c_B^\top B^{-1}A_j$ for all $j \in N$.
+				\State $\overline{\theta} = \min_{i \in I_B : u_i > 0} \braces{\frac{x_{B(i)}}{u_i}}$ and $l = \argmin_{i \in I_B : u_i > 0} \braces{\frac{x_{B(i)}}{u_i}}$ 
+				\State Set $x_j = \overline{\theta}$ and $x_B = x - \overline{\theta}u$. Form new basis $I_B = I_B \setminus \braces{l} \cup \braces{j}$.  
+				\State Calculate $\overline{c}_j = c_j - c_B^\top B^{-1}A_j$ for all $j \in I_N$.
 			\EndIf
 		\EndWhile
-		\State {\bf return} optimal basis $B$ and optimal solution $x$.
+		\State {\bf return} optimal basis $I_B$ and optimal solution $x$.
 	\end{algorithmic}
 \end{algorithm}
 
@@ -299,20 +299,20 @@ We can restate the simplex method in its revised form. This is presented in Algo
 	\caption{Revised simplex method} \label{p1c4:alg:revised_ximplex_method}
 	\begin{algorithmic}[1] %line numbering frequency. 
 	\State {\bf initialise.} Initial basis $B$, associated BFS $x$, and $B^{-1}$ are available.
-	\State Calculate $p^\top = c_B^\top B^{-1}$ and $\overline{c}_j = c_j - p^\top A_j$ for $j \in N$.
+	\State Calculate $p^\top = c_B^\top B^{-1}$ and $\overline{c}_j = c_j - p^\top A_j$ for $j \in I_N$.
 	\While {$\overline{c}_j < 0$ for some $j \in N$} \label{p1c4:alg:opt_condition_rev} 
 	    \State Choose some $j$ for which $\overline{c_j} < 0$. Calculate $u = B^{-1}A_j$. 
 	    \If {$u \leq 0$} \label{p1c4:alg:unb_condition_rev}
 			\State {\bf return} $z = -\infty$.		
 		\Else
-			\State $\overline{\theta} = \min_{i \in I_B : u_i > 0} \braces{\frac{x_{B(i)}}{u_i}}$ and $l = \argmin_{i \in B : u_i > 0} \braces{\frac{x_{B(i)}}{u_i}}$ 
+			\State $\overline{\theta} = \min_{i \in I_B : u_i > 0} \braces{\frac{x_{B(i)}}{u_i}}$ and $l = \argmin_{i \in I_B : u_i > 0} \braces{\frac{x_{B(i)}}{u_i}}$ 
 			\State Set $x_j = \overline{\theta}$ and $x_B = x - \overline{\theta}u$.
 			\State Form the matrix $[B^{-1} \,|\, u]$ and perform EROs to convert it to $[\overline{B}^{-1} \, | \, e_l]$. 
-			\State Make $B = B \setminus \braces{l} \cup \braces{j}$ and $B^{-1} = \overline{B}^{-1}$. 
+			\State Make $I_B = I_B \setminus \braces{l} \cup \braces{j}$ and $B^{-1} = \overline{B}^{-1}$. 
 			\State Calculate $p^\top = c_B^\top B^{-1}$ and $\overline{c}_j = c_j - p^\top A_j$ for all $j \in I_N = J \setminus I_B$.
 		\EndIf
 	\EndWhile
-	\State {\bf return} optimal basis $B$ and optimal solution $x$.
+	\State {\bf return} optimal basis $I_B$ and optimal solution $x$.
 	\end{algorithmic}
 \end{algorithm}
 
