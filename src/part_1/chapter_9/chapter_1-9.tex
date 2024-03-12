@@ -4,7 +4,7 @@
 
 We will now discuss a method to solve mixed-integer programming problems that rely on the successive solution of linear programming relaxations. Although there are several methods that can be employed to solve combinatorial optimisation problems, most of them are not capable of providing optimality guarantees for the solution obtained (e.g., are heuristics or metaheuristics) or do not exploit the availability of a (linear) mathematical programming formulation. To date, the most widespread method that is capable of both is something that is generally known as a \emph{branch-and-cut} method.
 
-Branch-and-cut methods are composed of a combination of multiple parts, including, among other techniques, a branch-and-bound approach, cutting planes, and heuristics as well. In the next chapters, we will focus on each of these parts individually, starting with the branch-and-bound method.
+Branch-and-cut methods are composed of a combination of multiple parts, including, among other techniques, a branch-and-bound coordination scheme, cutting planes, and heuristics as well. In the next chapters, we will focus on each of these parts individually, starting with the branch-and-bound method.
 
 
 \section{Relaxations}
@@ -17,9 +17,9 @@ Consider an integer programming problem of the form
 	z = \mini_x \braces{c^\top x : x \in X \subseteq \integers^n}.
 \end{equation*}
 %
-To prove that a given solution $x^*$ is optimal, we must rely on the notion of \emph{bounding}. That is, we must provide a pair of upper and lower bounds that are as close (or tight) as possible. In the occasion that these bounds are the same, and thus match the value of $z = c^\top x^*$, we have available a \emph{certificate} of optimality for $x^*$. This concept must be familiar to you. We already used similar arguments in Chapter \ref{chapter_5}, when we introduced the notion of dual bounds.
+To prove that a given solution $x^*$ is optimal, we must rely on the notion of \emph{bounding}. That is, we must provide a pair of upper and lower bounds that are as close (or tight) as possible. If it happens that these bounds have the same value, and thus match the value of $z = c^\top x^*$, we have available a \emph{certificate} of optimality for $x^*$. This concept must sound familiar to you. We already used similar arguments in Chapter \ref{chapter_5}, when we introduced the notion of dual bounds.
 
-Most methods that can prove optimality work by bounding an optimal solution. In this context, bounding means to construct an increasing sequence of lower bounds
+Most methods that can prove optimality work by bounding the optimal solution. In this context, bounding means to construct an increasing sequence of lower bounds
 %
 \begin{equation*}
 	\underline{z}_1 < \underline{z}_2 < \dots < \underline{z}_s \leq z	
@@ -33,7 +33,7 @@ and a decreasing sequence of upper bounds
 %
 to obtain as tight as possible lower ($\underline{z} \leq z$) and upper ($\overline{z} \geq z$) bounds. Notice that the process can be arbitrarily stopped when $\overline{z}_t - \underline{z}_s \leq \epsilon$, where $s$ and $t$ are some positive integers and $\epsilon > 0$ is a predefined (suitably small) tolerance. The term $\epsilon$ represents an \emph{absolute optimality gap}, meaning that one can guarantee that the optimal value is at most greater than $\underline{z}$ by $\epsilon$ units and at most smaller than $\overline{z}$ by $\epsilon$ units. In other words, the optimal value must be either $\underline{z}$, $\overline{z}$, or a value in between.
 
-This framework immediately poses the key challenge of deriving such bounds efficiently. It turns out that this is a challenge that goes beyond the context of mixed-integer programming problems. In fact, we have already seen this idea of bounding in Chapter \ref{chapter_7}, when we discussed decomposition methods, which also generate lower and upper bounds during their execution.
+This framework immediately poses the key challenge of deriving such bounds efficiently. It turns out that this is a challenge that goes beyond the context of mixed-integer programming problems. In fact, we will see this idea of bounding in Chapter \ref{chapter_12}, when we discuss decomposition methods, which also generate lower and upper bounds during their execution.
 
 Regardless of the context, bounds are typically of two types: \emph{primal} bounds, which are bounds obtained by evaluating a \emph{feasible} solution (i..e, that satisfy primal feasibility conditions); and \emph{dual} bounds, which are typically attained when primal feasibility is allowed to be violated so that a dual feasible solution is obtained. In the context of minimisation, primal bounds are upper bounds (to be minimised), while dual bounds are lower bounds (to be maximised). Clearly, in the case of maximisation, the reverse holds. 
 
@@ -109,7 +109,7 @@ A dual (upper; notice the maximisation) bound for $z$ can be obtained by solving
 %TODO: Chp9: Redraw figure in Julia.
 \begin{figure}[h]
 	\centering
-	\begin{tikzpicture}[scale = 0.8,
+	\begin{tikzpicture}[scale = 0.9,
 	point/.style={circle, fill=gray!40, inner sep=1pt},
 	feas point/.style={circle, fill=blue, inner sep=1pt}]
 	%\draw[help lines] (0,0) grid (4,4);  
@@ -422,7 +422,7 @@ Let us finalise presenting a numerical example of the employment of branch-and-b
     \st & 7x_1 - 2x_2 \leq 14 \\
     &x_2 \leq 3 \\
     &2x_1 - 2x_2 \leq 3 \\
-    &x \in \integers^2_+
+    &x \in \integers^2_+.
 \end{align*} 
 %
 We start by solving its LP relaxation, as represented in Figure \ref{p1c9:fig:example_LP_relaxation_solution}. We obtain the solution $x_{LP}=(20/7, 3)$ with objective value of $z=59/7$. As the first component of $x$ is fractional, we can generate subproblems by branching the node into subproblems $S_1$ and $S_2$, where
@@ -435,7 +435,7 @@ We start by solving its LP relaxation, as represented in Figure \ref{p1c9:fig:ex
 The current enumerative (or branch-and-bound) tree representation is depicted in Figure \ref{p1c9:fig:example_bb_tree_1}.
 
 \begin{figure}[h]
-\begin{tikzpicture}[scale = 0.7,
+\begin{tikzpicture}[scale = 0.9,
 	point/.style={circle, fill=gray!40, inner sep=1pt},
 	feas point/.style={circle, fill=blue, inner sep=1pt}]
 	\foreach \x in {0,...,4}{
@@ -606,7 +606,7 @@ Notice that in this example, the order in which we solved the subproblems was cr
 
 
 
-\pagebreak 
+\newpage 
 
 \section{Exercises}
 
