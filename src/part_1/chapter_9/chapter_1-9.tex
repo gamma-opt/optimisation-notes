@@ -63,9 +63,9 @@ Clearly, for relaxations to be useful in the context of solving mixed-integer pr
 	If RP is a relaxation of P, then $z_{RP}$ is a dual bound for $z$. 
 \end{proposition}
     
-\begin{proof} For any optimal solution $x^*$ of $P$, we have that $x^* \in X \subseteq \overline{X}$, which implies that $x^* \in \overline{X}$. Thus, we have that
+\begin{proof} Let $x^*_{RP}$ be the optimal solution for $RP$. For any optimal solution $x^*$ of $P$, we have that $x^* \in X \subseteq \overline{X}$, which implies that $x^* \in \overline{X}$. Thus, we have that
   \begin{equation*}
-  	 z = c^\top x^* \geq \overline{c}^\top x^* \geq z_{RP}.	\qedhere
+  	 z = c^\top x^* \geq \overline{c}^\top x^* \geq \overline{c}^\top x^*_{RP} = z_{RP}.	\qedhere
   \end{equation*}
 \end{proof}
 
@@ -80,13 +80,13 @@ The first inequality is due to Definition \ref{p1c9:def:relaxation} and the seco
 \end{proposition}
 %
 \begin{proof}
-    To prove (1), simply notice that if $\overline{X} = \emptyset$, then $X = \emptyset$. To show (2), notice that as $x^* \in X$, $z \leq c^\top x^* = \overline{c}^\top x^* = z_{RP}$. From Proposition \ref{p1c9:prop:relaxation_bounding}, we have $z \geq z_{RP}$. Thus, $z = z_{RP}$. 
+    To prove (1), simply notice that if $\overline{X} = \emptyset$, then $X = \emptyset$. Now, let $x^*$ be the optimal solution for $RP$. To show (2), notice that as $x^* \in X$, $z \leq c^\top x^* = \overline{c}^\top x^*_{RP} = z_{RP}$. From Proposition \ref{p1c9:prop:relaxation_bounding}, we have $z \geq z_{RP}$. Thus, $z = z_{RP}$. 
 \end{proof}
 
 
 \subsection{Linear programming relaxation}
 
-In the context of solving (mixed-)integer programming problems, we will rely on the notion of linear programming (LP) relaxations. We have briefly discussed the idea in the previous chapter, but, for the sake of precision, let us first define what we man by the term. 
+In the context of solving (mixed-)integer programming problems, we will rely on the notion of linear programming (LP) relaxations. We have briefly discussed the idea in the previous chapter, but, for the sake of precision, let us first define what we mean by the term. 
 
 \begin{definition}[Linear programming (LP) relaxation]
   The LP relaxation of an integer programming problem $\mini \braces{c^\top x : x \in P \cap \integers^n}$ with $P = \braces{x \in \reals^n_+ : Ax \leq b}$ is the linear programming problem $\mini \braces{c^\top x : x \in P}$.
@@ -434,7 +434,7 @@ We start by solving its LP relaxation, as represented in Figure \ref{p1c9:fig:ex
 %
 The current enumerative (or branch-and-bound) tree representation is depicted in Figure \ref{p1c9:fig:example_bb_tree_1}.
 
-\begin{figure}[h]
+\begin{figure}[H]
 \begin{tikzpicture}[scale = 0.9,
 	point/.style={circle, fill=gray!40, inner sep=1pt},
 	feas point/.style={circle, fill=blue, inner sep=1pt}]
@@ -579,7 +579,7 @@ Next, we choose to solve the LP relaxation of $S_{12}$, which yields an integer 
 	\caption{LP relaxations of all subproblems. Notice that $S_{11}$ and $S_{12}$ includes the constraints $x_1 \le 2$ from the parent node $S_1$}	\label{p1c9:fig:example_LP_relaxation_solution_3}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[H]
 	\begin{tikzpicture}[level distance=1.5cm, 
      level 1/.style={sibling distance=2cm}, 
      level 2/.style={sibling distance=2cm}, 
