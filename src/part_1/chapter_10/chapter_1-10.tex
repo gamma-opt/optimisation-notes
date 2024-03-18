@@ -1,6 +1,6 @@
 \section{Valid inequalities}
 
-In this chapter, we will discuss the idea of generating and adding constraints to improve a formulation of a (possibly mixed-)integer programming problem. This idea can either be implemented in a priori setting, for example before employing the branch-and-bound method or as the solution method itself. These constraints are often called \emph{valid inequalities} or \emph{cuts}, though the latter is typically used in the context of cutting-planes methods.
+In this chapter, we will discuss the idea of generating and adding constraints to improve a formulation of a (possibly mixed-)integer programming problem. This idea can either be implemented in a priori setting, for example before employing the branch-and-bound method or as the solution method itself. These constraints are often called \emph{valid inequalities} or \emph{cuts}, though the latter is typically used in the context of cutting-plane methods.
 
 Let us start by defining the integer programming problem
 %
@@ -128,7 +128,7 @@ To develop a systematic procedure for generating valid inequalities in the conte
 	Notice that $u^\top A\geq \pi$ can be seen as a consequence of dual feasibility, which is guaranteed to hold for some $u$ since $\pi^\top x$ is bounded. Then, strong duality gives $u^\top b = \pi ^\top x \leq \pi_0$, which completes the proof. 
 \end{proof}
 
-One thing to notice is that valid cuts in the context of polyhedral sets are somewhat redundant, since, by definition, they do not alter the polyhedral set in any means. However, the concept can be combined with a simple yet powerful way of generating valid inequalities for integer set by using rounding. This is stated in Proposition \ref{p1c10:prop:valid_inequality_IP}. 
+One thing to notice is that valid cuts in the context of polyhedral sets are somewhat redundant, since, by definition, they do not alter the polyhedral set by any means. However, the concept can be combined with a simple yet powerful way of generating valid inequalities for integer sets by using rounding. This is stated in Proposition \ref{p1c10:prop:valid_inequality_IP}. 
 %
 \begin{proposition}[Valid inequalities for integer sets] \label{p1c10:prop:valid_inequality_IP}
 	Let $X = \braces{y \in \integers^1 : y \leq b}$. The inequality $y \leq \floor{b}$ is valid for $X$.
@@ -169,20 +169,19 @@ Finally, we can invoke Proposition \ref{p1c10:prop:valid_inequality_IP} to gener
 	\begin{enumerate}
 	    \item $\sum_{j=1}^n u^\top A_jx_j \leq u^\top b$ is valid for $P$ as $u\geq 0$;
 	    \item $\sum_{j=1}^n \floor{u^\top A_j}x_j \leq u^\top b$ is valid for $P$ as $x \geq 0$;
-	    \item $\sum_{j=1}^n  \floor{u^\top A_j}x_j \leq \floor{u^\top b}$ is valid for $X$ as LHS is integer.
+	    \item $\sum_{j=1}^n  \floor{u^\top A_j}x_j \leq \floor{u^\top b}$ is valid for $X$ as $\floor{u^\top b}$ is integer.
 	\end{enumerate}		
 \end{definition}
 	
-Perhaps the most striking result in the theory of integer programming is that \emph{every} valid inequality for an integer set $X$ can be obtained by employing the Chv\'atal-gomory procedure a number of times. This is formalised in Theorem \ref{p1c10:thm:VG_valid_inequality}.
+Perhaps the most striking result in the theory of integer programming is that \emph{every} valid inequality for an integer set $X$ can be obtained by employing the Chv\'atal-gomory procedure a number of times. This is formalised in Theorem \ref{p1c10:thm:VG_valid_inequality}, which has its proof provided as an exercise (see Exercise 10.1).
 
 \begin{theorem} \label{p1c10:thm:VG_valid_inequality}
 	Every valid inequality for $X$ can be obtained by applying the Chv\'atal-Gomory procedure a finite number of times.
 \end{theorem}
 	
-% TODO: Chp10: Add a reference to the proof in the big Nemhauser and Wolsey book.
-	
 	
 \section{The cutting-plane method}
+
 
 Let us now consider how one could use valid inequalities to devise a solution method. The working paradigm behind a cutting-plane method is the \emph{separation principle}. 
 
@@ -190,7 +189,7 @@ The separation principle states that, given an integer set $X = P \cap \integers
 
 In general, these valid inequalities are generated from a family of inequalities $\mathcal{F}$, which are related to each other by properties related to, e.g., problem structure or the nature of the inequality itself. One way of thinking about it is to see the family of inequalities $\mathcal{F}$ as a means to dictate, to some extent, how the selection of weights $u$ in the Chv\'atal-Gomory procedure is defined.
 
-In any case, in possession of a family of inequalities and a method to solve the separation problem, we can pose a cutting-plane methods in general terms. This is stated in Algorithm \ref{p1c10:alg:cuting-plane}.
+In any case, in possession of a family of inequalities and a method to solve the separation problem, we can pose a cutting-plane method in general terms. This is stated in Algorithm \ref{p1c10:alg:cuting-plane}.
 
 \begin{algorithm}[h]
 	\caption{Cutting-plane algorithm} \label{p1c10:alg:cuting-plane}
@@ -209,23 +208,24 @@ In any case, in possession of a family of inequalities and a method to solve the
 	\end{algorithmic}
 \end{algorithm}
 
-Notice that we have already discussed a cutting-plane method before in Chapter \ref{chapter_7}, when we presented the Benders decomposition. In that case, the optimality and feasibility cuts form the family of valid inequalities $\mathcal{F}$, while the separation problem was the subproblem responsible to find the cuts that were violated by the current main problem solution. 
+%Notice that we have already discussed a cutting-plane method before in Chapter \ref{chapter_7}, when we presented the Benders decomposition. In that case, the optimality and feasibility cuts form the family of valid inequalities $\mathcal{F}$, while the separation problem was the subproblem responsible to find the cuts that were violated by the current main problem solution. 
 
-Like was the case in Benders decomposition, the motivation for employing cutting-plane algorithms lies in the belief that only a few of all $|\mathcal{F}|$ inequalities (assuming $\mathcal{F}$ is finite, which might not be necessarily the case) are necessary, circumventing the computationally prohibitive need of generating all possible inequalities from $\mathcal{F}$.
+%Like was the case in Benders decomposition, 
+The motivation for employing cutting-plane algorithms lies in the belief that only a few of all $|\mathcal{F}|$ inequalities (assuming $\mathcal{F}$ is finite, which might not be necessarily the case) is necessary, circumventing the computationally prohibitive need of generating all possible inequalities from $\mathcal{F}$.
 
-There are some other complicating aspects that must be observed when dealing with cutting-plane algorithms. First, it might be so that a given family of valid inequalities $\mathcal{F}$ is not sufficient to expose the optimal solution $x \in X$, which might be the case, for example, if $\mathcal{F}$ cannot fully describe $\conv(X)$ or if the separation problem is unsolvable. In that case, the algorithm will terminate with a solution for the LP relaxation tat is not integer, i.e., $x_{LP}^k \notin \integers^n$. 
+Some other complicating aspects must be observed when dealing with cutting-plane algorithms. First, it might be so that a given family of valid inequalities $\mathcal{F}$ is not sufficient to expose the optimal solution $x \in X$, which might be the case, for example, if $\mathcal{F}$ cannot fully describe $\conv(X)$ or if the separation problem is unsolvable. In that case, the algorithm will terminate with a solution for the LP relaxation that is not integer, i.e., $x_{LP}^k \notin \integers^n$. 
 
 However, failing to converge to an integer solution is not a complete failure since, in the process, we have improved the formulation $P$ (cf. Definition \ref{p1c8:def:better_formulations}). In fact, this idea plays a major role in professional-grade implementations of mixed-integer programming solvers, as we will see later. 
 
 
 \section{Gomory's fractional cutting-plane method}
 
-One important cutting-plane method that is guaranteed to converge (in theory) to an integer solution is the Gomory's fractional cutting plane method. Basically, the method consists of exploiting the Chv\'atal-Gomory procedure (cf .Definition \ref{p1c10:def:CG-procedure}) to be the family of cuts generated, while solving separation problem becomes simply the process of rounding to be applied to solutions of LP relaxations. 
+One important cutting-plane method that is guaranteed to converge (in theory) to an integer solution is Gomory's fractional cutting-plane method. The method consists of exploiting the Chv\'atal-Gomory procedure (cf. Definition \ref{p1c10:def:CG-procedure}) to be the family of cuts generated while solving separation problem becomes simply the process of rounding to be applied to solutions of LP relaxations. 
 
 Specifically, consider the integer programming problem 
 %
 \begin{equation*}
-	(P): \maxi_x\braces{c^\top x : x \in X},
+	(IP): \maxi_x\braces{c^\top x : x \in X},
 \end{equation*}
 %
 where $X = \braces{x \in \integers^n_+ : Ax = b}$. Recall that the optimal solution of the LP relaxation is characterised by a basis $B$ formed by columns of the matrix $A$, i.e.,
@@ -246,10 +246,10 @@ which is equivalent to $B^{-1}Ax = B^{-1}b$. Now, let $\overline{a}_{ij}$ be the
 %
 \begin{align*}
 	&x_{B(i)} + \sum_{j \in I_N} \overline{a}_{ij}x_j = \overline{a}_{i0}, \ \forall i \in I\\
-	&x_j \in \integers_+, \forall j \in J,
+	&x_j \in \integers_+, \ \forall j \in J,
 \end{align*}
 %
-where $I = \braces{1, \dots, m}$, $J = \braces{1, \dots, n}$, $I_B \subset J$ are the indices of basic variables and $I_N = J \setminus I_B$ the indices of nonbasic variables. Notice that, at this point, we are simply recasting $P$ by performing permutations of columns, since basic feasible solutions for the LP relaxation do not necessarily translate into a feasible solution for $X$.
+where $I = \braces{1, \dots, m}$, $J = \braces{1, \dots, n}$, $I_B \subset J$ are the indices of basic variables and $I_N = J \setminus I_B$ the indices of nonbasic variables. Notice that, at this point, we are simply recasting the problem $IP$ by performing permutations of columns, since basic feasible solutions for the LP relaxation do not necessarily translate into a feasible solution for $X$.
 
 However, assuming that we solve the LP relaxation of the integer programming problem $P$ and obtain an optimal solution $x = (x_B, x_N)$ with associated optimal basis $B$. If $x$ is fractional, then it means that $\overline{a}_{i0}$ is fractional for some $i$.
 
@@ -282,7 +282,7 @@ Let us present a numerical example illustrating the employment of Gomory's fract
 	\st & 7x_1 - 2x_2 \leq 14\\
 	& x_2 \leq 3 \\
 	&2x_1 -2x_2 \leq 3 \\
-	&x_1, x_2 \in \integers_+ 
+	&x_1, x_2 \in \integers_+. 
 \end{align*}
 
 Figure \ref{p1c10:fig:LP_1} illustrates the feasible region of the problem and indicates the solution of its LP relaxation. Considering the tableau representation of the optimal basis for the LP relaxation, we have
@@ -352,7 +352,7 @@ Then, adding it to the previous tableau and employing the dual simplex again, le
 
 Notice that now all variables are integer, and thus, an optimal solution for the original integer programming problem was found. 
 
-Some points are worth noticing. First, notice that, at the optimum, all variables, including the slacks, are integer. This is a consequence of having the Gomory cuts active at the optimal solution since \eqref{p1c10:eq:CG_cut}, and consequently, \eqref{p1c10:eq:gomorycut}, have both the left- and right-hand sides integer. Also, notice that at each iteration the problem increases in size, due to the new constraint being added, which implies that the basis also increases in size. Though this is an issue also in branch-and-bound method, it can be a more prominent computational issue in the context of cutting-plane methods. 
+Some points are worth noticing. First, notice that, at the optimum, all variables, including the slacks, are integer. This is a consequence of having the Gomory cuts active at the optimal solution since \eqref{p1c10:eq:CG_cut}, and consequently, \eqref{p1c10:eq:gomorycut}, have both the left- and right-hand sides integer. Also, notice that at each iteration the problem increases in size, due to the new constraint being added, which implies that the basis also increases in size. Though this is an issue also in the branch-and-bound method, it can be a more prominent computational issue in the context of cutting-plane methods. 
 
 We can also interpret the progress of the algorithm in graphical terms. First of all, notice that we can express the cuts in terms of the original variables $(x_1,x_2)$ by noticing that the original formulation gives $x_3 = 14 - 7x_1 + x_2$ and $x_4 = 3-x_2$. Substituting $x_3$ and $x_4$ in the cut $\frac{1}{7}x_3 + \frac{2}{7}x_4 - s = \frac{6}{7}$ gives $x_1 \leq 2$. More generally, we have that cuts can be expressed using the original problem variables, as stated in Proposition \ref{p1c10:prop:cuts_original}.
 
@@ -635,6 +635,9 @@ We leave the proof as a thought exercise. Let us however illustrate this using t
 \end{equation*}
 %
 which is stronger than $x_3 + x_4 + x_5 + x_6 \leq 3$ as the former dominates the latter, cf. Definition \ref{p1c10:def:dominance}. 
+
+The above serves as an example of how strong inequalities can be generated for problems with a known structure. However, this is just one example of many other well-known cutting-generation methods. In the next chapter, we will mention a few other alternative techniques to generate valid inequalities that enrich professional-grade implementations of MIP solvers. 
+
 
 \vfill
 \pagebreak
