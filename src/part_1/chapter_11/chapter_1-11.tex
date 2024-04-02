@@ -1,12 +1,12 @@
 \section{Modern mixed-integer linear programming solvers}
 
-In this chapter, we will discuss some of the numerous features that are shared by most professional-grade implementations of mixed-integer programming (MIP) solvers. As it will become clear, MIP solvers are formed by an intricate collection of techniques that have been developed over the last few decades. The continuous improvement and development of new such techniques have enabled performance improvements beyond purely hardware performance progress. In fact, this is a very lively and exciting research area, with new features being proposed and incorporated in these solvers with frequent new releases of these tools.
+In this chapter, we will discuss some of the numerous features that are shared by most professional-grade implementations of mixed-integer programming (MIP) solvers. As it will become clear, MIP solvers are formed by an intricate collection of techniques that have been developed over the last few decades. The continuous improvement and development of new such techniques have enabled performance improvements beyond purely hardware performance progress. In fact, this is a very lively and exciting research area, with new features being proposed and incorporated in these solvers with the frequent new releases of these tools.
 
-The main difference between MIP solver implementations is which ``tricks'' and techniques they have implemented. In some cases, these are not disclosed in full detail, since the high-performing solvers are commercial products subject to trade secrets. Luckily, some open-source (such as CBC and HiGHS) and free-to-use alternatives (such as SCIP) have been made available, but they are not up to par with commercial implementations in terms of performance as yet.
+The main difference between MIP solver implementations is which ``tricks'' and techniques they have implemented. In some cases, these are not disclosed in full detail, since the high-performing solvers are commercial products subject to trade secrets. Luckily, some open-source (such as CBC, SCIP, and HiGHS) have been made available, but they are not up to par with commercial implementations in terms of performance as yet.
 
 We will focus on describing the most important techniques forming a professional-grade MIP solver implementation. Most MIP solvers allow for significant tuning and on-off toggling of these techniques. Therefore, knowing the most important techniques and how they work can be beneficial in configuring MIP solvers to your own needs.
 
-Most MIP solvers implement a method that is called \emph{branch-and-cut} which consists of a combination of the linear-programming (LP)-based branch-and-bound method (as described in Chapter \ref{chapter_9}) and a cutting-plane method (as described in Chapter \ref{chapter_10}) that is employed at the root note (or the first subproblem LP relaxation) and possibly at later nodes as well. Figure \ref{p1c11:fig:MIP_solver_flowchart} illustrates the typical flowchart of a MIP solver algorithm.
+MIP solvers implement a method that is called \emph{branch-and-cut} which consists of a combination of the linear-programming (LP)-based branch-and-bound method (as described in Chapter \ref{chapter_9}) and a cutting-plane method (as described in Chapter \ref{chapter_10}) that is employed at the root note (or the first subproblem LP relaxation) and possibly at later nodes as well. Figure \ref{p1c11:fig:MIP_solver_flowchart} illustrates the typical flowchart of a MIP solver algorithm.
 
 \begin{figure}
 	\begin{tikzpicture}[scale=1, node/.style={draw, thick}]
@@ -38,14 +38,14 @@ The first phase consists of a preprocessing phase called \emph{presolve}. In tha
 
 Then, the main solution loop starts, similarly to what we have described in Chapter \ref{chapter_9} when discussing the branch-and-bound method. A node selection method is employed and the LP relaxation is solved. Then, branching is applied and the process continues until an optimal solution has been found. 
 
-The main difference however relates to the extra \emph{cuts} and \emph{heuristics} phases. Together with the \emph{presolve}, these are likely the phases that most differ between implementations of MIP solvers. The cut phase consists of the employment of a cutting-plane method onto the current LP relaxation with the aim of either obtaining an integer solution (and thus pruning the branch by optimality) or strengthening the formulation of the LP relaxation, as discussed in Chapter \ref{chapter_10}. Each solver will have their own family of cuts that are used in this phase, and typically a collection of them is used simultaneously. The heuristics phase is used in combination to try to obtain primal feasible solutions from the LP relaxations (possibly augmented by cuts) so primal bounds (integer and feasible solution values) can be obtained and broadcasted to the whole search tree, hopefully fostering pruning by bound. 
+The main difference however relates to the extra \emph{cuts} and \emph{heuristics} phases. Together with the \emph{presolve}, these are likely the phases that most differ between implementations of MIP solvers. The cut phase consists of the employment of a cutting-plane method onto the current LP relaxation with the aim of either obtaining an integer solution (and thus pruning the branch by optimality) or strengthening the formulation of the LP relaxation, as discussed in Chapter \ref{chapter_10}. Each solver will have their own family of cuts that are used in this phase, and typically a collection of cut families is used simultaneously. The heuristics phase is used in combination to try to obtain primal feasible solutions from the LP relaxations (possibly augmented by cuts) so primal bounds (integer and feasible solution values) can be obtained and broadcasted to the whole search tree, hopefully fostering pruning by bound. 
 
 In what follows, we will discuss some of the main techniques in each of these phases. 
 
 
 \section{Presolving methods}
 
-Presolving (or preprocessing) methods are methods typically employed before the start of the branch-and-cut method. These methods have three main goals: (i) reducing the problem size by fixing variables and eliminating constraints; (ii) strengthening the LP relaxation by identifying bounds and coefficients that can be tightened; and (iii) exploiting integrality to improve formulation and identify problem structures (e.g., knapsack or assignment structures)
+Presolving (or preprocessing) methods are typically employed before the start of the branch-and-cut method. These methods have three main goals: (i) reducing the problem size by fixing variables and eliminating constraints; (ii) strengthening the LP relaxation by identifying bounds and coefficients that can be tightened; and (iii) exploiting integrality to improve formulation and identify problem structures (e.g., knapsack or assignment structures)
 
 
 \subsubsection{Detecting infeasibility and redundancy}
@@ -75,12 +75,11 @@ One simple way of employing bound tightening is by noticing the following. Assum
 	\alpha_{\text{min}} = \sum_{j \in J}a_jl_j = a^\top l \le a^\top x \le b,
 \end{equation*}
 %
-where $l \in \reals^{|J|}$.
-From the second inequality, we obtain 
+where $l \in \reals^{|J|}$. From the second inequality, we obtain 
 %
-\begin{align*}
-    a_jx_j \le b - a^\top x + a_jx_j.
-\end{align*}
+\begin{equation} \label{p1c11:eq:upper_bound_ax}
+    a_jx_j \le b - a^\top x + a_jx_j.	
+\end{equation}
 %
 Let $a^\top = (\overline{a}, a_j)^\top$, $x = (\overline{x}, x_j)$ and $l = (\overline{l}, l_j)$, then we have $\alpha_{\text{min}} = a^\top l = \overline{a}^\top \overline{l} + a_j l_j$ and $a^\top x = \overline{a}^\top \overline{x} + a_j x_j$. By the definition of \emph{minimum activity}, we know that $\overline{\alpha}_{\text{min}} = \overline{a}^\top \overline{l} \le \overline{a}^\top \overline{x}$, which is equivalent to 
 %
@@ -94,7 +93,7 @@ This can be reformulated as
     b - a^\top x + a_jx_j \le b - \alpha_{\text{min}} + a_jl_j.
 \end{align*}
 %
-Combining this result with what was obtained from the second inequality, we have that
+Combining this result with what was obtained from \eqref{p1c11:eq:upper_bound_ax}, we have that
 \begin{equation*}
 	 a_jx_j \le b - a^\top x + a_jx_j \le b - \alpha_{\text{min}} + a_jl_j,
 \end{equation*}
@@ -150,10 +149,11 @@ There is a wide range of methods employed as preprocessing, and they vary greatl
 		& x_1 + x_3 \le 1 \\
 		& x_2 + x_3 \le 1.
 	\end{align*}
-	Then, one can think of these constraints forming a clique between the imaginary nodes 1, 2, and 3, which renders the clique cut $x_1 + x_2 + x_3 \le 1$. Many other ideas using this graph representation of implication constraints, known as \emph{conflict graphs} are implemented in presolvers.
-	\item {\bf Greatest common denominator (GCD) reduction}: We can use the GCD of the coefficients $a = [a_1, \dots, a_n]$ to generate or tighten inequalities. Let $\text{{\bf gcd}}(a)$ be the GCD of all coefficients $a_j$ in $a$. Then, we can generate the valid inequality
+	Then, one can think of these constraints forming a clique between the imaginary nodes 1, 2, and 3, which renders the clique cut $x_1 + x_2 + x_3 \le 1$. Many other similar ideas using this graph representation of implication constraints, known as \emph{conflict graphs} are implemented in presolvers to generate valid inequalities for MIPs.
+	\item {\bf Greatest common denominator (GCD) reduction}: Assume that $x_j \in \braces{0,1}$ for $j \in J$. We can use the GCD of the coefficients $a = [a_1, \dots, a_n]$ to generate or tighten inequalities. Let $\text{{\bf gcd}}(a)$ be the GCD of all coefficients $a_j$ in $a$. Then, we can generate the valid inequality
+	%
 	\begin{equation*}
-		\sum_{j=1}^n\frac{a_j}{\text{{\bf gcd}}(a)} x_j\leq \left\lfloor\frac{b}{\text{{\bf gcd}}(a)}\right \rfloor.
+		\sum_{j \in J}\frac{a_j}{\text{{\bf gcd}}(a)} x_j\leq \left\lfloor\frac{b}{\text{{\bf gcd}}(a)}\right \rfloor.
 	\end{equation*}
 \end{itemize}
 
@@ -165,13 +165,13 @@ In addition, conflict graphs can contain information that can be exploited in a 
 
 \section{Cut generation}
 
-One major component of MIP solvers is its cut generation procedures. In practice, MIP solvers implement what is called \emph{branch-and-cut}, which is a method formed by the amalgamation of branch-and-bound (as we seen in Chapter \ref{chapter_9}) and cutting-plane methods (Chapter \ref{chapter_10}). In fact, the combination of both methods is arguably the most important methodological development that ultimately rendered MIP solvers reliable to be used in practice in many applications. 
+One major component of MIP solvers is its cut generation procedures. In practice, MIP solvers implement what is called \emph{branch-and-cut}, which is a method formed by the amalgamation of branch-and-bound (as we have seen in Chapter \ref{chapter_9}) and cutting-plane methods (Chapter \ref{chapter_10}). In fact, the combination of both methods is arguably the most important methodological development that ultimately rendered MIP solvers reliable to be used in practice in many applications. 
 
 There is an interesting symbiotic relationship emerging from the combination of the two methods. In general, cutting planes are useful in tightening the existing formulation but often fail in being able to generate all the cuts required to expose an integer optimal solution. On the other hand, branch-and-bound might require considerable computational efforts to adequately expose the integer optimal solutions of all subproblems, but is guaranteed to converge in finite time (even if this time is not feasible in a practical sense). Thus, the combination of both allows for a method that is far more likely to terminate within reasonable computation time.
 
 However, some care must be considered when generating cuts in branch-and-cut settings, since it can quickly increase the dimension of the subproblems, which would lead to amplified consequences to the performance of the branch-and-bound part. This is mitigated with a feature called \emph{cut pool}, which consists of a way to make sure that only selected cuts, e.g., cuts that are violated by the solution of the relaxation, are considered in the subproblem. Such cuts are chosen using what is referred to as cut selection routines.
 
-Furthermore, most professional-grade solvers allow for the definition of user cuts, which are user-defined cuts that are strongly problem specific, but give strong customisation powers to advanced users. As it turns out, the types of cuts available is one of the main differentiators between solvers and the search for cuts that are both efficient and generic is an active research and development direction.
+Furthermore, most professional-grade solvers allow for the definition of user cuts, which are user-defined cuts that are problem-specific, but give strong customisation powers to advanced users. As it turns out, the types of cuts available is one of the main differentiators between solvers and the search for cuts that are both efficient and generic is an active research and development direction.
 
 The most common types of cuts utilised include fractional (or Gomory) cuts, of the form
 %
@@ -185,7 +185,7 @@ and Chv\'atal-Gomory cuts for pure integer constraints, which are dependent on t
 	\sum_{j=1}^n  \floor{uA_j}x_j \leq \floor{ub}.
 \end{equation*} 
 %
-For example, zero-half cuts (with $u \in [0,1/2]$) and mod-k cuts ($u \in \braces{0, 1/k, \dots, (k-1)/k}$) are available in most solvers. Other cuts such as knapsack (or cover) inequalities, mixed-integer rounding, clique as also common and, although they can be shown to be related to the Chv\'atal-Gomory procedure, are generated by means of heuristics (normally referring to a cut generation procedure).
+For example, zero-half cuts (with $u \in [0,1/2]$) and mod-k cuts ($u \in \braces{0, 1/k, \dots, (k-1)/k}$) are available in most solvers. Other cuts such as knapsack (or cover) inequalities, mixed-integer rounding, and clique cuts are also common and, although they can be shown to be related to the Chv\'atal-Gomory procedure, are generated by means of heuristics (normally referring to a cut generation procedure).
 
 
 \subsection{Cut management: generation, selection and discarding}
@@ -213,7 +213,7 @@ Variable selection, commonly referred to as \emph{branching strategies} in most 
 
 \subsubsection{Maximum infeasibility}
 
-The first branching strategy, sometimes called \emph{maximum infeasibility}, consists of choosing the variable with the fractional part as close to 0.5 as possible, or, more precisely selecting the variables $j \in \braces{1, \dots, n}$ as
+The branching strategy called \emph{maximum infeasibility} consists of choosing the variable with the fractional part as close to 0.5 as possible, or, more precisely selecting the variables $j \in \braces{1, \dots, n}$ as
 %
 \begin{equation*}
 	\arg\max_{j \in \braces{1,\dots,n}} \min\braces{f_j, 1 - f_j} 	
@@ -223,15 +223,15 @@ where $f_j = x_j - \lfloor x_j \rfloor$. This in effect is trying to reduce as m
 
 \subsubsection{Strong branching}
 
-Strong branching can be understood as an explicit look-ahead strategy. That is, to decide which variable to branch on, the method performs branching on all possible variables, and chooses the one which provides the best improvement on the dual (LP relaxation) bound. Specifically, for each fractional variable $x_j$, we can solve the LP relaxations corresponding to branching options $x_j \leq \lfloor x^\text{LP} \rfloor$ and $x_j \geq \lceil x^\text{LP} \rceil$ to obtain LP relaxation objective values $Z_j^D$ and $Z_j^U$. We then choose the fractional variable $x_j$ that leads to subproblems with the best LP relaxation objective values, defined as 
+Strong branching can be understood as an explicit look-ahead strategy. That is, to decide which variable to branch on, the method performs branching on all possible variables, and chooses the one which provides the best improvement on the dual (LP relaxation) bound. Specifically, for each fractional variable $x_j$, we can solve the LP relaxations corresponding to branching options $x_j \leq \lfloor x^\text{LP} \rfloor$ and $x_j \geq \lceil x^\text{LP} \rceil$ to obtain LP relaxation objective values $Z_j^D$ and $Z_j^U$, respectively. We then choose the fractional variable $x_j$ that leads to subproblems with the best LP relaxation objective values, defined as 
 %
 \begin{equation*}
 	\arg\max_{j \in \braces{1,\dots,n}} \min\braces{Z_j^D, Z_j^U}, 	
 \end{equation*}
 % 
-assuming a minimization problem. Strong branching thus compares the worse LP relaxation bound for each fractional $x_j$ and picks the fractional variable for which this value is the best. 
+assuming a minimisation problem. Strong branching thus compares the worse LP relaxation bound for each fractional $x_j$ and picks the fractional variable for which this value is the best. 
 
-As one might suspect, there is a trade-off related to the observed reduction in the number of nodes explored, given by the more prominent improvement of the dual bound, and how computationally intensive is the method. There are however ideas that can exploit this trade-off more efficiently. First, the solution of the subproblems might yield information related to infeasibility and pruning by limit, which can be used in favour of the method. 
+As one might suspect, there is a trade-off related to the observed reduction in the number of nodes explored given by the more prominent improvement of the dual bound, and how computationally intensive is the method. There are however ideas that can exploit this trade-off more efficiently. First, the solution of the subproblems might yield information related to infeasibility and pruning by limit, which can be used in favour of the method. 
 
 Another idea is to limit the number of simplex iterations performed when solving the subproblems associated with each branching option. This allows for using an approximate solution of the subproblems and potential savings in computational efforts. Some solvers offer a parameter that allows the user to set this iteration limit value.
 
@@ -240,7 +240,7 @@ Another idea is to limit the number of simplex iterations performed when solving
 
 Pseudo-cost branching relies on the idea of using past information from the search process to estimate gains from branching on a specific variable. Because of this reliance on past information, the method tends to be more reliable later in the search tree, where more information has been accumulated on the impact of choosing a variable for branching.
 
-These improvement estimates are the so-called \emph{pseudo-costs}, which compile an estimate of much the dual (LP relaxation) bound has improved per fractional unit of the variable that has been reduced. More specifically, let 
+These improvement estimates are the so-called \emph{pseudo-costs}, which compile an estimate of how much the dual (LP relaxation) bound has improved per fractional unit of the variable that has been reduced. More specifically, let 
 %
 \begin{equation} \label{p1c11:eq:fractionals}
 	f^{-}_j = x^{\text{LP}}_j - \lfloor x^{\text{LP}}_j \rfloor \text{ and } f^{+}_j = \lceil x^{\text{LP}}_j \rceil - x^{\text{LP}}_j.	
@@ -284,7 +284,7 @@ To remediate this, the idea of using a \emph{generalised upper bound} is employe
 	&S_2 = S \cap \braces{x : x_{j_i} = 0, \forall i \in \braces{r+1,\dots,k} }
 \end{align*} 
 %
-where $r = \argmax_{t \in \braces{1,\dots,k}} \sum_{j=1}^t x_j \leq 0.5$. Notice the upper bounding on some of the variables, from which the name stems. That is, only a subset of the variables are forced to be zero, while several others are left unconstrained, which favours more balanced search trees. As a final remark, constraints of the form of
+where $r = \argmax_{t \in \braces{1,\dots,k}} \sum_{j=1}^t x_j \leq 0.5$. Notice the upper bounding on some of the variables, which inspires the name GUB branching. That is, only a subset of the variables are forced to be zero, while several others are left unconstrained, which favours more balanced search trees. As a final remark, constraints of the form of
 %
 \begin{equation*}
 	\sum_{j = 1}^k x_j \le 1	
@@ -304,7 +304,7 @@ We now focus on the strategies associated with selecting the next subproblem to 
 	\item Minimise computational effort by minimising the overhead associated with changing the subproblems to be solved. That means that children nodes are preferred over other nodes, in a way to minimise the changes needed to assemble a starting basis for the dual simplex method.
 \end{enumerate}
 
-You might notice that points 1 and 2 are conflicting since while the former would benefit from a breadth-focused search (that is, having wider trees earlier is preferable than deeper trees) the latter would benefit from searches that dive deeply into the tree searching from leaf nodes. Points 3 and 4 pose exactly the same dilemma: the former benefits from breadth-focusing searches while the latter benefits from depth-focusing searches.
+You might notice that points 1 and 2 are conflicting since while the former would benefit from a \emph{breadth}-focused search (that is, having wider trees earlier is preferable than deeper trees) the latter would benefit from searches that dive \emph{deeply} into the tree searching from leaf nodes. Points 3 and 4 pose exactly the same dilemma: the former benefits from breadth-focusing searches while the latter benefits from depth-focusing searches.
 
 The main strategies for node selection are, to a large extent, ideas to emphasise each or a combination of the above. 
 
@@ -340,9 +340,9 @@ The expression $E$ is an estimate of what is the best possible value an integer 
 
 \section{Primal heuristics}
  
-The last element of MIP solvers we must consider are primal heuristics. The term ``primal'' refers to the fact that these are methods geared towards either (i) building primal feasible solutions normally from a solution obtained from a relaxation; or (ii), geared towards improving on previously known primal solutions. The former strategy is often referred to as \emph{constructive} heuristics, while the latter is called \emph{improvement} heuristics. 
+The last element of MIP solvers we must consider is the set of primal heuristics they MIP solver has available. The term ``primal'' refers to the fact that these are methods geared towards either (i) building primal feasible solutions normally from a solution obtained from a relaxation; or (ii), geared towards improving on previously known primal solutions. The former strategy is often referred to as \emph{constructive} heuristics, while the latter is called \emph{improvement} heuristics. 
 
-The name heuristic refers to the fact that these are methods that are not guided by any optimality certificates per se, but yet by performing local (or nearby, according to a given metric of solution difference) improvements repeatedly.
+The name heuristic refers to the fact that these are methods that are not guided by any optimality certificates per se, but focus only on performing local improvements repeatedly (or within a neighbourhood or a current reference solution), according to a given metric of solution difference.
 
 Primal heuristics play three main important roles in MIP solver algorithms. First, they are employed in the preprocessing phase to verify whether the model can be proved to be feasible, by constructing a primal feasible solution. Second, constructive heuristics are very powerful in generating feasible solutions during the branch-and-bound phase, meaning that it can make primal feasible solutions available \emph{before} they are found at leaf nodes when pruning by optimality (i.e., with integer LP relaxation solution), and therefore fostering early pruning by bound. Lastly, heuristics are a powerful way to obtain reasonably (often considerably) good solutions, which in practical cases might be sufficient, given computational or time limitations and precision requirements.
 
@@ -351,7 +351,7 @@ Primal heuristics play three main important roles in MIP solver algorithms. Firs
 
 Diving heuristics are used in combination with node selection strategies that search in breadth (instead of depth). In simple terms, it consists of performing a local depth search at the node being considered with no or very little backtracking, with the hope of reusing the subproblem structure while searching for primal feasible solutions. The main difference is that the subproblems are generated in an alternative tree in which branching is based on rounding and fixing instead of the standard branching we have seen in Chapter \ref{chapter_9}. 
 
-Once the heuristic terminates, the structure is discarded, but the solution, if found, is kept. Notice that the diving can also be preemptively aborted if it either renders an infeasible subproblem or if it leads to a relaxation with worse bound than a known primal bound from an incumbent solution. Another common termination criteria consists in limiting the total number of LP iterations solving the subproblems or the total number of subproblems solved. 
+Once the heuristic terminates, the structure is discarded, but the solution, if found, is kept. Notice that the diving can also be preemptively aborted if it either renders an infeasible subproblem or if it leads to a relaxation with a worse bound than a known primal bound from an incumbent solution. Another common termination criterion consists of limiting the total number of LP iterations solving the subproblems or the total number of subproblems solved. 
 
 The most common types of rounding employed in diving heuristics include \emph{fractional diving}, in which the variable selected for rounding is simply that with the smallest fractional component, i.e., $x_j$ is chosen, such that the index $j$ is given by
 %
@@ -377,13 +377,13 @@ Some of these searches are seldom used and often turned off by default in profes
 
 The relaxation-induced neighbourhood search (or RINS) is possibly the most common improvement heuristic available in modern implementations\footnote{Emilie Danna, Edward Rothberg, and Claude Le Pape (2005), Exploring relaxation induced neighborhoods to improve MIP solutions, Mathematical Programming}. The heuristic tries to find solutions that present a balance between proximity of the current LP solution, hoping this would improve the solution quality, and proximity to an incumbent (i.e., best-known primal feasible) solution, emphasising feasibility.
 
-In a nutshell, the method consists of the following. After solving the LP relaxation of a node, suppose we obtain the solution $x^{\text{LP}}$. Also, assume we have at hand an incumbent solution $\overline{x}$. Then, we form an auxiliary MIP problem in which we fix all variables coinciding between $x^{\text{LP}}$ and $\overline{x}$. This can be achieved by including the constraints
+In a nutshell, the method consists of the following. After solving the LP relaxation of a node, suppose we obtain the solution $x^{\text{LP}}$. Also, assume we have at hand an incumbent (integer feasible) solution $\overline{x}$. Then, we form an auxiliary MIP problem in which we fix all variables coinciding between $x^{\text{LP}}$ and $\overline{x}$. This can be achieved by using the constraints
 	%
 	\begin{equation*}
 		x_j = \overline{x}_j, \ \forall j \in \braces{1,\dots,n} : \overline{x}_j = x^\text{LP},	
 	\end{equation*}
 	%
-	which, in effect, fix these variables to integer values and remove them from the problem, as they can be converted to parameters (or input data). Notice that this constrains the feasible space to be in the (potentially large) neighbourhood of the incumbent solution. In later iterations, when more of the components of the relaxation solutions $x^{\text{LP}}$ are integer, this becomes a more local search, with fewer degrees of freedom. Finally, this additional MIP is solved and, in case an optimal solution is found, a new incumbent solution might become available.
+	which, in effect, fixes these variables to integer values and removes them from the problem, as they can be converted to parameters (or input data). Notice that this constrains the feasible space to be in the (potentially large) neighbourhood of the incumbent solution. In later iterations, when more of the components of the relaxation solutions $x^{\text{LP}}$ are integer, this becomes a more localised search, with fewer degrees of freedom. Finally, this additional MIP is solved and, in case an optimal solution is found, a new incumbent solution might become available.
 
 In contrast, relaxation-enforced neighbourhood search (or RENS) is a constructive heuristic, which has not yet seen a wider introduction in commercial-grade solvers, though it is available in   CBC and SCIP\footnote{Timo Berthold (2014), RENS: The optimal rounding, Mathematical Programming Computation}.
  
