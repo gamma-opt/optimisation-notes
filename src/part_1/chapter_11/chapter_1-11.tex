@@ -380,7 +380,7 @@ The relaxation-induced neighbourhood search (or RINS) is possibly the most commo
 In a nutshell, the method consists of the following. After solving the LP relaxation of a node, suppose we obtain the solution $x^{\text{LP}}$. Also, assume we have at hand an incumbent (integer feasible) solution $\overline{x}$. Then, we form an auxiliary MIP problem in which we fix all variables coinciding between $x^{\text{LP}}$ and $\overline{x}$. This can be achieved by using the constraints
 	%
 	\begin{equation*}
-		x_j = \overline{x}_j, \ \forall j \in \braces{1,\dots,n} : \overline{x}_j = x^\text{LP},	
+		x_j = \overline{x}_j, \ \forall j \in \braces{1,\dots,n} : \overline{x}_j = x^\text{LP}_j,	
 	\end{equation*}
 	%
 	which, in effect, fixes these variables to integer values and removes them from the problem, as they can be converted to parameters (or input data). Notice that this constrains the feasible space to be in the (potentially large) neighbourhood of the incumbent solution. In later iterations, when more of the components of the relaxation solutions $x^{\text{LP}}$ are integer, this becomes a more localised search, with fewer degrees of freedom. Finally, this additional MIP is solved and, in case an optimal solution is found, a new incumbent solution might become available.
@@ -402,7 +402,7 @@ One key difference is how the remaining variables are treated. For those compone
 	\lfloor x_j \rfloor \leq x_j \leq \lceil x_j \rceil, \ \forall j \in \braces{1,\dots,n} : x_j^{\text{LP}} \notin \integers.
 \end{equation*}
 %
-Notice that his in effect makes the neighbourhood considerably smaller around the solution $x^{\text{LP}}$. Then, the MIP subproblem with all these additional constraints is solved and a new incumbent solution may be found. 
+Notice that this in effect makes the neighbourhood considerably smaller around the solution $x^{\text{LP}}$. Then, the MIP subproblem with all these additional constraints is solved and a new incumbent solution may be found. 
 
  
 \subsubsection{Local branching}
