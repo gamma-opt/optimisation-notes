@@ -2,6 +2,12 @@
 [![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
 
 
+# Notice: this is out of date!
+This repository has been archived in October 2024. The new version of the linear optimisation notes can be found at: [github.com/gamma-opt/linpot-notes](https://github.com/gamma-opt/linopt-notes)
+
+
+
+
 # Optimisation notes
 
 Download the notes here: [download](https://gamma-opt.github.io/optimisation-notes/pdfs/optimisation-notes.pdf)
